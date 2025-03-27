@@ -16,16 +16,12 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "useDefineForClassFields": false,
-    "target": "es2022",
-    "module": "es2020",
+    "target": "ES2022",
+    "module": "ES2020",
     "types": [],
-    "lib": ["es2018", "es2020", "dom"]
+    "lib": ["ES2018", "ES2020", "DOM"]
   },
-  "references": [
-    {
-      "path": "tsconfig.spec.json"
-    }
-  ],
+  "references": [{ "path": "tsconfig.spec.json" }],
   "angularCompilerOptions": {
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,

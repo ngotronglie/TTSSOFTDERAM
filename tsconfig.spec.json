@@ -1,8 +1,7 @@
 {
-  "extends": "./tsconfig.json",
-  "include": ["src/main/webapp/**/*.ts"],
   "compilerOptions": {
     "composite": true,
+    "declaration": true,
     "outDir": "target/out-tsc/spec",
     "types": ["jest", "node"]
   }

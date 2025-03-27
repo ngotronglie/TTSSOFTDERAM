@@ -986,8 +986,10 @@
                 <dependency>
                     <groupId>org.testcontainers</groupId>
                     <artifactId>mysql</artifactId>
+                    <version>1.19.1</version> <!-- Hoặc kiểm tra phiên bản mới nhất -->
                     <scope>test</scope>
                 </dependency>
+
             </dependencies>
             <build>
                 <plugins>
