@@ -1,0 +1,103 @@
+.footer {
+  background-color: #295cab;
+  color: white;
+  padding: 40px 0;
+
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+  }
+
+  .footer-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .footer-col {
+    width: 25%;
+    padding: 10px;
+
+    h4.clicked {
+      text-transform: uppercase;
+      font: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol';
+      position: relative; // Để ::after có thể dùng absolute
+      display: inline-block;
+      font-size: 20px;
+      font-weight: bold;
+      color: #ffffff;
+      text-transform: uppercase;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0; // Đặt sát về bên trái chữ
+        bottom: -5px; // Khoảng cách giữa gạch và chữ
+        width: 50px; // Tổng chiều rộng của dấu gạch
+        height: 4px; // Độ cao của dấu gạch
+        bottom: -10px; // Tăng khoảng cách giữa chữ và gạch
+        background: repeating-linear-gradient(
+          to right,
+          #f998ba,
+          #f998ba 10px,
+          // Chiều dài của mỗi gạch
+          transparent 10px,
+          transparent 15px // Khoảng cách giữa các gạch
+        );
+      }
+    }
+    .icon {
+      width: 30px;
+      /* Độ rộng icon */
+      height: 30px;
+      /* Độ cao icon */
+      fill: #007bff;
+      /* Màu của icon */
+      transition: fill 0.3s ease;
+      /* Hiệu ứng đổi màu */
+      margin-right: 10px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        margin-bottom: 8px;
+
+        a {
+          text-decoration: none;
+          color: white;
+          transition: 0.3s;
+
+          &:hover {
+            color: #ffcc00;
+          }
+        }
+      }
+    }
+  }
+  .bct-logo {
+    max-width: 60%;
+  }
+  b {
+    font-weight: bold;
+    /* Làm chữ đậm */
+  }
+
+  // Responsive
+  @media (max-width: 992px) {
+    .footer-col {
+      width: 50%;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .footer-col {
+      width: 100%;
+    }
+  }
+}
