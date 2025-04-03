@@ -1,0 +1,48 @@
+<div class="bread-crumb">
+  <div class="container p-4" style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+      <li class="breadcrumb-item active" aria-current="page"><b>Đăng nhập tài khoản</b></li>
+    </ol>
+  </div>
+</div>
+
+<section class="mt-5">
+  <div class="container">
+    <h1 class="text-center h1 mb-3">ĐĂNG NHẬP TÀI KHOẢN</h1>
+    <p class="text-center p">Nếu bạn có một tài khoản, xin vui lòng đăng nhập</p>
+    <!-- Đăng nhập bằng MXH -->
+    <div class="d-flex justify-content-center gap-2 mb-3">
+      <a href="#" class="d-flex">
+        <img src="//bizweb.dktcdn.net/assets/admin/images/login/fb-btn.svg" alt="Facebook Login" width="129" height="37" />
+      </a>
+      <a href="#" class="d-flex">
+        <img src="//bizweb.dktcdn.net/assets/admin/images/login/gp-btn.svg" alt="Google Login" width="129" height="37" />
+      </a>
+    </div>
+    <form action="" class="p-4">
+      <!-- Email -->
+      <div class="mb-3">
+        <label for="email" class="form-label">Email *</label>
+        <input type="email" class="form-control" id="email" name="email" required />
+      </div>
+
+      <!-- Mật khẩu -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Mật khẩu *</label>
+        <input type="password" class="form-control" id="password" name="password" required />
+      </div>
+
+      <!-- Nút Đăng nhập và Điều hướng -->
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <button style="background: #da1919; color: white" type="submit" class="btn">Đăng nhập</button>
+          <a routerLink="/forgot-password" style="font-size: 1rem; font-weight: 400" class="text-decoration-none text-black"
+            >Mất mật khẩu?</a
+          >
+        </div>
+        <a routerLink="/register" style="background: #da1919; color: white" type="button" class="btn">Đăng ký</a>
+      </div>
+    </form>
+  </div>
+</section>

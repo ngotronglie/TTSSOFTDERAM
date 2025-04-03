@@ -1,23 +1,37 @@
-/* ==========================================================================
-Main page styles
-========================================================================== */
-
-.hipster {
-  display: inline-block;
-  width: 347px;
-  height: 497px;
-  background: url('../../content/images/jhipster_family_member_2.svg') no-repeat center top;
-  background-size: contain;
+.carousel-control-prev,
+.carousel-control-next {
+  opacity: 0;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
-/* wait autoprefixer update to allow simple generation of high pixel density media query */
-@media only screen and (-webkit-min-device-pixel-ratio: 2),
-  only screen and (-moz-min-device-pixel-ratio: 2),
-  only screen and (-o-min-device-pixel-ratio: 2/1),
-  only screen and (min-resolution: 192dpi),
-  only screen and (min-resolution: 2dppx) {
-  .hipster {
-    background: url('../../content/images/jhipster_family_member_2.svg') no-repeat center top;
-    background-size: contain;
-  }
+.carousel-control-prev {
+  transform: translateX(-100px);
+}
+
+.carousel-control-next {
+  transform: translateX(100px);
+}
+
+.carousel:hover .carousel-control-prev,
+.carousel:hover .carousel-control-next {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.hot-btn {
+  background: linear-gradient(to bottom, #ff6600, #ff9900);
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 50px;
+  padding: 30px 40px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hot-btn:hover {
+  background: linear-gradient(to bottom, #ff5500, #ff8800);
 }
