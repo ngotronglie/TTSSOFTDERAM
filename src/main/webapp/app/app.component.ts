@@ -19,10 +19,10 @@ import MainComponent from './layouts/main/main.component';
   ],
 })
 export default class AppComponent {
+  selectedCity = '';
   private readonly applicationConfigService = inject(ApplicationConfigService);
   private readonly iconLibrary = inject(FaIconLibrary);
   private readonly dpConfig = inject(NgbDatepickerConfig);
-
   constructor() {
     this.applicationConfigService.setEndpointPrefix(SERVER_API_URL);
     registerLocaleData(locale);

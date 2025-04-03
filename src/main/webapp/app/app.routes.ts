@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { Authority } from 'app/config/authority.constants';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { errorRoute } from './layouts/error/error.route';
-import { UserHelloComponent } from './user-hello/user-hello.component';
 
 const routes: Routes = [
   {
@@ -12,7 +11,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () => import('./layouts/navbar/navbar.component'),
+    loadComponent: () => import('./layouts/header/header.component').then(m => m.HeaderComponent),
     outlet: 'navbar',
   },
   {
@@ -29,18 +28,23 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./login/login.component'),
+    loadComponent: () => import('./layouts/login/login.component'),
     title: 'login.title',
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./layouts/register/register.component'),
+    title: 'register.title',
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./layouts/forgot-password/forgot-password.component'),
+    title: 'forgot-password.title',
   },
   {
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
   },
-  {
-    path: 'user-hello',
-    component: UserHelloComponent,
-  },
-  ...errorRoute,
 ];
 
 export default routes;

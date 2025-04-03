@@ -1,0 +1,54 @@
+.bread-crumb {
+  background-color: #cecece;
+  padding: 10px 15px;
+}
+
+.breadcrumb {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumb li {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb li + li::before {
+  content: '◆';
+  margin: 0 8px;
+  color: #e86a33;
+}
+
+.breadcrumb a {
+  text-decoration: none;
+  color: #e86a33;
+  font-weight: 600;
+}
+
+.breadcrumb strong {
+  font-weight: bold;
+  color: #e86a33;
+}
+b {
+  color: #e86a33;
+  font-weight: 25px;
+}
+.h1 {
+  font-size: 22px;
+  padding: 0px;
+  margin-top: 0;
+  text-transform: uppercase;
+  color: #1d1d1d;
+}
+.p {
+  font-weight: 600;
+  font-size: 12px;
+  text-align: center;
+}
+form {
+  max-width: 600px;
+  margin: 0 auto;
+}

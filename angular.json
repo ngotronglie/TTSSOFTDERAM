@@ -35,8 +35,13 @@
               "src/main/webapp/manifest.webapp",
               "src/main/webapp/robots.txt"
             ],
-            "styles": ["src/main/webapp/content/scss/vendor.scss", "src/main/webapp/content/scss/global.scss"],
-            "scripts": []
+
+            "styles": [
+              "src/main/webapp/content/scss/vendor.scss",
+              "src/main/webapp/content/scss/global.scss",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+            ],
+            "scripts": ["node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"]
           },
           "configurations": {
             "production": {
@@ -83,18 +88,21 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "buildTarget": "my-jhipster-app:build:development",
-            "port": 4200
+            "port": 4200,
+            "hmr": true
           },
           "configurations": {
             "production": {
               "buildTarget": "my-jhipster-app:build:production"
             },
             "development": {
-              "buildTarget": "my-jhipster-app:build:development"
+              "buildTarget": "my-jhipster-app:build:development",
+              "hmr": true
             }
           },
           "defaultConfiguration": "development"
         },
+
         "test": {
           "builder": "@angular-builders/jest:run",
           "options": {
