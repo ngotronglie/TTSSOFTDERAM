@@ -1,0 +1,69 @@
+<section class="mb-5">
+  <div class="bread-crumb">
+    <div class="container p-4" aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><b>Giỏ hàng</b></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="container my-4">
+    <h3 class="mb-3 text-uppercase fw-bold">Giỏ hàng của bạn</h3>
+
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="bg-danger text-white">
+          <tr>
+            <th>Ảnh sản phẩm</th>
+            <th>Tên sản phẩm</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Tạm tính</th>
+            <th>Xóa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of cartItems; let i = index">
+            <td>
+              <img [src]="item.image" class="img-thumbnail product-img" alt="{{ item.name }}" />
+            </td>
+            <td>
+              <strong class="text-danger">{{ item.name }}</strong
+              ><br />
+              <small class="text-muted">{{ item.location }}</small>
+            </td>
+            <td>
+              <strong>{{ item.price | number: '1.0-0' }}₫</strong>
+            </td>
+            <td>
+              <div class="d-flex justify-content-center align-items-center quantity-control">
+                <button class="btn btn-light btn-sm rounded-circle shadow-sm" (click)="decreaseQuantity(item)">-</button>
+                <span class="mx-3 fw-bold">{{ item.quantity }}</span>
+                <button class="btn btn-light btn-sm rounded-circle shadow-sm" (click)="increaseQuantity(item)">+</button>
+              </div>
+            </td>
+            <td>
+              <strong>{{ item.price * item.quantity | number: '1.0-0' }}₫</strong>
+            </td>
+            <td>
+              <button class="btn btn-outline-danger btn-sm" (click)="removeItem(i)">✖</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <button class="btn btn-outline-danger w-100 py-2">TIẾP TỤC MUA HÀNG</button>
+      </div>
+      <div class="col-md-6 text-end">
+        <div class="border p-3 total-price">
+          <strong class="h5">Tổng tiền: {{ totalPrice | number: '1.0-0' }}₫</strong>
+        </div>
+        <button class="btn btn-danger w-100 py-2 mt-3">TIẾN HÀNH THANH TOÁN</button>
+      </div>
+    </div>
+  </div>
+</section>
