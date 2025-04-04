@@ -28,7 +28,7 @@
 
     <!-- Icon điều hướng -->
     <div class="d-flex justify-content-between align-items-center gap-3">
-      <a href="" class="d-flex align-items-center text-decoration-none d-none d-md-flex">
+      <a href="/" class="d-flex align-items-center text-decoration-none d-none d-md-flex">
         <div
           class="bg-init-red text-white rounded-circle d-flex align-items-center justify-content-center"
           style="width: 40px; height: 40px"
@@ -40,7 +40,14 @@
           <div>đơn hàng</div>
         </div>
       </a>
-      <a href="" class="d-flex align-items-center text-decoration-none d-none d-md-flex">
+      <div
+        href=""
+        class="nav-link dropdown-toggle"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        class="d-flex align-items-center text-decoration-none d-none d-md-flex"
+      >
         <div
           class="bg-init-red text-white rounded-circle d-flex align-items-center justify-content-center"
           style="width: 40px; height: 40px"
@@ -51,14 +58,18 @@
           <div>Tài khoản</div>
           <div>của bạn</div>
         </div>
-      </a>
+        <ul class="dropdown-menu p-2">
+          <a class="btn btn-danger w-100 mb-2" (click)="goToLogin()">Login</a>
+          <a class="btn btn-danger w-100" (click)="goToRegister()">Register</a>
+        </ul>
+      </div>
 
-      <div class="text-center position-relative">
+      <a href="/cart" class="text-center position-relative">
         <div class="icon-circle" style="width: 40px; height: 40px">
           <img src="content/images/cart.svg" style="height: 20px" alt="Giỏ hàng" />
         </div>
         <span class="position-absolute bottom-1 start-100 translate-middle badge bg-primary">0</span>
-      </div>
+      </a>
     </div>
   </div>
 </nav>

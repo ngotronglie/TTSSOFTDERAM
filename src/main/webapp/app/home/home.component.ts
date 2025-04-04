@@ -6,6 +6,8 @@ import { takeUntil } from 'rxjs/operators';
 import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
+import { register } from 'swiper/swiper-element';
+register();
 
 @Component({
   selector: 'jhi-home',
@@ -35,5 +37,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  images = ['assets/images/banner1.jpg', 'assets/images/banner2.jpg', 'assets/images/banner3.jpg'];
+
+  ngAfterViewInit() {
+    console.log('Swiper đã được đăng ký thành công!');
   }
 }

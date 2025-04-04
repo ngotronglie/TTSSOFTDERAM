@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { Authority } from 'app/config/authority.constants';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { errorRoute } from './layouts/error/error.route';
-
 const routes: Routes = [
   {
     path: '',
@@ -40,6 +39,11 @@ const routes: Routes = [
     path: 'forgot-password',
     loadComponent: () => import('./layouts/forgot-password/forgot-password.component'),
     title: 'forgot-password.title',
+  },
+  {
+    path: 'cart',
+    loadComponent: () => import('./layouts/cart/cart.component'),
+    title: 'cart.title',
   },
   {
     path: '',

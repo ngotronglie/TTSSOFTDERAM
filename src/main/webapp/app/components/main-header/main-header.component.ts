@@ -1,9 +1,19 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'jhi-main-header',
-  imports: [],
   templateUrl: './main-header.component.html',
-  styleUrl: './main-header.component.scss',
+  styleUrls: ['./main-header.component.scss'],
 })
-export class MainHeaderComponent {}
+export class MainHeaderComponent {
+  constructor(private router: Router) {}
+
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
+  }
+}
