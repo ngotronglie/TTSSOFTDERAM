@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateDirective } from 'app/shared/language';
+
 import { CART_ITEMS, CartItem } from 'app/data/cart/cart';
 
 @Component({
@@ -8,7 +8,7 @@ import { CART_ITEMS, CartItem } from 'app/data/cart/cart';
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
   standalone: true,
-  imports: [CommonModule, TranslateDirective],
+  imports: [CommonModule],
 })
 export default class CartComponent {
   cartItems: CartItem[] = CART_ITEMS; // Sử dụng dữ liệu từ cart.data.ts

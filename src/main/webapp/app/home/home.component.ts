@@ -1,33 +1,72 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+// @ts-ignore
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
 import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
-import { register } from 'swiper/swiper-element';
-register();
+import { Sanphamhot, CART_ITEMS } from 'app/data/sanphamhot/sanphamhot';
+import { Suachoai, CART_ITEMS_SUA } from 'app/data/suachoai/suachoai';
+// Import Swiper
+import Swiper from 'swiper';
+import { Navigation, Pagination } from 'swiper/modules';
 
 @Component({
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
+  standalone: true,
   imports: [SharedModule, RouterModule],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
+  cartItems: Sanphamhot[] = CART_ITEMS;
+  cartItems_SUA: Suachoai[] = CART_ITEMS_SUA;
 
   private readonly destroy$ = new Subject<void>();
-
   private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
 
   ngOnInit(): void {
-    this.accountService
-      .getAuthenticationState()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(account => this.account.set(account));
+    new Swiper('.product-slider', {
+      slidesPerView: 2, // Hiển thị 2 sản phẩm cùng lúc
+      spaceBetween: 12, // Khoảng cách giữa các sản phẩm
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+    });
+    new Swiper('.for-slider', {
+      slidesPerView: 7, // Hiển thị 7 sản phẩm cùng lúc
+      spaceBetween: 8, // Khoảng cách giữa các sản phẩm
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        0: {
+          slidesPerView: 2,
+        },
+        576: {
+          slidesPerView: 2,
+        },
+        768: {
+          slidesPerView: 3,
+        },
+        992: {
+          slidesPerView: 7,
+        },
+      },
+    });
   }
 
   login(): void {
@@ -37,10 +76,5 @@ export default class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-  images = ['assets/images/banner1.jpg', 'assets/images/banner2.jpg', 'assets/images/banner3.jpg'];
-
-  ngAfterViewInit() {
-    console.log('Swiper đã được đăng ký thành công!');
   }
 }
