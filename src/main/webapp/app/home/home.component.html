@@ -32,14 +32,23 @@
   <div class="swiper product-slider container">
     <div class="swiper-wrapper">
       <div class="swiper-slide" *ngFor="let product of cartItems">
-        <div class="rounded w-100 border border-1 border-dashed p-3 d-flex justify-content-between align-items-center flex-md-row">
-          <div class="d-flex flex-column">
+        <div
+          class="rounded w-100 border border-1 border-dashed p-3 d-flex flex-column flex-md-row justify-content-between align-items-center"
+        >
+          <!-- Ảnh: nằm trên khi mobile -->
+          <img
+            style="max-width: 300px; height: auto"
+            [src]="product.image"
+            [alt]="product.name"
+            class="product-image order-1 order-md-2 mb-3 mb-md-0"
+          />
+
+          <!-- Thông tin: nằm dưới khi mobile -->
+          <div class="d-flex flex-column text-center text-md-start order-2 order-md-1">
             <a href="#" class="product-title">{{ product.name }}</a>
             <span class="product-price">{{ product.price }}đ</span>
             <span class="product-description">{{ product.descriptsion }}</span>
           </div>
-
-          <img style="max-width: 300px; height: auto" [src]="product.image" [alt]="product.name" class="product-image" />
         </div>
       </div>
     </div>
@@ -59,9 +68,9 @@
   <div class="swiper for-slider container">
     <div class="swiper-wrapper">
       <div class="swiper-slide" *ngFor="let sua of cartItems_SUA">
-        <a href="{{ sua.url }}" class="image d-flex flex-column align-items-center">
-          <img [src]="sua.image" style="width: 8rem" alt="sua" />
-          <p>{{ sua.name }}</p>
+        <a href="{{ sua.url }}" class="image d-flex flex-column align-items-center text-decoration-none">
+          <img height="60px" [src]="sua.image" style="width: 5rem" alt="sua" />
+          <p class="sua-title">{{ sua.name }}</p>
         </a>
       </div>
     </div>

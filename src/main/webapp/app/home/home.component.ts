@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-// @ts-ignore
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import SharedModule from 'app/shared/shared.module';
@@ -8,6 +7,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 import { Sanphamhot, CART_ITEMS } from 'app/data/sanphamhot/sanphamhot';
 import { Suachoai, CART_ITEMS_SUA } from 'app/data/suachoai/suachoai';
+
 // Import Swiper
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
