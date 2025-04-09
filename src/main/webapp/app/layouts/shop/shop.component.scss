@@ -95,3 +95,7 @@ img {
   background-color: #f5f6f7;
   color: #aaa;
 }
+.form-check-input:checked {
+  background-color: red; /* Màu nền khi checkbox được chọn */
+  border-color: red; /* Viền checkbox */
+}
