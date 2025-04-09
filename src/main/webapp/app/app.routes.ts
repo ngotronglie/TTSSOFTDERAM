@@ -46,6 +46,11 @@ const routes: Routes = [
     title: 'cart.title',
   },
   {
+    path: 'shop',
+    loadComponent: () => import('./layouts/shop/shop.component'),
+    title: 'shop.title',
+  },
+  {
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
   },
