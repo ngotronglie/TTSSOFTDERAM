@@ -56,6 +56,12 @@ const routes: Routes = [
     data: { title: 'cửa hàng' },
   },
   {
+    path: 'tin-tuc',
+    loadComponent: () => import('./layouts/news/news.component').then(m => m.NewsComponent),
+    title: 'tin-tuc.title',
+    data: { title: 'Tin tuc' },
+  },
+  {
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
   },
