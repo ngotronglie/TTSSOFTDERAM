@@ -7,7 +7,8 @@ import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 import { Sanphamhot, CART_ITEMS } from 'app/data/sanphamhot/sanphamhot';
 import { Suachoai, CART_ITEMS_SUA } from 'app/data/suachoai/suachoai';
-
+import { PRODUCT_GROUPS, ProductGroup } from 'app/data/home-group';
+import { PRODUCTS, Product } from 'app/data/product';
 // Import Swiper
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -23,6 +24,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
   cartItems: Sanphamhot[] = CART_ITEMS;
   cartItems_SUA: Suachoai[] = CART_ITEMS_SUA;
+  productGroups: ProductGroup[] = [];
+  products: Product[] = PRODUCTS;
 
   private readonly destroy$ = new Subject<void>();
   private readonly accountService = inject(AccountService);
@@ -67,6 +70,25 @@ export default class HomeComponent implements OnInit, OnDestroy {
         },
       },
     });
+    new Swiper('.product-2-3', {
+      slidesPerView: 3, // 3 sản phẩm mỗi hàng
+      grid: {
+        rows: 2, // 2 hàng
+        fill: 'row', // điền theo hàng
+      },
+      spaceBetween: 15, // khoảng cách giữa các sản phẩm
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+    });
+
+    this.productGroups = PRODUCT_GROUPS;
+    this.products = PRODUCTS;
   }
 
   login(): void {
@@ -77,4 +99,5 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+  //  ----------------------------------------------------------------
 }
