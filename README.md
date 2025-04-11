@@ -19,10 +19,10 @@
 ### Tuần 2: Java OOP + Spring Boot REST (Ngày 8–14)
 
 - [x] Ngày 8: Java OOP (Class, Object, Inheritance...)
-- [ ] Ngày 9: Java Collections, Stream API, Exception
-- [ ] Ngày 10: Tạo project Spring Boot đầu tiên
-- [ ] Ngày 11: REST API (GET, POST), Controller, Service, Model
-- [ ] Ngày 12: JPA + MySQL, Repository
+- [x] Ngày 9: Java Collections, Stream API, Exception
+- [x] Ngày 10: Tạo project Spring Boot đầu tiên
+- [x] Ngày 11: REST API (GET, POST), Controller, Service, Model
+- [ ] Ngày 12: JPA + SQL SEVER, Repository
 - [ ] Ngày 13: Viết CRUD cho bảng Product
 - [ ] Ngày 14: Test API với Postman, tạo Swagger Doc
 

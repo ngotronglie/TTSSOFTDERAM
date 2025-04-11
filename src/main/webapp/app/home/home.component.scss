@@ -88,5 +88,115 @@
 }
 
 .image-branch {
-  max-width: 90px;
+  width: 80px;
+}
+.day {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  background: #da1919;
+  padding: 10px;
+  text-align: center;
+  color: #fff;
+  border-radius: 13px;
+}
+.title {
+  color: #2c5da8;
+  font-size: 20px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.title:hover {
+  color: #da1919;
+}
+
+.block-cate a {
+  text-decoration: none;
+  padding: 10px;
+  background: #da1919;
+  color: #fff;
+  border-radius: 10px;
+  margin-top: 3px;
+}
+.h2-element-right {
+  background: #da1919;
+  position: relative;
+  padding-right: 90px; /* để chừa chỗ cho hình tròn */
+  padding-left: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 0 50px 50px 0;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.h2-element-left {
+  color: #fff;
+  position: relative;
+  background-color: #da1919;
+  height: 90px;
+  font-weight: bold;
+  padding-left: 100px;
+  font-size: 18px;
+  line-height: 1.4;
+  border-radius: 50px 0 0 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.box-title-left h2::before {
+  content: '3';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 90px;
+  height: 90px;
+  background-color: #1e4fa3; /* màu xanh */
+  color: white;
+  border-radius: 50%;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  font-weight: bold;
+}
+.box-title-right h2::after {
+  content: '2'; /* bạn có thể thay đổi số tại đây */
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 90px;
+  height: 90px;
+  background-color: #1e4fa3;
+  color: white;
+  border-radius: 50%;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: bold;
+  box-shadow: 0 0 0 2px red; /* viền ngoài khớp nền đỏ */
+}
+h2 a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 19px;
+}
+h3 a {
+  font-size: 20px;
+  text-decoration: none;
+}
+.des {
+  font-size: 14px;
+  color: #7f7a7a;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.img-responsive {
+  border-radius: 10px;
 }
