@@ -31,18 +31,23 @@ spring:
       enabled: false
     livereload:
       enabled: false
-  # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
     contexts: prod
-    url: jdbc:mysql://localhost:3306/myJhipsterApp?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    user: system
+    password: 1111
+    driver-class-name: oracle.jdbc.OracleDriver
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:Orcl21
+    username: system
+    password: 1111
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    database-platform: org.hibernate.dialect.Oracle12cDialect
   mail:
     host: localhost
     port: 25
     username:
-    password:
-  r2dbc:
-    url: r2dbc:mysql://localhost:3306/myJhipsterApp?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-    username: root
     password:
   thymeleaf:
     cache: true
