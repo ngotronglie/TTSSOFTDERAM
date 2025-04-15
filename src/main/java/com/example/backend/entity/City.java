@@ -27,5 +27,4 @@ public class City {
     public void setNameCity(String nameCity) {
         this.nameCity = nameCity;
     }
-
 }
