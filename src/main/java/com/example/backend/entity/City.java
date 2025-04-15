@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 @Table(name = "city")
 public class City {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_city")
+    @SequenceGenerator(name = "id_city", sequenceName = "CITY_ID_SEQ", initialValue = 1, allocationSize = 1)
     private Long id_city;
 
     @Column(name = "name_city", nullable = false)
