@@ -36,7 +36,6 @@ public class ImageVarianController {
     // Tạo mới một ImageVarian
     @PostMapping
     public ImageVarian createImageVarian(@RequestBody ImageVarian imageVarian) {
-        imageVarian.setCreated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         imageVarian.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         return imageVarianService.save(imageVarian);
     }
