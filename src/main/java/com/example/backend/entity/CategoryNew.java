@@ -9,9 +9,6 @@ import java.time.LocalDateTime;
 @Table(name = "category_news")
 public class CategoryNew {
 
-
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_category_new")
     @SequenceGenerator(name = "id_category_new", sequenceName = "CATEGORY_NEW_ID_SEQ", initialValue = 1, allocationSize = 1)
