@@ -36,6 +36,7 @@ public class ImageBranchController {
 
     @PostMapping
     public ImageBranch createImageBranch(@RequestBody ImageBranch imageBranch) {
+        imageBranch.setCreated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         imageBranch.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         return imageBranchService.save(imageBranch);
     }
