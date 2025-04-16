@@ -2,15 +2,18 @@ package com.example.backend.dto;
 
 import java.time.LocalDateTime;
 
-public class ApiResponse<T> {
+public class ApiResponse {
     private String status;
     private String message;
     private LocalDateTime timestamp;
-    private T data;
+    private Object data;
     private String errors;
 
+    public ApiResponse() {
+    }
+
     // Constructor
-    public ApiResponse(String status, String message, LocalDateTime timestamp, T data, String errors) {
+    public ApiResponse(String status, String message, LocalDateTime timestamp, Object data, String errors) {
         this.status = status;
         this.message = message;
         this.timestamp = timestamp;
@@ -43,11 +46,11 @@ public class ApiResponse<T> {
         this.timestamp = timestamp;
     }
 
-    public T getData() {
+    public Object getData() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(Object data) {
         this.data = data;
     }
 

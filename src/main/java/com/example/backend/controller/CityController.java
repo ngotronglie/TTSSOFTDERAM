@@ -5,6 +5,7 @@ import com.example.backend.entity.City;
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.service.CityService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,16 +54,9 @@ public class CityController {
 
 
     @PostMapping
-    public ResponseEntity<ApiResponse<City>> createCity(@RequestBody City city) {
-        City createdCity = cityService.save(city);
-        ApiResponse<City> response = new ApiResponse<>(
-                "success",
-                "Tạo thành phố thành công",
-                LocalDateTime.now(),
-                createdCity,
-                null
-        );
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ApiResponse> createCity(@RequestBody City city) {
+        ApiResponse response = cityService.save(city);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
