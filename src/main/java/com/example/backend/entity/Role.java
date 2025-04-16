@@ -1,42 +1,33 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Table(name = "role")
 public class Role {
 
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_role")
+    @SequenceGenerator(name = "id_role", sequenceName = "ROLE_ID_SEQ", initialValue = 1, allocationSize = 1)
     private Long id_role;
+
 
     @Column(name = "name_role", nullable = false)
     private String name_role;
 
-    @Column(name = "comment", nullable = true)
-    private String comment;
+    @Column(name = "comment_role")
+    private String comment_role;
+    @Column(name = "created_at")
+    private LocalDateTime created_at;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date created_at;
+    @Column(name = "updated_at")
+    private LocalDateTime updated_at;
 
-    @Column(name = "updated_at", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updated_at;
 
-    // Lấy giá trị của created_at và updated_at trước khi persist và update
-    @PrePersist
-    protected void onCreate() {
-        created_at = updated_at = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updated_at = new Date();
-    }
-
-    // Getters and Setters
     public Long getId_role() {
         return id_role;
     }
@@ -54,26 +45,28 @@ public class Role {
     }
 
     public String getComment() {
-        return comment;
+        return comment_role;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setComment(String comment_role) {
+        this.comment_role = comment_role;
     }
 
-    public Date getCreated_at() {
+    public LocalDateTime getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(Date created_at) {
+    public void setCreated_at(LocalDateTime created_at) {
         this.created_at = created_at;
     }
 
-    public Date getUpdated_at() {
+    public LocalDateTime getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(Date updated_at) {
+    public void setUpdated_at(LocalDateTime updated_at) {
         this.updated_at = updated_at;
     }
+
+
 }
