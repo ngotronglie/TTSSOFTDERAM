@@ -1,10 +1,14 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.ApiResponse;
 import com.example.backend.entity.City;
+import com.example.backend.dto.ApiResponse;
 import com.example.backend.service.CityService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -18,39 +22,79 @@ public class CityController {
     }
 
     @GetMapping
-    public List<City> getAllCities() {
-        return cityService.findAll();
+    public ResponseEntity<ApiResponse<List<City>>> getAllCities() {
+        List<City> cities = cityService.findAll();
+        ApiResponse<List<City>> response = new ApiResponse<>(
+                "success",
+                "Lấy danh sách thành phố thành công",
+                LocalDateTime.now(),
+                cities,
+                null
+        );
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public City getCityById(@PathVariable Long id) {
-        return cityService.findById(id);
-    }
-    @PostMapping
-    public City createCity(@RequestBody City city) {
-        return cityService.save(city);
-    }
-    @PutMapping("/{id}")
-    public City updateCity(@PathVariable Long id, @RequestBody City city) {
-        // Tìm city bằng id từ cơ sở dữ liệu
-        City existingCity = cityService.findById(id);
+    public ResponseEntity<ApiResponse<City>> getCityById(@PathVariable Long id) {
+        City city = cityService.findById(id);
+        if (city == null) {
+            throw new EntityNotFoundException("Không tìm thấy thành phố với ID: " + id);
+        }
 
-        // Nếu thành phố không tồn tại, có thể ném ngoại lệ hoặc trả về lỗi
+        ApiResponse<City> response = new ApiResponse<>(
+                "success",
+                "Lấy thành phố thành công",
+                LocalDateTime.now(),
+                city,
+                null
+        );
+        return ResponseEntity.ok(response);
+    }
+
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<City>> createCity(@RequestBody City city) {
+        City createdCity = cityService.save(city);
+        ApiResponse<City> response = new ApiResponse<>(
+                "success",
+                "Tạo thành phố thành công",
+                LocalDateTime.now(),
+                createdCity,
+                null
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<City>> updateCity(@PathVariable Long id, @RequestBody City city) {
+        City existingCity = cityService.findById(id);
         if (existingCity == null) {
             throw new EntityNotFoundException("City with id " + id + " not found");
         }
 
-        // Cập nhật các thông tin của city
-        existingCity.setNameCity(city.getNameCity()); // Giả sử bạn muốn cập nhật tên thành phố
-        // Cập nhật các thuộc tính khác của city ở đây nếu cần
+        existingCity.setNameCity(city.getNameCity());
+        City updatedCity = cityService.save(existingCity);
 
-        // Lưu lại thành phố đã được cập nhật
-        return cityService.save(existingCity);
+        ApiResponse<City> response = new ApiResponse<>(
+                "success",
+                "Cập nhật thành phố thành công",
+                LocalDateTime.now(),
+                updatedCity,
+                null
+        );
+        return ResponseEntity.ok(response);
     }
 
-
     @DeleteMapping("/{id}")
-    public void deleteCity(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCity(@PathVariable Long id) {
         cityService.deleteById(id);
+        ApiResponse<Void> response = new ApiResponse<>(
+                "success",
+                "Xóa thành phố thành công",
+                LocalDateTime.now(),
+                null,
+                null
+        );
+        return ResponseEntity.ok(response);
     }
 }
