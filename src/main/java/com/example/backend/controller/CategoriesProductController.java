@@ -48,8 +48,6 @@ public class CategoriesProductController {
         existingCategoryProduct.setIs_active(categoriesProduct.getIs_active());
         existingCategoryProduct.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
-
-
         return categoriesProductService.save(existingCategoryProduct);
     }
 

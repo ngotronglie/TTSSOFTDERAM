@@ -2,9 +2,12 @@ package com.example.backend.service;
 
 import com.example.backend.entity.CategoryProduct;
 import com.example.backend.repository.CategoriesProductRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
+@Service
 public class CategoriesProductService {
 
     private final CategoriesProductRepository categoriesProductRepository;

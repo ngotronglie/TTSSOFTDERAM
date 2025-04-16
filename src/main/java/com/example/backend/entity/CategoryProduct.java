@@ -4,14 +4,14 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "categories_product")
 public class CategoryProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_category_product")
     @SequenceGenerator(name = "id_category_product", sequenceName = "CATEGORY_PRODUCT_ID_SEQ", initialValue = 1, allocationSize = 1)
-    private Long id_category_product;
-
-
+    private Long id_categories_product;
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -32,11 +32,11 @@ public class CategoryProduct {
 
 
     public Long getId_category_product() {
-        return id_category_product;
+        return id_categories_product;
     }
 
     public void setId_category_product(Long id_category_product) {
-        this.id_category_product = id_category_product;
+        this.id_categories_product = id_categories_product;
     }
     public LocalDateTime getCreated_at() {
         return created_at;
