@@ -1,12 +1,11 @@
 package com.example.backend.controller;
 
 import com.example.backend.entity.ImageBranch;
-import com.example.backend.service.ImageBranchService;
+import com.example.backend.service.ImageBranchServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZoneId;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -14,20 +13,20 @@ import java.util.List;
 @RequestMapping("/api/image-branch")
 public class ImageBranchController {
 
-    private final ImageBranchService imageBranchService;
+    private final ImageBranchServiceImpl imageBranchServiceImpl;
 
-    public ImageBranchController(ImageBranchService imageBranchService) {
-        this.imageBranchService = imageBranchService;
+    public ImageBranchController(ImageBranchServiceImpl imageBranchServiceImpl) {
+        this.imageBranchServiceImpl = imageBranchServiceImpl;
     }
 
     @GetMapping
     public List<ImageBranch> getAllImageBranches() {
-        return imageBranchService.findAll();
+        return imageBranchServiceImpl.findAll();
     }
 
     @GetMapping("/{id}")
     public ImageBranch getImageBranchById(@PathVariable Long id) {
-        ImageBranch imageBranch = imageBranchService.findById(id);
+        ImageBranch imageBranch = imageBranchServiceImpl.findById(id);
         if (imageBranch == null) {
             throw new EntityNotFoundException("ImageBranch with id " + id + " not found");
         }
@@ -38,23 +37,23 @@ public class ImageBranchController {
     public ImageBranch createImageBranch(@RequestBody ImageBranch imageBranch) {
         imageBranch.setCreated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         imageBranch.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        return imageBranchService.save(imageBranch);
+        return imageBranchServiceImpl.save(imageBranch);
     }
 
     @PutMapping("/{id}")
     public ImageBranch updateImageBranch(@PathVariable Long id, @RequestBody ImageBranch imageBranch) {
-        ImageBranch existing = imageBranchService.findById(id);
+        ImageBranch existing = imageBranchServiceImpl.findById(id);
         if (existing == null) {
             throw new EntityNotFoundException("ImageBranch with id " + id + " not found");
         }
         existing.setImage_branch(imageBranch.getImage_branch());
         existing.setIs_status(imageBranch.getIs_status());
         existing.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        return imageBranchService.save(existing);
+        return imageBranchServiceImpl.save(existing);
     }
 
     @DeleteMapping("/{id}")
     public void deleteImageBranch(@PathVariable Long id) {
-        imageBranchService.deleteById(id);
+        imageBranchServiceImpl.deleteById(id);
     }
 }

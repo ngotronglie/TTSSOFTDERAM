@@ -1,6 +1,6 @@
 package com.example.backend.controller;
 import com.example.backend.entity.ImageVarian;
-import com.example.backend.service.ImageVarianService;
+import com.example.backend.service.ImageVarianServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import java.time.ZoneId;
@@ -11,22 +11,22 @@ import java.util.List;
 @RequestMapping("/api/image-varian")
 public class ImageVarianController {
 
-    private final ImageVarianService imageVarianService;
+    private final ImageVarianServiceImpl imageVarianServiceImpl;
 
-    public ImageVarianController(ImageVarianService imageVarianService) {
-        this.imageVarianService = imageVarianService;
+    public ImageVarianController(ImageVarianServiceImpl imageVarianServiceImpl) {
+        this.imageVarianServiceImpl = imageVarianServiceImpl;
     }
 
     // Lấy tất cả ImageVarian
     @GetMapping
     public List<ImageVarian> getAllImageVarians() {
-        return imageVarianService.findAll();
+        return imageVarianServiceImpl.findAll();
     }
 
     // Lấy ImageVarian theo ID
     @GetMapping("/{id}")
     public ImageVarian getImageVarianById(@PathVariable Long id) {
-        ImageVarian imageVarian = imageVarianService.findById(id);
+        ImageVarian imageVarian = imageVarianServiceImpl.findById(id);
         if (imageVarian == null) {
             throw new EntityNotFoundException("ImageVarian with id " + id + " not found");
         }
@@ -37,13 +37,13 @@ public class ImageVarianController {
     @PostMapping
     public ImageVarian createImageVarian(@RequestBody ImageVarian imageVarian) {
         imageVarian.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        return imageVarianService.save(imageVarian);
+        return imageVarianServiceImpl.save(imageVarian);
     }
 
     // Cập nhật thông tin của một ImageVarian
     @PutMapping("/{id}")
     public ImageVarian updateImageVarian(@PathVariable Long id, @RequestBody ImageVarian imageVarian) {
-        ImageVarian existing = imageVarianService.findById(id);
+        ImageVarian existing = imageVarianServiceImpl.findById(id);
         if (existing == null) {
             throw new EntityNotFoundException("ImageVarian with id " + id + " not found");
         }
@@ -51,11 +51,11 @@ public class ImageVarianController {
 //        existing.setCreated_at(imageVarian.getCreated_at());
         existing.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
-        return imageVarianService.save(existing);
+        return imageVarianServiceImpl.save(existing);
     }
 
     @DeleteMapping("/{id}")
     public void deleteImageVarian(@PathVariable Long id) {
-        imageVarianService.deleteById(id);
+        imageVarianServiceImpl.deleteById(id);
     }
 }

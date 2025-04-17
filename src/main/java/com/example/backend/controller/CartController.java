@@ -2,7 +2,7 @@ package com.example.backend.controller;
 
 
 import com.example.backend.entity.Cart;
-import com.example.backend.service.CartService;
+import com.example.backend.service.CartServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,31 +14,31 @@ import java.util.List;
 @RequestMapping("/api/cart")
 public class CartController {
 
-    private final CartService cartService;
+    private final CartServiceImpl cartServiceImpl;
 
-    public CartController(CartService cartService) {
-        this.cartService = cartService;
+    public CartController(CartServiceImpl cartServiceImpl) {
+        this.cartServiceImpl = cartServiceImpl;
     }
 
     @GetMapping
     public List<Cart> getAllCart() {
-        return cartService.findAll();
+        return cartServiceImpl.findAll();
     }
 
     @GetMapping("/{id}")
     public Cart getCartById(@PathVariable Long id) {
-        return cartService.findById(id);
+        return cartServiceImpl.findById(id);
     }
 
     @PostMapping
     public Cart createCart(@RequestBody Cart cart) {
 
-        return cartService.save(cart);
+        return cartServiceImpl.save(cart);
     }
 
     @PutMapping("/{id}")
     public Cart updateCart(@PathVariable Long id, @RequestBody Cart cart) {
-        Cart existingCart = cartService.findById(id);
+        Cart existingCart = cartServiceImpl.findById(id);
         if (existingCart == null) {
             throw new EntityNotFoundException("Banner with id " + id + " not found");
         }
@@ -47,12 +47,12 @@ public class CartController {
         existingCart.setProduct_id(cart.getProduct_id());
         existingCart.setQuantity(cart.getQuantity());
         existingCart.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        return cartService.save(existingCart);
+        return cartServiceImpl.save(existingCart);
     }
 
     @DeleteMapping("/{id}")
     public void deleteCart(@PathVariable Long id) {
-        cartService.deleteById(id);
+        cartServiceImpl.deleteById(id);
     }
 
 }

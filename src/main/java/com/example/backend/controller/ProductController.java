@@ -1,7 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.entity.Product;
-import com.example.backend.service.ProductService;
+import com.example.backend.service.ProductServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,23 +13,23 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductServiceImpl productServiceImpl;
 
     // Constructor injection
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    public ProductController(ProductServiceImpl productServiceImpl) {
+        this.productServiceImpl = productServiceImpl;
     }
 
     // Lấy tất cả sản phẩm
     @GetMapping
     public List<Product> getAllProducts() {
-        return productService.findAll();
+        return productServiceImpl.findAll();
     }
 
     // Lấy sản phẩm theo ID
     @GetMapping("/{id}")
     public Product getProductById(@PathVariable Long id) {
-        Product product = productService.findById(id);
+        Product product = productServiceImpl.findById(id);
         if (product == null) {
             throw new EntityNotFoundException("Product with id " + id + " not found");
         }
@@ -41,13 +41,13 @@ public class ProductController {
     public Product createProduct(@RequestBody Product product) {
         product.setCreated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         product.setUpdated_at(product.getCreated_at());
-        return productService.save(product);
+        return productServiceImpl.save(product);
     }
 
     // Cập nhật sản phẩm theo ID
     @PutMapping("/{id}")
     public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        Product existingProduct = productService.findById(id);
+        Product existingProduct = productServiceImpl.findById(id);
         if (existingProduct == null) {
             throw new EntityNotFoundException("Product with id " + id + " not found");
         }
@@ -64,12 +64,12 @@ public class ProductController {
         existingProduct.setBanner_show(product.getBanner_show());
         existingProduct.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
-        return productService.save(existingProduct);
+        return productServiceImpl.save(existingProduct);
     }
 
     // Xóa sản phẩm theo ID
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id) {
-        productService.deleteById(id);
+        productServiceImpl.deleteById(id);
     }
 }

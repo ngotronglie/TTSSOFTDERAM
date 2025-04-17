@@ -1,7 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.entity.CommentNew;
-import com.example.backend.service.CommentNewService;
+import com.example.backend.service.CommentNewServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,22 +13,22 @@ import java.util.List;
 @RequestMapping("/api/comment-new")
 public class CommentNewController {
 
-    private final CommentNewService commentNewService;
+    private final CommentNewServiceImpl commentNewServiceImpl;
 
-    public CommentNewController(CommentNewService commentNewService) {
-        this.commentNewService = commentNewService;
+    public CommentNewController(CommentNewServiceImpl commentNewServiceImpl) {
+        this.commentNewServiceImpl = commentNewServiceImpl;
     }
 
     // Lấy tất cả comment
     @GetMapping
     public List<CommentNew> getAllComments() {
-        return commentNewService.findAll();
+        return commentNewServiceImpl.findAll();
     }
 
     // Lấy comment theo ID
     @GetMapping("/{id}")
     public CommentNew getCommentById(@PathVariable Long id) {
-        CommentNew comment = commentNewService.findById(id);
+        CommentNew comment = commentNewServiceImpl.findById(id);
         if (comment == null) {
             throw new EntityNotFoundException("Comment with id " + id + " not found");
         }
@@ -40,13 +40,13 @@ public class CommentNewController {
     public CommentNew createComment(@RequestBody CommentNew comment) {
         comment.setCreated_at( new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         comment.setUpdated_at( new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-        return commentNewService.save(comment);
+        return commentNewServiceImpl.save(comment);
     }
 
     // Cập nhật comment
     @PutMapping("/{id}")
     public CommentNew updateComment(@PathVariable Long id, @RequestBody CommentNew updatedComment) {
-        CommentNew existing = commentNewService.findById(id);
+        CommentNew existing = commentNewServiceImpl.findById(id);
         if (existing == null) {
             throw new EntityNotFoundException("Comment news with id " + id + " not found");
         }
@@ -55,12 +55,12 @@ public class CommentNewController {
         existing.setNews_id(updatedComment.getNews_id());
         existing.setParent_comment_id(updatedComment.getParent_comment_id());
         existing.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-        return commentNewService.save(existing);
+        return commentNewServiceImpl.save(existing);
     }
 
     // Xóa comment
     @DeleteMapping("/{id}")
     public void deleteComment(@PathVariable Long id) {
-        commentNewService.deleteById(id);
+        commentNewServiceImpl.deleteById(id);
     }
 }

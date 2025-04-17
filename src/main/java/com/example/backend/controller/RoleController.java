@@ -1,7 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.entity.Role;
-import com.example.backend.service.RoleService;
+import com.example.backend.service.RoleServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,34 +13,34 @@ import java.util.List;
 @RequestMapping("/api/roles")
 public class RoleController {
 
-    private final RoleService roleService;
+    private final RoleServiceImpl roleServiceImpl;
 
-    public RoleController(RoleService roleService) {
-        this.roleService = roleService;
+    public RoleController(RoleServiceImpl roleServiceImpl) {
+        this.roleServiceImpl = roleServiceImpl;
     }
 
     // Lấy tất cả các Role
     @GetMapping
     public List<Role> getAllRoles() {
-        return roleService.findAll(); // Gọi phương thức findAll trong RoleService
+        return roleServiceImpl.findAll(); // Gọi phương thức findAll trong RoleService
     }
 
     // Lấy Role theo ID
     @GetMapping("/{id}")
     public Role getRoleById(@PathVariable Long id) {
-        return roleService.findById(id); // Gọi phương thức findById trong RoleService
+        return roleServiceImpl.findById(id); // Gọi phương thức findById trong RoleService
     }
 
     // Tạo mới một Role
     @PostMapping
     public Role createRole(@RequestBody Role role) {
-        return roleService.save(role); // Gọi phương thức save trong RoleService
+        return roleServiceImpl.save(role); // Gọi phương thức save trong RoleService
     }
 
     // Cập nhật thông tin của một Role
     @PutMapping("/{id}")
     public Role updateRole(@PathVariable Long id, @RequestBody Role role) {
-        Role existingRole = roleService.findById(id);
+        Role existingRole = roleServiceImpl.findById(id);
 
         if (existingRole == null) {
             throw new EntityNotFoundException("Role with id " + id + " not found");
@@ -49,13 +49,13 @@ public class RoleController {
         existingRole.setComment(role.getComment());
         existingRole.setCreated_at(role.getCreated_at());
         existingRole.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        return roleService.save(existingRole);
+        return roleServiceImpl.save(existingRole);
     }
 
     // Xóa một Role theo ID
     @DeleteMapping("/{id}")
     public void deleteRole(@PathVariable Long id) {
-        roleService.deleteById(id); // Gọi phương thức deleteById trong RoleService
+        roleServiceImpl.deleteById(id); // Gọi phương thức deleteById trong RoleService
     }
 }
 

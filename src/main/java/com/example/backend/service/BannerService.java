@@ -1,32 +1,18 @@
 package com.example.backend.service;
+
+import com.example.backend.dto.ApiResponse;
 import com.example.backend.entity.Banner;
-import com.example.backend.repository.BannerProductRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class BannerService {
+public interface BannerService {
+    ApiResponse<List<Banner>> findAll();
 
-    private final BannerProductRepository bannerProductRepository;
+    ApiResponse<Banner> findById(Long id);
 
-    public BannerService(BannerProductRepository bannerProductRepository) {
-        this.bannerProductRepository = bannerProductRepository;
-    }
+    ApiResponse<Banner> save(Banner banner);
 
-    public List<Banner> findAll() {
-        return bannerProductRepository.findAll();
-    }
+    ApiResponse<Banner> update(Long id, Banner banner);
 
-    public Banner findById(Long id) {
-        return bannerProductRepository.findById(id).orElse(null);
-    }
-
-    public Banner save(Banner banner) {
-        return bannerProductRepository.save(banner);
-    }
-
-    public void deleteById(Long id) {
-        bannerProductRepository.deleteById(id);
-    }
+    ApiResponse<String> deleteById(Long id);
 }

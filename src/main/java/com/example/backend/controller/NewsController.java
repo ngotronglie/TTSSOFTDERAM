@@ -1,35 +1,34 @@
 package com.example.backend.controller;
 
 import com.example.backend.entity.News;
-import com.example.backend.service.NewService;
+import com.example.backend.service.NewServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/news")
 public class NewsController {
 
-    private final NewService newService;
+    private final NewServiceImpl newServiceImpl;
 
-    public NewsController(NewService newService) {
-        this.newService = newService;
+    public NewsController(NewServiceImpl newServiceImpl) {
+        this.newServiceImpl = newServiceImpl;
     }
 
     // ✅ Lấy tất cả News
     @GetMapping
     public List<News> getAllNews() {
-        return newService.findAll();
+        return newServiceImpl.findAll();
     }
 
     // ✅ Lấy News theo ID
     @GetMapping("/{id}")
     public News getNewsById(@PathVariable Long id) {
-        News news = newService.findById(id);
+        News news = newServiceImpl.findById(id);
         if (news == null) {
             throw new EntityNotFoundException("News with id " + id + " not found");
         }
@@ -42,13 +41,13 @@ public class NewsController {
         LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
         news.setCreated_at(now);
         news.setUpdated_at(now);
-        return newService.save(news);
+        return newServiceImpl.save(news);
     }
 
     // ✅ Cập nhật thông tin News
     @PutMapping("/{id}")
     public News updateNews(@PathVariable Long id, @RequestBody News news) {
-        News existing = newService.findById(id);
+        News existing = newServiceImpl.findById(id);
         if (existing == null) {
             throw new EntityNotFoundException("News with id " + id + " not found");
         }
@@ -59,12 +58,12 @@ public class NewsController {
         existing.setCategory_news_id(news.getCategory_news_id());
         existing.setUpdated_at(LocalDateTime.now(ZoneId.systemDefault()));
 
-        return newService.save(existing);
+        return newServiceImpl.save(existing);
     }
 
     // ✅ Xoá News theo ID
     @DeleteMapping("/{id}")
     public void deleteNews(@PathVariable Long id) {
-        newService.deleteById(id);
+        newServiceImpl.deleteById(id);
     }
 }

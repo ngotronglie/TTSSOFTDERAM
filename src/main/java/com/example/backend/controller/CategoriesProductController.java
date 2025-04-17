@@ -1,7 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.entity.CategoryProduct;
-import com.example.backend.service.CategoriesProductService;
+import com.example.backend.service.CategoriesProductServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,30 +14,30 @@ import java.util.List;
 @RequestMapping("/api/categories-products")
 public class CategoriesProductController {
 
-    private final CategoriesProductService categoriesProductService;
+    private final CategoriesProductServiceImpl categoriesProductServiceImpl;
 
-    public CategoriesProductController(CategoriesProductService categoriesProductService) {
-        this.categoriesProductService = categoriesProductService;
+    public CategoriesProductController(CategoriesProductServiceImpl categoriesProductServiceImpl) {
+        this.categoriesProductServiceImpl = categoriesProductServiceImpl;
     }
 
     @GetMapping
     public List<CategoryProduct> getAllCategoriesProducts() {
-        return categoriesProductService.findAll();
+        return categoriesProductServiceImpl.findAll();
     }
 
     @GetMapping("/{id}")
     public CategoryProduct getCategoriesProductById(@PathVariable Long id) {
-        return categoriesProductService.findById(id);
+        return categoriesProductServiceImpl.findById(id);
     }
 
     @PostMapping
     public CategoryProduct createCategoriesProduct(@RequestBody CategoryProduct categoriesProduct) {
-        return categoriesProductService.save(categoriesProduct);
+        return categoriesProductServiceImpl.save(categoriesProduct);
     }
 
     @PutMapping("/{id}")
     public CategoryProduct updateCategoriesProduct(@PathVariable Long id, @RequestBody CategoryProduct categoriesProduct) {
-        CategoryProduct existingCategoryProduct = categoriesProductService.findById(id);
+        CategoryProduct existingCategoryProduct = categoriesProductServiceImpl.findById(id);
         if (existingCategoryProduct == null) {
             throw new EntityNotFoundException("CategoriesProduct with id " + id + " not found");
         }
@@ -48,11 +48,11 @@ public class CategoriesProductController {
         existingCategoryProduct.setIs_active(categoriesProduct.getIs_active());
         existingCategoryProduct.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
-        return categoriesProductService.save(existingCategoryProduct);
+        return categoriesProductServiceImpl.save(existingCategoryProduct);
     }
 
     @DeleteMapping("/{id}")
     public void deleteCategoriesProduct(@PathVariable Long id) {
-        categoriesProductService.deleteById(id);
+        categoriesProductServiceImpl.deleteById(id);
     }
 }

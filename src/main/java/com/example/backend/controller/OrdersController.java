@@ -1,7 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.entity.Orders;
-import com.example.backend.service.OrdersService;
+import com.example.backend.service.OrdersServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,23 +14,23 @@ import java.util.List;
 @RequestMapping("/api/orders")
 public class OrdersController {
 
-    private final OrdersService ordersService;
+    private final OrdersServiceImpl ordersServiceImpl;
 
     @Autowired
-    public OrdersController(OrdersService ordersService) {
-        this.ordersService = ordersService;
+    public OrdersController(OrdersServiceImpl ordersServiceImpl) {
+        this.ordersServiceImpl = ordersServiceImpl;
     }
 
     // Lấy tất cả đơn hàng
     @GetMapping
     public List<Orders> getAllOrders() {
-        return ordersService.findAll();
+        return ordersServiceImpl.findAll();
     }
 
     // Lấy đơn hàng theo ID
     @GetMapping("/{id}")
     public Orders getOrderById(@PathVariable Long id) {
-        Orders order = ordersService.findById(id);
+        Orders order = ordersServiceImpl.findById(id);
         if (order == null) {
             throw new EntityNotFoundException("Order with id " + id + " not found");
         }
@@ -42,13 +42,13 @@ public class OrdersController {
     public Orders createOrder(@RequestBody Orders order) {
         order.setCreated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         order.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        return ordersService.save(order);
+        return ordersServiceImpl.save(order);
     }
 
     // Cập nhật đơn hàng
     @PutMapping("/{id}")
     public Orders updateOrder(@PathVariable Long id, @RequestBody Orders updatedOrder) {
-        Orders existingOrder = ordersService.findById(id);
+        Orders existingOrder = ordersServiceImpl.findById(id);
         if (existingOrder == null) {
             throw new EntityNotFoundException("Order with id " + id + " not found");
         }
@@ -61,12 +61,12 @@ public class OrdersController {
         existingOrder.setEmail(updatedOrder.getEmail());
         existingOrder.setAddress(updatedOrder.getAddress());
         existingOrder.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        return ordersService.save(existingOrder);
+        return ordersServiceImpl.save(existingOrder);
     }
 
     // Xóa đơn hàng
     @DeleteMapping("/{id}")
     public void deleteOrder(@PathVariable Long id) {
-        ordersService.deleteById(id);
+        ordersServiceImpl.deleteById(id);
     }
 }

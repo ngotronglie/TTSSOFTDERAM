@@ -1,8 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.entity.OrderDetail;
-import com.example.backend.entity.Orders;
-import com.example.backend.service.OrderDetailService;
+import com.example.backend.service.OrderDetailServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,23 +16,23 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/order-detail")
 public class OrderDetailController {
-    private final OrderDetailService orderDetailService;
+    private final OrderDetailServiceImpl orderDetailServiceImpl;
 
     @Autowired
-    public OrderDetailController(OrderDetailService orderDetailService) {
-        this.orderDetailService = orderDetailService;
+    public OrderDetailController(OrderDetailServiceImpl orderDetailServiceImpl) {
+        this.orderDetailServiceImpl = orderDetailServiceImpl;
     }
 
     // Lấy tất cả chi tiết đơn hàng
     @GetMapping
     public List<OrderDetail> getAllOrderDetails() {
-        return orderDetailService.findAll();
+        return orderDetailServiceImpl.findAll();
     }
 
     // Lấy chi tiết đơn hàng theo ID
     @GetMapping("/{id}")
     public ResponseEntity<OrderDetail> getOrderDetailById(@PathVariable Long id) {
-        OrderDetail orderDetail = orderDetailService.findById(id);
+        OrderDetail orderDetail = orderDetailServiceImpl.findById(id);
         if (orderDetail == null) {
             throw new EntityNotFoundException("OrderDetail with id " + id + " not found");
         }
@@ -48,7 +47,7 @@ public class OrderDetailController {
         orderDetail.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
         // Lưu đơn hàng chi tiết vào cơ sở dữ liệu
-        OrderDetail savedOrderDetail = orderDetailService.save(orderDetail);
+        OrderDetail savedOrderDetail = orderDetailServiceImpl.save(orderDetail);
 
         // Trả về ResponseEntity với mã trạng thái 201 (Created) và đối tượng đã lưu
         return ResponseEntity.status(HttpStatus.CREATED).body(savedOrderDetail);
@@ -58,7 +57,7 @@ public class OrderDetailController {
     // Cập nhật chi tiết đơn hàng
     @PutMapping("/{id}")
     public ResponseEntity<OrderDetail> updateOrderDetail(@PathVariable Long id, @RequestBody OrderDetail updatedOrderDetail) {
-        OrderDetail existingOrderDetail = orderDetailService.findById(id);
+        OrderDetail existingOrderDetail = orderDetailServiceImpl.findById(id);
         if (existingOrderDetail == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Trả về 404 nếu không tìm thấy
         }
@@ -68,19 +67,19 @@ public class OrderDetailController {
         existingOrderDetail.setQuantity(updatedOrderDetail.getQuantity());
         existingOrderDetail.setPrice(updatedOrderDetail.getPrice());
         existingOrderDetail.setUpdated_at(LocalDateTime.now());
-        OrderDetail savedOrderDetail = orderDetailService.save(existingOrderDetail);
+        OrderDetail savedOrderDetail = orderDetailServiceImpl.save(existingOrderDetail);
         return ResponseEntity.ok(savedOrderDetail);
     }
 
     // Xóa chi tiết đơn hàng
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrderDetail(@PathVariable Long id) {
-        OrderDetail existingOrderDetail = orderDetailService.findById(id);
+        OrderDetail existingOrderDetail = orderDetailServiceImpl.findById(id);
         if (existingOrderDetail == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Trả về 404 nếu không tìm thấy
         }
 
-        orderDetailService.deleteById(id);
+        orderDetailServiceImpl.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // Trả về 204 khi xóa thành công
     }
 }
