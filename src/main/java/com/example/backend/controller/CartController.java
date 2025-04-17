@@ -21,23 +21,23 @@ public class CartController {
     }
 
     @GetMapping
-    public List<Cart> getAllCategoriesProducts() {
+    public List<Cart> getAllCart() {
         return cartService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Cart getCategoriesProductById(@PathVariable Long id) {
+    public Cart getCartById(@PathVariable Long id) {
         return cartService.findById(id);
     }
 
     @PostMapping
-    public Cart createCategoriesProduct(@RequestBody Cart cart) {
+    public Cart createCart(@RequestBody Cart cart) {
 
         return cartService.save(cart);
     }
 
     @PutMapping("/{id}")
-    public Cart updateBanner(@PathVariable Long id, @RequestBody Cart cart) {
+    public Cart updateCart(@PathVariable Long id, @RequestBody Cart cart) {
         Cart existingCart = cartService.findById(id);
         if (existingCart == null) {
             throw new EntityNotFoundException("Banner with id " + id + " not found");
@@ -51,7 +51,7 @@ public class CartController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteBanner(@PathVariable Long id) {
+    public void deleteCart(@PathVariable Long id) {
         cartService.deleteById(id);
     }
 

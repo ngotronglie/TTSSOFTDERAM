@@ -18,17 +18,17 @@ public class BannerController {
     }
 
     @GetMapping
-    public List<Banner> getAllCategoriesProducts() {
+    public List<Banner> getAllBanner() {
         return bannerService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Banner getCategoriesProductById(@PathVariable Long id) {
+    public Banner getBannerById(@PathVariable Long id) {
         return bannerService.findById(id);
     }
 
     @PostMapping
-    public Banner createCategoriesProduct(@RequestBody Banner banner) {
+    public Banner createBanner(@RequestBody Banner banner) {
         return bannerService.save(banner);
     }
 
