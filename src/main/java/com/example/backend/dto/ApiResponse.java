@@ -1,19 +1,20 @@
 package com.example.backend.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-public class ApiResponse {
+public class ApiResponse<T> {
     private String status;
     private String message;
     private LocalDateTime timestamp;
-    private Object data;
-    private String errors;
+    private T data;
+    private List<String> errors;  // Thay đổi từ String thành List<String>
 
     public ApiResponse() {
     }
 
     // Constructor
-    public ApiResponse(String status, String message, LocalDateTime timestamp, Object data, String errors) {
+    public ApiResponse(String status, String message, LocalDateTime timestamp, T data, List<String> errors) {
         this.status = status;
         this.message = message;
         this.timestamp = timestamp;
@@ -46,19 +47,19 @@ public class ApiResponse {
         this.timestamp = timestamp;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
 
-    public String getErrors() {
+    public List<String> getErrors() {
         return errors;
     }
 
-    public void setErrors(String errors) {
+    public void setErrors(List<String> errors) {
         this.errors = errors;
     }
 }

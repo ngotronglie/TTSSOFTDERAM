@@ -2,15 +2,15 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.entity.City;
-import com.example.backend.dto.ApiResponse;
 import com.example.backend.service.CityService;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cities")
@@ -23,72 +23,68 @@ public class CityController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<City>>> getAllCities() {
-        List<City> cities = cityService.findAll();
-        ApiResponse<List<City>> response = new ApiResponse<>(
-                "success",
-                "Lấy danh sách thành phố thành công",
-                LocalDateTime.now(),
-                cities,
-                null
-        );
-        return ResponseEntity.ok(response);
+    public ApiResponse<List<City>> getAllCities() {
+        return cityService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<City>> getCityById(@PathVariable Long id) {
-        City city = cityService.findById(id);
-        if (city == null) {
-            throw new EntityNotFoundException("Không tìm thấy thành phố với ID: " + id);
-        }
-
-        ApiResponse<City> response = new ApiResponse<>(
-                "success",
-                "Lấy thành phố thành công",
-                LocalDateTime.now(),
-                city,
-                null
-        );
-        return ResponseEntity.ok(response);
+    public ApiResponse<City> getCityById(@PathVariable Long id) {
+        return cityService.findById(id);
     }
-
 
     @PostMapping
-    public ResponseEntity<ApiResponse> createCity(@RequestBody City city) {
-        ApiResponse response = cityService.save(city);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    public ApiResponse<City> createCity(@Valid @RequestBody City city, BindingResult bindingResult) {
+        // Kiểm tra xem có lỗi nào trong quá trình validate không
+        if (bindingResult.hasErrors()) {
+            // Dùng stream để lấy tất cả các thông báo lỗi và gom lại thành một danh sách
+            List<String> errorMessages = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage) // Lấy thông báo lỗi của mỗi trường
+                    .collect(Collectors.toList());
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<City>> updateCity(@PathVariable Long id, @RequestBody City city) {
-        City existingCity = cityService.findById(id);
-        if (existingCity == null) {
-            throw new EntityNotFoundException("City with id " + id + " not found");
+            // Trả về ApiResponse với danh sách lỗi
+            return new ApiResponse<>(
+                    "error",
+                    "Dữ liệu không hợp lệ",
+                    LocalDateTime.now(),
+                    null,
+                    errorMessages // Trả về danh sách lỗi
+            );
         }
 
-        existingCity.setNameCity(city.getNameCity());
-        City updatedCity = cityService.save(existingCity);
-
-        ApiResponse<City> response = new ApiResponse<>(
-                "success",
-                "Cập nhật thành phố thành công",
-                LocalDateTime.now(),
-                updatedCity,
-                null
-        );
-        return ResponseEntity.ok(response);
+        // Nếu không có lỗi, gọi phương thức save để lưu thành phố
+        return cityService.save(city);
     }
 
+
+    @PutMapping("/{id}")
+    public ApiResponse<City> updateCity(@PathVariable Long id,
+                                        @Valid @RequestBody City city,
+                                        BindingResult bindingResult) {
+        // Kiểm tra lỗi validation
+        if (bindingResult.hasErrors()) {
+            // Lấy tất cả các lỗi và trả về chúng dưới dạng mảng
+            List<String> errorMessages = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(fieldError -> fieldError.getDefaultMessage())
+                    .collect(Collectors.toList());
+
+            return new ApiResponse<>(
+                    "error",
+                    "Dữ liệu không hợp lệ",
+                    LocalDateTime.now(),
+                    null,
+                    errorMessages // Trả về mảng lỗi
+            );
+        }
+
+        // Nếu không có lỗi, thực hiện cập nhật
+        return cityService.update(id, city);
+    }
+
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteCity(@PathVariable Long id) {
-        cityService.deleteById(id);
-        ApiResponse<Void> response = new ApiResponse<>(
-                "success",
-                "Xóa thành phố thành công",
-                LocalDateTime.now(),
-                null,
-                null
-        );
-        return ResponseEntity.ok(response);
+    public ApiResponse<String> deleteCity(@PathVariable Long id) {
+        return cityService.deleteById(id);
     }
 }

@@ -2,17 +2,17 @@ package com.example.backend.service;
 
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.entity.City;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 public interface CityService {
-//
-//    List<City> findAll();
-//
-//     City findById(Long id);
+    ApiResponse<List<City>> findAll();
 
-    ApiResponse save(City city);
+    ApiResponse<City> findById(Long id);
 
-//     void deleteById(Long id);
+    ApiResponse<City> save(City city);
+
+    ApiResponse<City> update(Long id, City city);
+
+    ApiResponse<String> deleteById(Long id);
 }
