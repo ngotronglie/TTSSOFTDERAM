@@ -1,33 +1,18 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.ApiResponse;
 import com.example.backend.entity.City;
-import com.example.backend.repository.CityReponsitory;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class CityService {
+public interface CityService {
+    ApiResponse<List<City>> findAll();
 
-    private final CityReponsitory cityRepository;
+    ApiResponse<City> findById(Long id);
 
-    public CityService(CityReponsitory cityRepository) {
-        this.cityRepository = cityRepository;
-    }
+    ApiResponse<City> save(City city);
 
-    public List<City> findAll() {
-        return cityRepository.findAll();
-    }
+    ApiResponse<City> update(Long id, City city);
 
-    public City findById(Long id) {
-        return cityRepository.findById(id).orElse(null);
-    }
-
-    public City save(City city) {
-        return cityRepository.save(city);
-    }
-
-    public void deleteById(Long id) {
-        cityRepository.deleteById(id);
-    }
+    ApiResponse<String> deleteById(Long id);
 }
