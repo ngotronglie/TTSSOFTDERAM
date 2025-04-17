@@ -234,7 +234,7 @@ public class BannerController {
 
     // Lưu file ảnh vào thư mục uploads/
     private String saveFile(MultipartFile file, HttpServletRequest request) throws IOException {
-        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads";
+        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads/banner";
         File directory = new File(uploadDir);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -247,15 +247,15 @@ public class BannerController {
 
         // Đây là phần quan trọng: tạo đường dẫn đầy đủ
 //        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        return  "/uploads/" + fileName;
+        return  "/uploads/banner/" + fileName;
     }
 
 
     private void deleteOldImage(String imageUrl) throws IOException {
-        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads";
+        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads/banner";
 
         // Kết hợp với tên file để tạo thành đường dẫn đầy đủ
-        String pathStr = uploadDir + File.separator + imageUrl.replace("/uploads/", "");
+        String pathStr = uploadDir + File.separator + imageUrl.replace("/uploads/banner", "");
         System.out.println(imageUrl);
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println(">" + uploadDir);
