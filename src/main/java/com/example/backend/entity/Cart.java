@@ -1,6 +1,7 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 
 import java.time.LocalDateTime;
 
@@ -21,6 +22,7 @@ public class Cart {
     private int product_id;
 
     @Column(name = "quantity")
+    @Min(value = 0, message = "Số lượng không được để trống hoặc nhỏ hơn 0")
     private int quantity;
 
     @Column(name = "created_at")

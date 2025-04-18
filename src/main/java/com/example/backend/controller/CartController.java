@@ -1,58 +1,84 @@
 package com.example.backend.controller;
 
 
+import com.example.backend.dto.ApiResponse;
 import com.example.backend.entity.Cart;
+import com.example.backend.entity.City;
+import com.example.backend.service.CartService;
 import com.example.backend.service.CartServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
 
-    private final CartServiceImpl cartServiceImpl;
+    private final CartService cartService;
 
-    public CartController(CartServiceImpl cartServiceImpl) {
-        this.cartServiceImpl = cartServiceImpl;
+    public CartController(CartService cartService) {
+        this.cartService = cartService;
     }
 
     @GetMapping
-    public List<Cart> getAllCart() {
-        return cartServiceImpl.findAll();
+    public ApiResponse<List<Cart>> getAllCart() {
+        return cartService.findAll();
+    }
+    @GetMapping("/{id}")
+    public ApiResponse<Cart> getCartById(@PathVariable Long id) {
+        return cartService.findById(id);
     }
 
-    @GetMapping("/{id}")
-    public Cart getCartById(@PathVariable Long id) {
-        return cartServiceImpl.findById(id);
-    }
 
     @PostMapping
-    public Cart createCart(@RequestBody Cart cart) {
-
-        return cartServiceImpl.save(cart);
+    public ApiResponse<Cart> createCart(@RequestBody Cart cart, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage) // Lấy thông báo lỗi của mỗi trường
+                    .collect(Collectors.toList());
+            return new ApiResponse<>(
+                    "error",
+                    "Dữ liệu không hợp lệ",
+                    LocalDateTime.now(),
+                    null,
+                    errorMessages // Trả về danh sách lỗi
+            );
+        }
+        return cartService.save(cart);
     }
 
     @PutMapping("/{id}")
-    public Cart updateCart(@PathVariable Long id, @RequestBody Cart cart) {
-        Cart existingCart = cartServiceImpl.findById(id);
-        if (existingCart == null) {
-            throw new EntityNotFoundException("Banner with id " + id + " not found");
+    public ApiResponse<Cart> updateCart(@PathVariable Long id, @RequestBody Cart cart, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            // Lấy tất cả các lỗi và trả về chúng dưới dạng mảng
+            List<String> errorMessages = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(fieldError -> fieldError.getDefaultMessage())
+                    .collect(Collectors.toList());
+
+            return new ApiResponse<>(
+                    "error",
+                    "Dữ liệu không hợp lệ",
+                    LocalDateTime.now(),
+                    null,
+                    errorMessages // Trả về mảng lỗi
+            );
         }
 
-        existingCart.setUser_id(cart.getUser_id());
-        existingCart.setProduct_id(cart.getProduct_id());
-        existingCart.setQuantity(cart.getQuantity());
-        existingCart.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        return cartServiceImpl.save(existingCart);
+        return cartService.update(id, cart);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCart(@PathVariable Long id) {
-        cartServiceImpl.deleteById(id);
+    public ApiResponse<String> deleteCart(@PathVariable Long id) {
+        return cartService.deleteById(id);
     }
-
 }

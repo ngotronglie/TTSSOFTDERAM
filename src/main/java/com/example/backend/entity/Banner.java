@@ -22,7 +22,7 @@ public class Banner {
     private int is_status;
 
     @Column(name = "category_id")
-    @Min(value = 1, message = "Category ID không được để trống hoặc nhỏ hơn 1")
+    @Min(value = 0, message = "Category ID không được để trống hoặc nhỏ hơn 1")
     private int category_id;
 
     @Column(name = "created_at")

@@ -175,8 +175,6 @@ public class BannerController {
         }
     }
 
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteBanner(@PathVariable Long id) {
         try {
