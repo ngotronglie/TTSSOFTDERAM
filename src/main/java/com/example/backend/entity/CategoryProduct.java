@@ -12,16 +12,16 @@ public class CategoryProduct {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_category_product")
     @SequenceGenerator(name = "id_category_product", sequenceName = "CATEGORY_PRODUCT_ID_SEQ", initialValue = 1, allocationSize = 1)
     private Long id_categories_product;
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "image", nullable = false)
+    @Column(name = "image")
     private String image;
 
-    @Column(name = "parent_category_product_id", nullable = false)
+    @Column(name = "parent_category_product_id")
     private int parent_category_product_id;
 
-    @Column(name = "is_active", nullable = false)
+    @Column(name = "is_active")
     private int is_active;
 
     @Column(name = "created_at")
@@ -30,14 +30,14 @@ public class CategoryProduct {
     @Column(name = "updated_at")
     private LocalDateTime updated_at;
 
-
-    public Long getId_category_product() {
-        return id_categories_product;
+    public int getParent_category_product_id() {
+        return parent_category_product_id;
     }
 
-    public void setId_category_product(Long id_category_product) {
-        this.id_categories_product = id_categories_product;
+    public void setParent_category_product_id(int parent_category_product_id) {
+        this.parent_category_product_id = parent_category_product_id;
     }
+
     public LocalDateTime getCreated_at() {
         return created_at;
     }
@@ -46,28 +46,12 @@ public class CategoryProduct {
         this.created_at = created_at;
     }
 
-    public LocalDateTime getUpdated_at() {
-        return updated_at;
+    public Long getId_categories_product() {
+        return id_categories_product;
     }
 
-    public void setUpdated_at(LocalDateTime updated_at) {
-        this.updated_at = updated_at;
-    }
-
-    public int getIs_active() {
-        return is_active;
-    }
-
-    public void setIs_active(int is_active) {
-        this.is_active = is_active;
-    }
-
-    public int getParent_category_product_id() {
-        return parent_category_product_id;
-    }
-
-    public void setParent_category_product_id(int parent_category_product_id) {
-        this.parent_category_product_id = parent_category_product_id;
+    public void setId_categories_product(Long id_categories_product) {
+        this.id_categories_product = id_categories_product;
     }
 
     public String getImage() {
@@ -78,12 +62,28 @@ public class CategoryProduct {
         this.image = image;
     }
 
+    public int getIs_active() {
+        return is_active;
+    }
+
+    public void setIs_active(int is_active) {
+        this.is_active = is_active;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public LocalDateTime getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(LocalDateTime updated_at) {
+        this.updated_at = updated_at;
     }
 
 }

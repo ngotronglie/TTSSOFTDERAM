@@ -55,7 +55,10 @@ public class CartServiceImpl implements CartService {
             return new ApiResponse<>("error", "Không tìm thấy gio hang", LocalDateTime.now(), null, errorMessages);
         }
 
-//        existing.setNameCity(city.getNameCity());
+        existing.setUser_id(cart.getUser_id());
+        existing.setProduct_id(cart.getProduct_id());
+        existing.setQuantity(cart.getQuantity());
+        existing.setUpdated_at( LocalDateTime.now());
         cartRepository.save(existing);
 
         return new ApiResponse<>("success", "Cập nhật gio hang thành công", LocalDateTime.now(), existing, null);
