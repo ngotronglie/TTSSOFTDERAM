@@ -1,6 +1,7 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +14,7 @@ public class CategoryProduct {
     @SequenceGenerator(name = "id_category_product", sequenceName = "CATEGORY_PRODUCT_ID_SEQ", initialValue = 1, allocationSize = 1)
     private Long id_categories_product;
     @Column(name = "name")
+    @NotEmpty(message = "ten danh muc khong duoc de trong!")
     private String name;
 
     @Column(name = "image")

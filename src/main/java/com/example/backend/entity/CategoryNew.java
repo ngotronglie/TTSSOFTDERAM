@@ -1,7 +1,7 @@
 package com.example.backend.entity;
 
-
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.time.LocalDateTime;
 
@@ -14,13 +14,14 @@ public class CategoryNew {
     @SequenceGenerator(name = "id_category_new", sequenceName = "CATEGORY_NEW_ID_SEQ", initialValue = 1, allocationSize = 1)
     private Long id_category_new;
 
-    @Column(name = "name_category_new", nullable = false)
+    @Column(name = "name_category_new")
+    @NotEmpty(message = "teen danh muc khong duoc de trong!")
     private String name_category_new;
 
-    @Column(name = "parent_category_new_id", nullable = false)
+    @Column(name = "parent_category_new_id")
     private int parent_category_new_id;
 
-    @Column(name = "image_category_new", nullable = false)
+    @Column(name = "image_category_new")
     private String image_category_new;
 
     @Column(name = "created_at")
@@ -29,8 +30,7 @@ public class CategoryNew {
     @Column(name = "updated_at")
     private LocalDateTime updated_at;
 
-
-    @Column(name = "is_active", nullable = false)
+    @Column(name = "is_active")
     private int is_active;
 
     public Long getId_category_new() {
@@ -40,7 +40,6 @@ public class CategoryNew {
     public void setId_category_new(Long id_category_new) {
         this.id_category_new = id_category_new;
     }
-
 
     public String getName_category_new() {
         return name_category_new;
