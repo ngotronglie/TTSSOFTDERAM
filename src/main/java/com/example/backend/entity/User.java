@@ -24,14 +24,14 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "avatar")
+    @Column(name = "avatar") // day la anh
     private String avatar;
 
     @Column(name = "phone", unique = true)
     private String phone;
 
     @Column(name = "role_id")
-    private Long role_id; // Sửa từ int -> Long
+    private Long role_id;
 
     @Column(name = "status")
     private int status;
@@ -46,7 +46,7 @@ public class User {
     private String provider_id;
 
     @Column(name = "last_login_at")
-    private LocalDateTime last_login_at; // Sửa từ String -> LocalDateTime
+    private LocalDateTime last_login_at;
 
     @Column(name = "created_at")
     private LocalDateTime created_at;

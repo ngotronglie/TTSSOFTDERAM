@@ -20,9 +20,11 @@ public class SocialToken {
     private String provider;
 
     @Column(name = "access_token")
+    @Lob
     private String access_token;
 
     @Column(name = "refresh_token")
+    @Lob
     private String refresh_token;
 
     @Column(name = "expires_in")
