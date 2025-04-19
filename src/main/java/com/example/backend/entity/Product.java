@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "products")
 public class Product {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_product")
     @SequenceGenerator(name = "id_product", sequenceName = "PRODUCT_ID_SEQ", initialValue = 1, allocationSize = 1)
@@ -19,12 +21,8 @@ public class Product {
     @Column(name = "image_varian_id")
     private int image_varian_id;
 
-
-
-
     @Column(name = "branch_id")
     private int branch_id;
-
 
     @Column(name = "city_id")
     private int city_id;
@@ -33,22 +31,24 @@ public class Product {
     private String name;
 
     @Column(name = "price")
-    private double price;
+    private float price;
 
     @Column(name = "discount")
-    private double discount;
+    private float discount;
 
-    @Column(name = "image")
+    @Column(name = "image") // cai nay la anh
     private String image;
 
     @Column(name = "stock")
     private int stock;
 
     @Column(name = "description")
+    @Lob
     private String description;
 
+
     @Column(name = "banner_show")
-    private String banner_show;
+    private int banner_show;
 
     @Column(name = "created_at")
     private LocalDateTime created_at;
@@ -56,19 +56,11 @@ public class Product {
     @Column(name = "updated_at")
     private LocalDateTime updated_at;
 
-    public Long getId_product() {
-        return id_product;
-    }
-
-    public void setId_product(Long id_product) {
-        this.id_product = id_product;
-    }
-
-    public String getBanner_show() {
+    public int getBanner_show() {
         return banner_show;
     }
 
-    public void setBanner_show(String banner_show) {
+    public void setBanner_show(int banner_show) {
         this.banner_show = banner_show;
     }
 
@@ -112,12 +104,20 @@ public class Product {
         this.description = description;
     }
 
-    public double getDiscount() {
+    public float getDiscount() {
         return discount;
     }
 
-    public void setDiscount(double discount) {
+    public void setDiscount(float discount) {
         this.discount = discount;
+    }
+
+    public Long getId_product() {
+        return id_product;
+    }
+
+    public void setId_product(Long id_product) {
+        this.id_product = id_product;
     }
 
     public String getImage() {
@@ -144,11 +144,11 @@ public class Product {
         this.name = name;
     }
 
-    public double getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
@@ -167,4 +167,8 @@ public class Product {
     public void setUpdated_at(LocalDateTime updated_at) {
         this.updated_at = updated_at;
     }
+
+
+
+
 }

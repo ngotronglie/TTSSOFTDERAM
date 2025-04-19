@@ -1,75 +1,253 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.ApiResponse;
 import com.example.backend.entity.Product;
-import com.example.backend.service.ProductServiceImpl;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.backend.service.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductServiceImpl productServiceImpl;
+    private final ProductService productService;
 
-    // Constructor injection
-    public ProductController(ProductServiceImpl productServiceImpl) {
-        this.productServiceImpl = productServiceImpl;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
-    // Lấy tất cả sản phẩm
+    // =================== CRUD ===================
+
     @GetMapping
-    public List<Product> getAllProducts() {
-        return productServiceImpl.findAll();
+    public ApiResponse<List<Product>> getAllProducts() {
+        return productService.findAll();
     }
 
-    // Lấy sản phẩm theo ID
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) {
-        Product product = productServiceImpl.findById(id);
-        if (product == null) {
-            throw new EntityNotFoundException("Product with id " + id + " not found");
+    public ApiResponse<Product> getProductById(@PathVariable Long id) {
+        return productService.findById(id);
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<Product>> createProductWithImage(
+            @RequestParam("name") String name,
+            @RequestParam("price") float price,
+            @RequestParam("discount") float discount,
+            @RequestParam("description") String description,
+            @RequestParam("stock") int stock,
+            @RequestParam("branch_id") int branchId,
+            @RequestParam("category_id_product") int categoryIdProduct,
+            @RequestParam("city_id") int cityId,
+            @RequestParam("image_varian_id") int imageVarianId,
+            @RequestParam("banner_show") int bannerShow,
+            @RequestParam("image") MultipartFile file,
+            HttpServletRequest request
+    ) {
+        List<String> errors = validateProductFields(name, price, file, discount, stock, description);
+
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    new ApiResponse<>("error", "Dữ liệu không hợp lệ", LocalDateTime.now(), null, errors)
+            );
         }
-        return product;
+        try {
+            String imagePath = saveFile(file, request);
+
+            Product product = new Product();
+            product.setName(name);
+            product.setPrice(price);
+            product.setDiscount(discount);
+            product.setDescription(description);
+            product.setStock(stock);
+            product.setBranch_id(branchId);
+            product.setCategory_id_product(categoryIdProduct);
+            product.setCity_id(cityId);
+            product.setImage_varian_id(imageVarianId);
+            product.setBanner_show(bannerShow);
+            product.setImage(imagePath);
+            product.setCreated_at(LocalDateTime.now());
+            product.setUpdated_at(LocalDateTime.now());
+
+            ApiResponse<Product> response = productService.save(product);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(
+                    new ApiResponse<>("error", "Lỗi khi tạo sản phẩm", LocalDateTime.now(), null, List.of(e.getMessage()))
+            );
+        }
     }
 
-    // Tạo sản phẩm mới
-    @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        product.setCreated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        product.setUpdated_at(product.getCreated_at());
-        return productServiceImpl.save(product);
-    }
-
-    // Cập nhật sản phẩm theo ID
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        Product existingProduct = productServiceImpl.findById(id);
-        if (existingProduct == null) {
-            throw new EntityNotFoundException("Product with id " + id + " not found");
+    public ResponseEntity<ApiResponse<Product>> updateProductWithImage(
+            @PathVariable Long id,
+            @RequestParam("name") String name,
+            @RequestParam("price") float price,
+            @RequestParam("discount") float discount,
+            @RequestParam("description") String description,
+            @RequestParam("stock") int stock,
+            @RequestParam("branch_id") int branchId,
+            @RequestParam("category_id_product") int categoryIdProduct,
+            @RequestParam("city_id") int cityId,
+            @RequestParam("image_varian_id") int imageVarianId,
+            @RequestParam("banner_show") int bannerShow,
+            @RequestParam(value = "image", required = false) MultipartFile file,
+            HttpServletRequest request
+    ) {
+        List<String> errors = validateProductFields(name, price, file,discount, stock, description);
+
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    new ApiResponse<>("error", "Dữ liệu không hợp lệ", LocalDateTime.now(), null, errors)
+            );
         }
-        existingProduct.setCategory_id_product(product.getCategory_id_product());
-        existingProduct.setImage_varian_id(product.getImage_varian_id());
-        existingProduct.setBranch_id(product.getBranch_id());
-        existingProduct.setCity_id(product.getCity_id());
-        existingProduct.setName(product.getName());
-        existingProduct.setPrice(product.getPrice());
-        existingProduct.setDiscount(product.getDiscount());
-        existingProduct.setImage(product.getImage());
-        existingProduct.setStock(product.getStock());
-        existingProduct.setDescription(product.getDescription());
-        existingProduct.setBanner_show(product.getBanner_show());
-        existingProduct.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
-        return productServiceImpl.save(existingProduct);
+        try {
+            Product existingProduct = productService.findById(id).getData();
+            if (existingProduct == null) {
+                return ResponseEntity.status(404).body(
+                        new ApiResponse<>("error", "Không tìm thấy sản phẩm", LocalDateTime.now(), null, List.of("Không tìm thấy ID: " + id))
+                );
+            }
+
+            // Nếu có file ảnh mới thì xóa ảnh cũ và lưu ảnh mới
+            if (file != null && !file.isEmpty()) {
+                deleteOldImage(existingProduct.getImage());
+                String newImageUrl = saveFile(file, request);
+                existingProduct.setImage(newImageUrl);
+            }
+
+            existingProduct.setName(name);
+            existingProduct.setPrice(price);
+            existingProduct.setDiscount(discount);
+            existingProduct.setDescription(description);
+            existingProduct.setStock(stock);
+            existingProduct.setBranch_id(branchId);
+            existingProduct.setCategory_id_product(categoryIdProduct);
+            existingProduct.setCity_id(cityId);
+            existingProduct.setImage_varian_id(imageVarianId);
+            existingProduct.setBanner_show(bannerShow);
+            existingProduct.setUpdated_at(LocalDateTime.now());
+
+            ApiResponse<Product> response = productService.update(id, existingProduct);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(
+                    new ApiResponse<>("error", "Lỗi khi cập nhật sản phẩm", LocalDateTime.now(), null, List.of(e.getMessage()))
+            );
+        }
     }
 
-    // Xóa sản phẩm theo ID
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id) {
-        productServiceImpl.deleteById(id);
+    public ResponseEntity<ApiResponse<String>> deleteProduct(@PathVariable Long id) {
+        try {
+            Product product = productService.findById(id).getData();
+            if (product == null) {
+                return ResponseEntity.status(404).body(
+                        new ApiResponse<>("error", "Không tìm thấy sản phẩm", LocalDateTime.now(), null, List.of("Không tìm thấy ID: " + id))
+                );
+            }
+
+            deleteOldImage(product.getImage());
+            productService.deleteById(id);
+
+            return ResponseEntity.ok(
+                    new ApiResponse<>("success", "Xóa sản phẩm thành công", LocalDateTime.now(), "Deleted ID: " + id, null)
+            );
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(
+                    new ApiResponse<>("error", "Lỗi khi xóa sản phẩm", LocalDateTime.now(), null, List.of(e.getMessage()))
+            );
+        }
     }
+
+    // =================== Helper methods ===================
+
+    private List<String> validateProductFields(String name, Float price, MultipartFile file, Float discount, Integer stock, String Description)
+    {
+    List<String> errors = new ArrayList<>();
+
+
+        if (file != null && !file.getContentType().startsWith("image/")) errors.add("File tải lên phải là ảnh");
+        if (name == null || name.trim().isEmpty()) {
+            errors.add("Tên sản phẩm không được để trống");
+        }
+
+        if (price == null) {
+            errors.add("Giá sản phẩm không được để trống");
+        } else if (price < 0) {
+            errors.add("Giá sản phẩm không hợp lệ");
+        }
+
+        if (file == null || file.isEmpty()) {
+            errors.add("Vui lòng chọn ảnh sản phẩm");
+        } else if (!file.getContentType().startsWith("image/")) {
+            errors.add("Tệp tải lên phải là hình ảnh");
+        }
+
+        if (discount == null) {
+            errors.add("Giá giảm không được để trống");
+        } else if (discount < 0) {
+            errors.add("Giá giảm không hợp lệ");
+        }
+
+        if (stock == null) {
+            errors.add("Số lượng không được để trống");
+        } else if (stock < 0) {
+            errors.add("Số lượng sản phẩm không hợp lệ");
+        }
+        if (Description == null || Description.trim().isEmpty()) {
+            errors.add("chi tiet san pham khong de trong!!");
+        }
+
+        return errors;
+    }
+
+    private String saveFile(MultipartFile file, HttpServletRequest request) throws IOException {
+        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "product";
+
+        File directory = new File(uploadDir);
+        if (!directory.exists()) directory.mkdirs();
+
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null) throw new IOException("Tên file không hợp lệ");
+
+        originalFilename = originalFilename.replaceAll("[^a-zA-Z0-9.\\-]", "_");
+        String fileName = UUID.randomUUID() + "_" + originalFilename;
+
+        Path filePath = Paths.get(uploadDir, fileName);
+        file.transferTo(filePath.toFile());
+
+        return "/uploads/product/" + fileName;
+    }
+
+    private void deleteOldImage(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) return;
+
+        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "product";
+        String fileName = imageUrl.replace("/uploads/product/", "");
+        String filePath = uploadDir + File.separator + fileName;
+
+        File file = new File(filePath);
+        if (file.exists()) {
+            if (file.delete()) {
+                System.out.println("✅ Xóa file ảnh cũ: " + filePath);
+            } else {
+                System.out.println("❌ Không thể xóa file ảnh: " + filePath);
+            }
+        }
+    }
+
 }
