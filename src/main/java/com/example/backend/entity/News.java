@@ -20,6 +20,7 @@ public class News {
     private String title;
 
     @Column(name = "html")
+    @Lob
     private String html;
 
     @Column(name = "user_post_id")
