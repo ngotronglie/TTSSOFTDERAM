@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.entity.CommentNew;
 import com.example.backend.service.CommentNewService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +32,12 @@ public class CommentNewController {
     }
 
     @PostMapping
-    public ApiResponse<CommentNew> createComment(@RequestBody CommentNew commentNew) {
+    public ApiResponse<CommentNew> createComment(@Valid @RequestBody CommentNew commentNew) {
         return commentNewService.save(commentNew);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<CommentNew> updateComment(@PathVariable Long id, @RequestBody CommentNew commentNew) {
+    public ApiResponse<CommentNew> updateComment(@Valid @PathVariable Long id, @RequestBody CommentNew commentNew) {
         return commentNewService.update(id, commentNew);
     }
 

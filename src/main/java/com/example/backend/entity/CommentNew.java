@@ -2,6 +2,7 @@ package com.example.backend.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.time.LocalDate;
 
@@ -15,6 +16,7 @@ public class CommentNew {
     private Long id_comment_news;
 
     @Column(name = "message")
+    @NotEmpty(message = "message khong duoc de trong!")
     private String message;
 
     @Column(name = "user_id")
