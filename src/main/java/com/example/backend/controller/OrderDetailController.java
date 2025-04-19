@@ -1,85 +1,87 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.ApiResponse;
 import com.example.backend.entity.OrderDetail;
-import com.example.backend.service.OrderDetailServiceImpl;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.example.backend.service.OrderDetailService;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/order-detail")
 public class OrderDetailController {
-    private final OrderDetailServiceImpl orderDetailServiceImpl;
 
-    @Autowired
-    public OrderDetailController(OrderDetailServiceImpl orderDetailServiceImpl) {
-        this.orderDetailServiceImpl = orderDetailServiceImpl;
+    private final OrderDetailService orderDetailService;
+
+    public OrderDetailController(OrderDetailService orderDetailService) {
+        this.orderDetailService = orderDetailService;
     }
 
-    // Lấy tất cả chi tiết đơn hàng
+    // Lấy danh sách tất cả chi tiết đơn hàng
     @GetMapping
-    public List<OrderDetail> getAllOrderDetails() {
-        return orderDetailServiceImpl.findAll();
+    public ApiResponse<List<OrderDetail>> getAllOrderDetails() {
+        return orderDetailService.findAll();
     }
 
     // Lấy chi tiết đơn hàng theo ID
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDetail> getOrderDetailById(@PathVariable Long id) {
-        OrderDetail orderDetail = orderDetailServiceImpl.findById(id);
-        if (orderDetail == null) {
-            throw new EntityNotFoundException("OrderDetail with id " + id + " not found");
-        }
-        return ResponseEntity.ok(orderDetail);
+    public ApiResponse<OrderDetail> getOrderDetailById(@PathVariable Long id) {
+        return orderDetailService.findById(id);
     }
 
     // Tạo mới chi tiết đơn hàng
     @PostMapping
-    public ResponseEntity<OrderDetail> createOrderDetail(@RequestBody OrderDetail orderDetail) {
-        // Thiết lập thời gian tạo và cập nhật
-        orderDetail.setCreated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        orderDetail.setUpdated_at(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+    public ApiResponse<OrderDetail> createOrderDetail(@Valid @RequestBody OrderDetail orderDetail,
+                                                      BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
 
-        // Lưu đơn hàng chi tiết vào cơ sở dữ liệu
-        OrderDetail savedOrderDetail = orderDetailServiceImpl.save(orderDetail);
+            return new ApiResponse<>(
+                    "error",
+                    "Dữ liệu không hợp lệ",
+                    LocalDateTime.now(),
+                    null,
+                    errorMessages
+            );
+        }
 
-        // Trả về ResponseEntity với mã trạng thái 201 (Created) và đối tượng đã lưu
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedOrderDetail);
+        return orderDetailService.save(orderDetail);
     }
 
-
-    // Cập nhật chi tiết đơn hàng
+    // Cập nhật chi tiết đơn hàng theo ID
     @PutMapping("/{id}")
-    public ResponseEntity<OrderDetail> updateOrderDetail(@PathVariable Long id, @RequestBody OrderDetail updatedOrderDetail) {
-        OrderDetail existingOrderDetail = orderDetailServiceImpl.findById(id);
-        if (existingOrderDetail == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Trả về 404 nếu không tìm thấy
+    public ApiResponse<OrderDetail> updateOrderDetail(@PathVariable Long id,
+                                                      @Valid @RequestBody OrderDetail orderDetail,
+                                                      BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+            return new ApiResponse<>(
+                    "error",
+                    "Dữ liệu không hợp lệ",
+                    LocalDateTime.now(),
+                    null,
+                    errorMessages
+            );
         }
 
-        existingOrderDetail.setOrder_id(updatedOrderDetail.getOrder_id());
-        existingOrderDetail.setProduct_id(updatedOrderDetail.getProduct_id());
-        existingOrderDetail.setQuantity(updatedOrderDetail.getQuantity());
-        existingOrderDetail.setPrice(updatedOrderDetail.getPrice());
-        existingOrderDetail.setUpdated_at(LocalDateTime.now());
-        OrderDetail savedOrderDetail = orderDetailServiceImpl.save(existingOrderDetail);
-        return ResponseEntity.ok(savedOrderDetail);
+        return orderDetailService.update(id, orderDetail);
     }
 
-    // Xóa chi tiết đơn hàng
+    // Xóa chi tiết đơn hàng theo ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrderDetail(@PathVariable Long id) {
-        OrderDetail existingOrderDetail = orderDetailServiceImpl.findById(id);
-        if (existingOrderDetail == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Trả về 404 nếu không tìm thấy
-        }
-
-        orderDetailServiceImpl.deleteById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // Trả về 204 khi xóa thành công
+    public ApiResponse<String> deleteOrderDetail(@PathVariable Long id) {
+        return orderDetailService.deleteById(id);
     }
 }
