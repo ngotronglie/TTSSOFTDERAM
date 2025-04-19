@@ -10,10 +10,10 @@ public class ImageBranch {
     @SequenceGenerator(name = "id_image_branch", sequenceName = "IMAGE_BRANCH_ID_SEQ", initialValue = 1, allocationSize = 1)
     private Long id_image_branch;
 
-    @Column(name = "image_branch", nullable = false)
+    @Column(name = "image_branch")
     private String image_branch;
 
-    @Column(name = "is_status", nullable = false)
+    @Column(name = "is_status")
     private String is_status;
 
     @Column(name = "created_at")
