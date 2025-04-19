@@ -1,8 +1,7 @@
 package com.example.backend.entity;
 
-
 import jakarta.persistence.*;
-
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -14,37 +13,53 @@ public class Coupons {
     @SequenceGenerator(name = "id_coupon", sequenceName = "COUPONS_ID_SEQ", initialValue = 1, allocationSize = 1)
     private Long id_coupon;
 
-    @Column(name = "code", nullable = false, unique = true)
+    @Column(name = "code", unique = true)
+    @NotEmpty(message = "Mã giảm giá không được để trống!")
+    @Size(min = 3, max = 20, message = "Mã giảm giá phải có từ 3 đến 20 ký tự!")
     private String code;
 
-    @Column(name = "discount_type", nullable = false, unique = true)
+    @Column(name = "discount_type", unique = true)
+    @NotEmpty(message = "Tên loại giảm giá không được để trống!")
+    @Size(min = 3, max = 50, message = "Tên loại giảm giá phải có từ 3 đến 50 ký tự!")
     private String discount_type;
 
-    @Column(name = "discount_value", nullable = false)
+    @Column(name = "discount_value")
+    @NotNull(message = "Giá giảm giá không được để trống!")
+    @DecimalMin(value = "0.01", message = "Giá giảm giá phải lớn hơn 0!")
     private BigDecimal discount_value;
 
-    @Column(name = "min_discount", nullable = false)
+    @Column(name = "min_discount")
+    @NotNull(message = "Giá giảm giá min không được để trống!")
+    @DecimalMin(value = "0.01", message = "Giá giảm giá min phải lớn hơn 0!")
     private BigDecimal min_discount;
 
-    @Column(name = "max_discount", nullable = false)
+    @Column(name = "max_discount")
+    @NotNull(message = "Giá giảm giá max không được để trống!")
+    @DecimalMin(value = "0.01", message = "Giá giảm giá max phải lớn hơn 0!")
     private BigDecimal max_discount;
 
-    @Column(name = "min_order_value", nullable = false)
+    @Column(name = "min_order_value")
+    @NotNull(message = "Giá trị đơn hàng min không được để trống!")
+    @DecimalMin(value = "0.01", message = "Giá trị đơn hàng min phải lớn hơn 0!")
     private BigDecimal min_order_value;
 
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date")
+    @NotNull(message = "Ngày bắt đầu giảm giá không được để trống!")
     private LocalDate start_date;
 
-    @Column(name = "expiry_date", nullable = false)
+    @Column(name = "expiry_date")
+    @NotNull(message = "Ngày hết hạn giảm giá không được để trống!")
     private LocalDate expiry_date;
-
-    @Column(name = "usage_limit", nullable = false)
+    @Column(name = "usage_limit")
+    @Min(value = 1, message = "Số lượng sử dụng tối đa phải lớn hơn 0!")
     private int usage_limit;
 
-    @Column(name = "used_count", nullable = false)
+    @Column(name = "used_count")
+    @Min(value = 0, message = "Số lượng đã sử dụng không được nhỏ hơn 0!")
     private int used_count;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
+    @PastOrPresent(message = "Ngày tạo phải là ngày trong quá khứ hoặc hiện tại!")
     private LocalDate created_at;
 
     public String getCode() {
@@ -143,4 +158,3 @@ public class Coupons {
         this.used_count = used_count;
     }
 }
-
