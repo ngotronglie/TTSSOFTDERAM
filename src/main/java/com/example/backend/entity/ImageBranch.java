@@ -14,7 +14,7 @@ public class ImageBranch {
     private String image_branch;
 
     @Column(name = "is_status")
-    private String is_status;
+    private int is_status;
 
     @Column(name = "created_at")
     private LocalDateTime created_at;
@@ -38,14 +38,13 @@ public class ImageBranch {
         this.image_branch = image_branch;
     }
 
-    public String getIs_status() {
+    public int getIs_status() {
         return is_status;
     }
 
-    public void setIs_status(String is_status) {
+    public void setIs_status(int is_status) {
         this.is_status = is_status;
     }
-
     public LocalDateTime getCreated_at() {
         return created_at;
     }
