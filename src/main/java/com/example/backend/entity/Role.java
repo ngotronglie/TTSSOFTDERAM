@@ -1,6 +1,7 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -16,7 +17,8 @@ public class Role {
     private Long id_role;
 
 
-    @Column(name = "name_role", nullable = false)
+    @Column(name = "name_role")
+    @NotBlank(message = "ten role khong duoc de trong!")
     private String name_role;
 
     @Column(name = "comment_role")
@@ -26,7 +28,6 @@ public class Role {
 
     @Column(name = "updated_at")
     private LocalDateTime updated_at;
-
 
     public Long getId_role() {
         return id_role;
