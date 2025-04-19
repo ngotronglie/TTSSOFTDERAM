@@ -53,7 +53,7 @@ public class BannerController {
     ) {
         try {
             List<String> errors = new ArrayList<>();
-            int is_status = 0;
+            int is_status = 0 ;
             int category_id = 0;
 
             // Validate is_status

@@ -21,7 +21,7 @@ public class CategoryNew {
     @Column(name = "parent_category_new_id")
     private int parent_category_new_id;
 
-    @Column(name = "image_category_new")
+    @Column(name = "image_category_new") // day la anh
     private String image_category_new;
 
     @Column(name = "created_at")
