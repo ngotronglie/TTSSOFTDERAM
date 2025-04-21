@@ -98,3 +98,15 @@ img {
   border-radius: 50%; /* Làm tròn ảnh */
   z-index: 2;
 }
+
+@media (max-width: 768px) {
+  .contact-fixed {
+    position: fixed;
+    right: 15px;
+    bottom: 120px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}

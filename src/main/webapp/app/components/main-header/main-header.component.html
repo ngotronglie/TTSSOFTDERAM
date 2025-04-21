@@ -1,75 +1,130 @@
-<nav class="container py-3">
-  <div class="d-flex align-items-center justify-content-between">
-    <!-- Nút Toggle menu -->
-    <button class="d-md-none btn btn-danger rounded-circle toggle-menu" type="button">
-      <img src="content/images/menu.svg" style="height: 20px" alt="Menu" />
-    </button>
-
+<div class="container header text-center mt-3 mb-3">
+  <div class="row align-items-center">
     <!-- Logo -->
-    <div>
-      <a href="#">
-        <img src="content/images/logomain.webp" style="height: 35px" alt="Logo" />
+    <div class="col-lg-3 col-12 logo-wrapper">
+      <a href="/">
+        <img
+          class="img-responsive lazyload loaded"
+          src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/logo.png?1744969171405"
+          data-src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/logo.png?1744969171405"
+          alt="logo"
+          data-was-processed="true"
+        />
       </a>
     </div>
 
-    <!-- Thanh tìm kiếm -->
-    <form class="search-container d-flex align-items-center w-100 position-relative" action="#" method="get">
-      <input
-        type="search"
-        name="query"
-        class="form-control search-input rounded-pill border border-danger px-3"
-        placeholder="Tìm kiếm..."
-        aria-label="Tìm kiếm"
-      />
-      <button class="btn btn-danger rounded-circle position-absolute end-0 h-100" type="submit">
-        <img src="content/images/search.svg" style="height: 20px" alt="Tìm kiếm" />
-      </button>
-    </form>
+    <!-- Main header content -->
+    <div class="col-lg-9 col-12">
+      <div class="header-group-action d-flex align-items-center justify-content-end gap-3">
+        <!-- Mobile Menu (hamburger icon) -->
+        <a
+          class="mobile-menu red-background p-2 d-flex align-items-center gap-2 d-lg-none"
+          data-bs-toggle="offcanvas"
+          href="#offcanvasExample"
+          role="button"
+          aria-controls="offcanvasExample"
+        >
+          <div href="">
+            <svg
+              width="15px"
+              viewBox="0 0 1024 1024"
+              class="icon"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="#ffffff"
+              stroke="#ffffff"
+            >
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <path d="M64 192h896v76.8H64V192z m0 281.6h896v76.8H64V473.6z m0 281.6h896V832H64v-76.8z" fill="#ffffff"></path>
+              </g>
+            </svg>
+          </div>
+        </a>
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+          <!--  body canvas -->
+          <div class="auth-offcanvas w-100 d-flex">
+            <a class="border p-3 w-100 text-decoration-none"> Dang nhap </a>
+            <a class="border p-3 w-100 text-decoration-none"> Dang ki </a>
+          </div>
+        </div>
 
-    <!-- Icon điều hướng -->
-    <div class="d-flex justify-content-between align-items-center gap-3">
-      <a href="/" class="d-flex align-items-center text-decoration-none d-none d-md-flex">
-        <div
-          class="bg-init-red text-white rounded-circle d-flex align-items-center justify-content-center"
-          style="width: 40px; height: 40px"
-        >
-          <img src="content/images/bill.svg" style="height: 20px" alt="Theo dõi đơn hàng" />
+        <!-- Search Form -->
+        <div class="header_search search_form">
+          <form class="input-group search-bar search_form d-flex position-relative w-100">
+            <input type="search" name="query" placeholder="Tìm kiếm..." class="change_pl input-group-field search-text w-100" />
+            <span class="input-group-btn">
+              <button class="btn position-absolute btn-search" type="submit">
+                <img width="25px" src="./content/images/search.svg" alt="" />
+              </button>
+            </span>
+          </form>
         </div>
-        <div class="ms-2 text-dark">
-          <div>Theo dõi</div>
-          <div>đơn hàng</div>
+        <!--don hang-->
+        <div class="d-flex align-items-center gap-2 d-none d-lg-block">
+          <a href="/apps/kiem-tra-don-hang" class="d-flex align-items-center text-decoration-none">
+            <div class="circle-icon d-flex align-items-center justify-content-center">
+              <img src="content/images/bill.svg" alt="Đơn hàng" />
+            </div>
+            <div class="ms-2">
+              <p class="order-text mb-0">Theo dõi<br />đơn hàng</p>
+            </div>
+          </a>
         </div>
-      </a>
-      <div
-        href=""
-        class="nav-link dropdown-toggle"
-        role="button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-        class="d-flex align-items-center text-decoration-none d-none d-md-flex"
-      >
-        <div
-          class="bg-init-red text-white rounded-circle d-flex align-items-center justify-content-center"
-          style="width: 40px; height: 40px"
-        >
-          <img src="content/images/account.svg" style="height: 20px" alt="Tài khoản của bạn" />
+
+        <!--don hang-->
+        <div class="d-flex align-items-center gap-2 d-none d-lg-block">
+          <a href="/apps/kiem-tra-don-hang" class="d-flex align-items-center text-decoration-none">
+            <div class="circle-icon d-flex align-items-center justify-content-center">
+              <img src="content/images/account.svg" alt="Đơn hàng" />
+            </div>
+            <div class="ms-2">
+              <p class="order-text mb-0">Theo dõi<br />đơn hàng</p>
+            </div>
+          </a>
         </div>
-        <div class="ms-2 text-dark">
-          <div>Tài khoản</div>
-          <div>của bạn</div>
+
+        <div class="d-flex gap-2">
+          <a href="" class="d-flex align-items-center position-relative">
+            <div class="circle-icon d-flex align-items-center justify-content-center">
+              <img src="content/images/cart.svg" alt="Đơn hàng" />
+            </div>
+            <div
+              class="position-absolute number translate-middle bg-primary text-white rounded-circle d-flex justify-content-center align-items-center"
+              style="width: 20px; height: 20px; font-size: 12px"
+            >
+              0
+            </div>
+          </a>
         </div>
-        <ul class="dropdown-menu p-2">
-          <a class="btn btn-danger w-100 mb-2" (click)="goToLogin()">Login</a>
-          <a class="btn btn-danger w-100" (click)="goToRegister()">Register</a>
-        </ul>
       </div>
-
-      <a href="/cart" class="text-center position-relative">
-        <div class="icon-circle" style="width: 40px; height: 40px">
-          <img src="content/images/cart.svg" style="height: 20px" alt="Giỏ hàng" />
-        </div>
-        <span class="position-absolute bottom-1 start-100 translate-middle badge bg-primary">0</span>
-      </a>
+      <!-- /.header-group-action -->
     </div>
+    <!-- /.col-lg-9 -->
   </div>
-</nav>
+  <!-- /.row -->
+</div>
+
+<div class="menu-mobile position-fixed bottom-0 p-2 z-3 w-100 d-flex justify-content-around d-xl-none d-block">
+  <a class="item-2 text-center text-decoration-none d-block">
+    <img src="https://bizweb.dktcdn.net/100/416/540/themes/839121/assets/logo_mb.png?1744969171405" width="20px" alt="" />
+    <p>Trang chu</p>
+  </a>
+  <a class="item-2 text-center text-decoration-none d-block">
+    <img src="https://bizweb.dktcdn.net/100/416/540/themes/839121/assets/logo_mb.png?1744969171405" width="20px" alt="" />
+    <p>Trang chu</p>
+  </a>
+  <a class="item-2 text-center text-decoration-none d-block">
+    <img src="https://bizweb.dktcdn.net/100/416/540/themes/839121/assets/logo_mb.png?1744969171405" width="20px" alt="" />
+    <p>Trang chu</p>
+  </a>
+  <a class="item-2 text-center text-decoration-none d-block">
+    <img src="https://bizweb.dktcdn.net/100/416/540/themes/839121/assets/logo_mb.png?1744969171405" width="20px" alt="" />
+    <p>Trang chu</p>
+  </a>
+  <a class="item-2 text-center text-decoration-none d-block">
+    <img src="https://bizweb.dktcdn.net/100/416/540/themes/839121/assets/logo_mb.png?1744969171405" width="20px" alt="" />
+    <p>Trang chu</p>
+  </a>
+</div>

@@ -21,37 +21,50 @@
     </div>
 
     <div>
-      <div type="button" style="font-size: 12px" class="text-white inline-flex" data-bs-toggle="modal" data-bs-target="#myModal">
+      <!-- Nút mở modal -->
+      <div
+        type="button"
+        style="font-size: 12px"
+        class="text-white inline-flex"
+        data-bs-toggle="modal"
+        data-bs-target="#myModal"
+        (click)="removeModalBackdrop()"
+      >
         Khu vực:
-        <span class=""
-          ><b>{{ selectedCity || 'Tỉnh' }}</b> <span><img src="content/images/muiten-duoi.svg" width="20px" alt="" /></span
-        ></span>
+        <span>
+          <b>{{ selectedCity || 'Tỉnh' }}</b>
+          <span><img src="content/images/muiten-duoi.svg" width="20px" alt="mũi tên" /></span>
+        </span>
       </div>
     </div>
+
     <!-- Modal -->
     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <!-- Tiêu đề -->
-          <div class="modal-header">
+          <div class="modal-header border-0">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
 
           <!-- Nội dung -->
           <div class="modal-body">
-            <div class="text-center">
+            <div class="text-center mb-3">
               <b>Chào mừng bạn đến với Thế giới sữa</b>
               <p>Vui lòng chọn tỉnh thành để xem chính xác giá và khuyến mãi Tỉnh/Thành phố</p>
             </div>
+
             <select class="form-select" [(ngModel)]="selectedCity">
-              <option value="" disabled selected>Vui lòng chọn Tỉnh/Thành phố</option>
-              <option *ngFor="let city of cities" [value]="city.name">{{ city.name }}</option>
+              <option [ngValue]="null" disabled>Vui lòng chọn Tỉnh/Thành phố</option>
+              <option *ngFor="let city of cities" [ngValue]="city.name">
+                {{ city.name }}
+              </option>
             </select>
           </div>
 
           <!-- Footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger w-100%" data-bs-dismiss="modal">Xác nhận</button>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-danger w-100" data-bs-dismiss="modal">Xác nhận</button>
           </div>
         </div>
       </div>

@@ -1,10 +1,12 @@
-<div>
-  <router-outlet name="navbar"></router-outlet>
-</div>
+<div class="position-relative">
+  <div class="position-fixed top-0 w-100 mb-5 z-3 bg-light">
+    <router-outlet name="navbar"></router-outlet>
+  </div>
 
-<main>
-  <router-outlet></router-outlet>
-</main>
-<div>
-  <jhi-footer></jhi-footer>
+  <main style="margin-top: 165px">
+    <router-outlet></router-outlet>
+  </main>
+  <div>
+    <jhi-footer></jhi-footer>
+  </div>
 </div>

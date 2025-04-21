@@ -76,4 +76,11 @@ export class TopHeaderComponent {
     { value: 'vinhphuc', name: 'Vĩnh Phúc' },
     { value: 'yenbai', name: 'Yên Bái' },
   ];
+  removeModalBackdrop(): void {
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+      backdrop.remove(); // Xóa backdrop
+      document.body.classList.remove('modal-open');
+    }
+  }
 }
