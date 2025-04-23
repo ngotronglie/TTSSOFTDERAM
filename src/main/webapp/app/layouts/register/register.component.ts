@@ -1,42 +1,55 @@
-import { AfterViewInit, Component, ElementRef, OnInit, inject, signal, viewChild } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-
-import SharedModule from 'app/shared/shared.module';
-// import { registerService } from 'app/layouts/register/register.service';
-import { AccountService } from 'app/core/auth/account.service';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { RegisterService } from 'app/layouts/register/register.service';
+import { CommonModule } from '@angular/common'; // Import RegisterService
 
 @Component({
   selector: 'jhi-register',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule, RouterModule],
-  styleUrls: ['./register.component.scss'],
   templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink], // ✅ phải có cái này!
 })
-export default class registerComponent implements OnInit, AfterViewInit {
-  username = viewChild.required<ElementRef>('username');
+export class RegisterComponent implements OnInit, AfterViewInit {
+  @ViewChild('firstnameInput') firstnameInput!: ElementRef;
+  registerForm: FormGroup;
+  authenticationError = false;
 
-  authenticationError = signal(false);
-
-  registerForm = new FormGroup({
-    username: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    rememberMe: new FormControl(false, { nonNullable: true, validators: [Validators.required] }),
-  });
-
-  private readonly accountService = inject(AccountService);
-  // private readonly registerService = inject(registerService);
-  private readonly router = inject(Router);
-
-  ngOnInit(): void {
-    // if already authenticated then navigate to home page
-    this.accountService.identity().subscribe(() => {
-      if (this.accountService.isAuthenticated()) {
-        this.router.navigate(['']);
-      }
+  constructor(
+    private fb: FormBuilder,
+    private registerService: RegisterService, // Inject RegisterService
+    private router: Router,
+  ) {
+    this.registerForm = this.fb.group({
+      firstname: ['', Validators.required],
+      lastname: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
+  ngOnInit(): void {}
+
   ngAfterViewInit(): void {
-    this.username().nativeElement.focus();
+    this.firstnameInput?.nativeElement.focus();
+  }
+
+  // Hàm xử lý đăng ký
+  register(): void {
+    if (this.registerForm.valid) {
+      const user = this.registerForm.value;
+
+      // Gọi API đăng ký thông qua service
+      this.registerService.register(user).subscribe({
+        next: () => {
+          alert('Đăng ký thành công!');
+          this.router.navigate(['/login']); // Chuyển hướng sang trang đăng nhập
+        },
+        error: () => {
+          this.authenticationError = true; // Hiển thị lỗi đăng ký
+        },
+      });
+    }
   }
 }

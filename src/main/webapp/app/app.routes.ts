@@ -33,9 +33,7 @@ const routes: Routes = [
   },
   {
     path: 'register',
-    loadComponent: () => import('./layouts/register/register.component'),
-    title: 'register.title',
-    data: { title: 'Đăng kí' },
+    loadComponent: () => import('./layouts/register/register.component').then(m => m.RegisterComponent),
   },
   {
     path: 'forgot-password',

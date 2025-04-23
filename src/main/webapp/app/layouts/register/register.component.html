@@ -19,39 +19,38 @@
         <img src="//bizweb.dktcdn.net/assets/admin/images/login/gp-btn.svg" alt="Google Login" width="129" height="37" />
       </a>
     </div>
-    <form action="" class="p-4">
+    <form [formGroup]="registerForm" (ngSubmit)="register()" class="p-4">
       <div class="mb-3">
         <label for="firstname" class="form-label">Họ *</label>
-        <input type="text" class="form-control" id="firstname" name="firstname" required />
+        <input type="text" class="form-control" id="firstname" formControlName="firstname" required />
       </div>
       <div class="mb-3">
         <label for="lastname" class="form-label">Tên *</label>
-        <input type="text" class="form-control" id="lastname" name="lastname" required />
+        <input type="text" class="form-control" id="lastname" formControlName="lastname" required />
       </div>
       <!-- Email -->
       <div class="mb-3">
         <label for="email" class="form-label">Email *</label>
-        <input type="email" class="form-control" id="email" name="email" required />
+        <input type="email" class="form-control" id="email" formControlName="email" required />
       </div>
       <div class="mb-3">
-        <label for="sdt" class="form-label">Điện Thoại *</label>
-        <input type="number" class="form-control" id="sdt" name="sdt" required />
+        <label for="phone" class="form-label">Điện Thoại *</label>
+        <input type="number" class="form-control" id="phone" formControlName="phone" required />
       </div>
-
       <!-- Mật khẩu -->
       <div class="mb-3">
         <label for="password" class="form-label">Mật khẩu *</label>
-        <input type="password" class="form-control" id="password" name="password" required />
+        <input type="password" class="form-control" id="password" formControlName="password" required />
       </div>
 
       <!-- Nút Đăng nhập và Điều hướng -->
       <div class="d-flex justify-content-between align-items-center">
         <div>
-          <button style="background: #da1919; color: white" type="submit" class="btn">Đăng Kí</button>
+          <button style="background: #da1919; color: white" type="submit" class="btn" [disabled]="registerForm.invalid">Đăng Kí</button>
         </div>
-        <a routerLink="/login" style="background: #da1919; color: white" type="button" class="btn"
-          ><i style="margin-right: 3px" class="fa fa-reply"></i>Quay</a
-        >
+        <a routerLink="/login" style="background: #da1919; color: white" type="button" class="btn">
+          <i style="margin-right: 3px" class="fa fa-reply"></i>Quay lại
+        </a>
       </div>
     </form>
   </div>
