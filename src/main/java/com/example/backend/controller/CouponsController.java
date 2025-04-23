@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/coupons")
 public class CouponsController {
@@ -15,6 +17,11 @@ public class CouponsController {
 
     public CouponsController(CouponsService couponsService) {
         this.couponsService = couponsService;
+    }
+
+    @GetMapping("")
+    public ApiResponse<List<Coupons>> getAllCoupons() {
+        return couponsService.findAll();
     }
 
     // Tạo mới coupon

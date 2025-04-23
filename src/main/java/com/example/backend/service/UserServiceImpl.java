@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.UserTDO;
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -81,4 +83,20 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
         return new ApiResponse<>("success", "Xóa người dùng thành công", LocalDateTime.now(), "Deleted ID: " + id, null);
     }
+
+    // Triển khai phương thức findByEmailAndPassword
+    @Override
+    public ApiResponse<UserTDO> findByEmailAndPassword(String email, String password) {
+        Optional<UserTDO> userOptional = userRepository.findByEmailAndPassword(email, password);
+
+        if (userOptional.isPresent()) {
+            return new ApiResponse<>("success", "Đăng nhập thành công", LocalDateTime.now(), userOptional.get(), null);
+        } else {
+            List<String> errorMessages = new ArrayList<>();
+            errorMessages.add("Sai email hoặc mật khẩu");
+            return new ApiResponse<>("error", "Đăng nhập thất bại", LocalDateTime.now(), null, errorMessages);
+        }
+    }
+
+
 }

@@ -1,18 +1,14 @@
 package com.example.backend.controller;
-
 import com.example.backend.dto.ApiResponse;
-import com.example.backend.entity.CategoryProduct;
-import com.example.backend.entity.SocialToken;
+import com.example.backend.dto.UserTDO;
 import com.example.backend.entity.User;
-import com.example.backend.service.SocialTokenService;
 import com.example.backend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
@@ -31,6 +27,7 @@ public class UserController {
 
     @GetMapping
     public ApiResponse<List<User>> getAll() {
+        System.out.println(userService.findAll());
         return userService.findAll();
     }
 
@@ -46,7 +43,7 @@ public class UserController {
             @RequestParam String lastname,
             @RequestParam String email,
             @RequestParam String password,
-            @RequestParam MultipartFile avatar,
+            @RequestParam(required = false) MultipartFile avatar,  // Không yêu cầu avatar
             @RequestParam String phone,
             @RequestParam Long role_id,
             @RequestParam(required = false) LocalDateTime email_verified_at,
@@ -61,8 +58,22 @@ public class UserController {
         }
 
         try {
-            String avatarUrl = saveFile(avatar, request);
+            String avatarUrl = null;  // Khởi tạo avatarUrl mặc định là null
 
+            // Kiểm tra nếu avatar không phải null và không rỗng
+            if (avatar != null && !avatar.isEmpty()) {
+                // Kiểm tra xem có phải là ảnh hay không (có thể kiểm tra định dạng file)
+                if (isValidImage(avatar)) {
+                    avatarUrl = saveFile(avatar, request);  // Lưu avatar và lấy URL
+                } else {
+                    // Nếu không phải ảnh, trả về lỗi
+                    errors.add("File không phải là ảnh hợp lệ.");
+                    return ResponseEntity.badRequest().body(
+                            new ApiResponse<>("error", "Dữ liệu không hợp lệ", LocalDateTime.now(), null, errors));
+                }
+            }
+
+            // Tạo đối tượng User và lưu thông tin
             User user = new User();
             user.setFirstname(firstname);
             user.setLastname(lastname);
@@ -70,7 +81,7 @@ public class UserController {
             user.setPassword(password);
             user.setPhone(phone);
             user.setRole_id(role_id);
-            user.setAvatar(avatarUrl);
+            user.setAvatar(avatarUrl);  // Gán avatarUrl (có thể là null nếu không có avatar)
             user.setEmail_verified_at(email_verified_at);
             user.setProvider(provider);
             user.setProvider_id(provider_id);
@@ -78,14 +89,69 @@ public class UserController {
             user.setCreated_at(LocalDateTime.now());
             user.setUpdated_at(LocalDateTime.now());
 
+            // Lưu người dùng và trả về kết quả
             ApiResponse<User> response = userService.save(user);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            // Xử lý lỗi hệ thống
             return ResponseEntity.status(500).body(
                     new ApiResponse<>("error", "Lỗi hệ thống khi tạo người dùng", LocalDateTime.now(), null, List.of(e.getMessage())));
         }
     }
+
+    // Hàm kiểm tra xem file có phải là ảnh hay không
+    private boolean isValidImage(MultipartFile file) {
+        String contentType = file.getContentType();
+        return contentType != null && contentType.startsWith("image/");
+    }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<UserTDO>> login(
+            @RequestParam String email,
+            @RequestParam String password,
+            HttpSession session
+    ) {
+        try {
+            // Gọi phương thức findByEmailAndPassword từ UserService
+            ApiResponse<UserTDO> response = userService.findByEmailAndPassword(email, password);
+
+            // Kiểm tra nếu không có user trả về thông báo lỗi
+            if ("error".equals(response.getStatus())) {
+                return ResponseEntity.status(401).body(response);
+            }
+
+            // Nếu đăng nhập thành công, lưu thông tin user vào session
+            session.setAttribute("user", response.getData());
+
+            // Trả về thông báo thành công và thông tin user
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            // Xử lý lỗi hệ thống
+            ApiResponse<UserTDO> errorResponse = new ApiResponse<>(
+                    "error",
+                    "Lỗi hệ thống khi đăng nhập",
+                    LocalDateTime.now(),
+                    null,
+                    List.of(e.getMessage())
+            );
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+    // =================== LOGOUT ===================
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout(HttpSession session) {
+        try {
+            session.invalidate(); // Invalidate the session to log out the user
+            return ResponseEntity.ok(new ApiResponse<>("success", "Logout successful", LocalDateTime.now(), "Logged out", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(
+                    new ApiResponse<>("error", "Lỗi hệ thống khi đăng xuất", LocalDateTime.now(), null, List.of(e.getMessage())));
+        }
+    }
+
 
     // =================== UPDATE ===================
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -181,13 +247,9 @@ public class UserController {
         List<String> errors = new ArrayList<>();
         if (firstname == null || firstname.trim().isEmpty()) errors.add("firstname không được để trống");
         if (email == null || email.trim().isEmpty()) errors.add("Email không được để trống");
-        if (avatar == null || avatar.isEmpty()) errors.add("Vui lòng chọn ảnh đại diện");
-        else if (!isImageFile(avatar)) errors.add("Chỉ hỗ trợ file ảnh");
-
         if(lastname == null || lastname.trim().isEmpty()) errors.add("lastname không được để trống");
-
         if(password == null || password.trim().isEmpty()) errors.add("password khong duoc de trong!");
-        if(phone == null || phone.trim().isEmpty()) errors.add("sdt khong duoc de trong!");
+//        if(phone == null || phone.trim().isEmpty()) errors.add("sdt khong duoc de trong!");
         return errors;
     }
 
