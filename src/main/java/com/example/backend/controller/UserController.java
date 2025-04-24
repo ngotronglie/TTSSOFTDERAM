@@ -5,6 +5,7 @@ import com.example.backend.entity.User;
 import com.example.backend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.*;
+
+@CrossOrigin(origins = {"http://localhost:9000", "http://localhost:9090"}) // Hạn chế CORS cho các origin cụ thể
 
 @RestController
 @RequestMapping("/api/users")
@@ -43,7 +46,7 @@ public class UserController {
             @RequestParam String lastname,
             @RequestParam String email,
             @RequestParam String password,
-            @RequestParam(required = false) MultipartFile avatar,  // Không yêu cầu avatar
+            @RequestParam(required = false) MultipartFile avatar,
             @RequestParam String phone,
             @RequestParam Long role_id,
             @RequestParam(required = false) LocalDateTime email_verified_at,
@@ -51,29 +54,44 @@ public class UserController {
             @RequestParam(required = false) String provider_id,
             HttpServletRequest request
     ) {
+        System.out.println("==== [CREATE USER REQUEST] ====");
+        System.out.println("firstname: " + firstname);
+        System.out.println("lastname: " + lastname);
+        System.out.println("email: " + email);
+        System.out.println("phone: " + phone);
+        System.out.println("role_id: " + role_id);
+        System.out.println("provider: " + provider);
+        System.out.println("provider_id: " + provider_id);
+
+        if (avatar != null && !avatar.isEmpty()) {
+            System.out.println("Avatar received: " + avatar.getOriginalFilename() + " (size: " + avatar.getSize() + ")");
+        } else {
+            System.out.println("No avatar uploaded.");
+        }
+
         List<String> errors = validateUserInput(firstname, email, avatar, lastname, password, phone);
         if (!errors.isEmpty()) {
+            System.out.println("Validation errors: " + errors);
             return ResponseEntity.badRequest().body(
                     new ApiResponse<>("error", "Dữ liệu không hợp lệ", LocalDateTime.now(), null, errors));
         }
 
         try {
-            String avatarUrl = null;  // Khởi tạo avatarUrl mặc định là null
+            String avatarUrl = null;
 
-            // Kiểm tra nếu avatar không phải null và không rỗng
             if (avatar != null && !avatar.isEmpty()) {
-                // Kiểm tra xem có phải là ảnh hay không (có thể kiểm tra định dạng file)
                 if (isValidImage(avatar)) {
-                    avatarUrl = saveFile(avatar, request);  // Lưu avatar và lấy URL
+                    avatarUrl = saveFile(avatar, request);
+                    System.out.println("Avatar saved at: " + avatarUrl);
                 } else {
-                    // Nếu không phải ảnh, trả về lỗi
-                    errors.add("File không phải là ảnh hợp lệ.");
+                    String err = "File không phải là ảnh hợp lệ.";
+                    System.out.println("Error: " + err);
+                    errors.add(err);
                     return ResponseEntity.badRequest().body(
                             new ApiResponse<>("error", "Dữ liệu không hợp lệ", LocalDateTime.now(), null, errors));
                 }
             }
 
-            // Tạo đối tượng User và lưu thông tin
             User user = new User();
             user.setFirstname(firstname);
             user.setLastname(lastname);
@@ -81,7 +99,7 @@ public class UserController {
             user.setPassword(password);
             user.setPhone(phone);
             user.setRole_id(role_id);
-            user.setAvatar(avatarUrl);  // Gán avatarUrl (có thể là null nếu không có avatar)
+            user.setAvatar(avatarUrl);
             user.setEmail_verified_at(email_verified_at);
             user.setProvider(provider);
             user.setProvider_id(provider_id);
@@ -89,16 +107,20 @@ public class UserController {
             user.setCreated_at(LocalDateTime.now());
             user.setUpdated_at(LocalDateTime.now());
 
-            // Lưu người dùng và trả về kết quả
+            System.out.println("Saving user: " + user);
+
             ApiResponse<User> response = userService.save(user);
+            System.out.println("User created successfully");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            // Xử lý lỗi hệ thống
+            System.out.println("Lỗi hệ thống khi tạo người dùng: " + e.getMessage());
+            e.printStackTrace(); // In stack trace đầy đủ
             return ResponseEntity.status(500).body(
                     new ApiResponse<>("error", "Lỗi hệ thống khi tạo người dùng", LocalDateTime.now(), null, List.of(e.getMessage())));
         }
     }
+
 
     // Hàm kiểm tra xem file có phải là ảnh hay không
     private boolean isValidImage(MultipartFile file) {
@@ -107,8 +129,9 @@ public class UserController {
     }
 
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<UserTDO>> login(
+            @Valid
             @RequestParam String email,
             @RequestParam String password,
             HttpSession session
@@ -263,19 +286,14 @@ public class UserController {
         String uploadDir = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "userAvatar";
         File directory = new File(uploadDir);
         if (!directory.exists()) directory.mkdirs();
-
         String originalFilename = Optional.ofNullable(file.getOriginalFilename())
                 .orElseThrow(() -> new IOException("Tên file không hợp lệ"));
-
         originalFilename = originalFilename.replaceAll("[^a-zA-Z0-9.\\-]", "_");
         String fileName = UUID.randomUUID() + "_" + originalFilename;
-
         Path filePath = Paths.get(uploadDir, fileName);
         file.transferTo(filePath.toFile());
-
         return "/uploads/userAvatar/" + fileName;
     }
-
     private void deleteOldImage(String imageUrl) {
         if (imageUrl == null || imageUrl.isEmpty()) return;
 

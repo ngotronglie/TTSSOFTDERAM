@@ -17,7 +17,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@CrossOrigin(origins = {"http://localhost:9000", "http://localhost:9090"}) // Hạn chế CORS cho các origin cụ thể
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {

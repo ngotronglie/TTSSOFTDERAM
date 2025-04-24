@@ -1,6 +1,7 @@
 package com.example.backend.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -16,5 +17,15 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations(uploadPath);
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        // Cấu hình CORS, hợp nhất logic từ cả hai lớp
+        registry.addMapping("/**")  // Apply CORS policy to tất cả endpoints
+                .allowedOrigins("http://localhost:9000")  // Nhiều origins cho phép
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // Các HTTP method
+                .allowedHeaders("Authorization", "Content-Type", "*")  // Cho phép tất cả headers
+                .allowCredentials(true);  // Allow credentials
     }
 }
