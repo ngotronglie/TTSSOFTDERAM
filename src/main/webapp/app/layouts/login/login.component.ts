@@ -1,55 +1,68 @@
-import { AfterViewInit, Component, ElementRef, OnInit, inject, signal, viewChild } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-
-import SharedModule from 'app/shared/shared.module';
-import { LoginService } from 'app/layouts/login/login.service';
-import { AccountService } from 'app/core/auth/account.service';
+// src/main/webapp/app/layouts/login/login.component.ts
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { LoginService } from './login.service'; // Import LoginService
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router'; // Để sử dụng các routerLink trong template
 
 @Component({
   selector: 'jhi-login',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule, RouterModule],
-  styleUrls: ['./login.component.scss'],
+  standalone: true, // Đảm bảo LoginComponent là standalone
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule], // Các module cần thiết cho standalone component
 })
-export default class LoginComponent implements OnInit, AfterViewInit {
-  username = viewChild.required<ElementRef>('username');
+export class LoginComponent implements OnInit, AfterViewInit {
+  @ViewChild('firstnameInput') firstnameInput!: ElementRef;
+  loginForm: FormGroup;
+  authenticationError = false;
 
-  authenticationError = signal(false);
-
-  loginForm = new FormGroup({
-    username: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    rememberMe: new FormControl(false, { nonNullable: true, validators: [Validators.required] }),
-  });
-
-  private readonly accountService = inject(AccountService);
-  private readonly loginService = inject(LoginService);
-  private readonly router = inject(Router);
-
-  ngOnInit(): void {
-    // if already authenticated then navigate to home page
-    this.accountService.identity().subscribe(() => {
-      if (this.accountService.isAuthenticated()) {
-        this.router.navigate(['']);
-      }
+  constructor(
+    private fb: FormBuilder,
+    private loginService: LoginService, // Inject LoginService
+    private router: Router,
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
+  ngOnInit(): void {}
+
   ngAfterViewInit(): void {
-    this.username().nativeElement.focus();
+    this.firstnameInput?.nativeElement.focus();
   }
 
   login(): void {
-    this.loginService.login(this.loginForm.getRawValue()).subscribe({
-      next: () => {
-        this.authenticationError.set(false);
-        if (!this.router.getCurrentNavigation()) {
-          // There were no routing during login (eg from navigationToStoredUrl)
-          this.router.navigate(['']);
-        }
-      },
-      error: () => this.authenticationError.set(true),
-    });
+    // In ra trạng thái của form để kiểm tra
+    console.log('Login Form: ', this.loginForm);
+    console.log('Is form valid?', this.loginForm.valid);
+
+    if (this.loginForm.valid) {
+      const formValues = this.loginForm.value;
+
+      // In ra các giá trị form để kiểm tra xem chúng có đúng không
+      console.log('Form values: ', formValues);
+
+      // Gọi service login
+      this.loginService.login(formValues).subscribe({
+        next: () => {
+          this.authenticationError = false;
+          console.log('Login successful');
+          alert('đăng nhập thành công');
+          this.router.navigate(['/']); // Navigate to home page after successful login
+        },
+        error: err => {
+          this.authenticationError = true;
+          alert('sai email hoăặc mật khẩu');
+          console.error('Login error: ', err); // In lỗi nếu có
+        },
+      });
+    } else {
+      console.log('Form is invalid, not proceeding with login.');
+    }
   }
 }

@@ -27,9 +27,7 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./layouts/login/login.component'),
-    title: 'login.title',
-    data: { title: 'Đăng nhập' },
+    loadComponent: () => import('./layouts/login/login.component').then(m => m.LoginComponent),
   },
   {
     path: 'register',

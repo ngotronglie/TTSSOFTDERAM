@@ -16,7 +16,7 @@ export class RegisterService {
   //   return this.http.put(`${this.baseUrl}/profile`, data, { withCredentials: true });
   // }
   // Hàm đăng ký người dùng
-  register(user: any): Observable<any> {
+  register(user: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}/create`, user);
   }
 }

@@ -19,7 +19,7 @@
         <img src="//bizweb.dktcdn.net/assets/admin/images/login/gp-btn.svg" alt="Google Login" width="129" height="37" />
       </a>
     </div>
-    <form [formGroup]="registerForm" (ngSubmit)="register()" class="p-4">
+    <form [formGroup]="registerForm" (ngSubmit)="register()" enctype="multipart/form-data" class="p-4">
       <div class="mb-3">
         <label for="firstname" class="form-label">Họ *</label>
         <input type="text" class="form-control" id="firstname" formControlName="firstname" required />
@@ -46,7 +46,7 @@
       <!-- Nút Đăng nhập và Điều hướng -->
       <div class="d-flex justify-content-between align-items-center">
         <div>
-          <button style="background: #da1919; color: white" type="submit" class="btn" [disabled]="registerForm.invalid">Đăng Kí</button>
+          <button style="background: #da1919; color: white" type="submit" class="btn">Đăng Kí</button>
         </div>
         <a routerLink="/login" style="background: #da1919; color: white" type="button" class="btn">
           <i style="margin-right: 3px" class="fa fa-reply"></i>Quay lại

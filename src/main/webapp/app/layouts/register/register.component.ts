@@ -26,6 +26,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       phone: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      role_id: ['1', Validators.required],
     });
   }
 
@@ -35,19 +36,29 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     this.firstnameInput?.nativeElement.focus();
   }
 
-  // Hàm xử lý đăng ký
   register(): void {
     if (this.registerForm.valid) {
-      const user = this.registerForm.value;
+      const formValues = this.registerForm.value;
 
-      // Gọi API đăng ký thông qua service
-      this.registerService.register(user).subscribe({
+      // In dữ liệu của form ra console
+      console.log('Form Values:', formValues);
+      // Tạo FormData
+      const formData = new FormData();
+      formData.append('firstname', formValues.firstname);
+      formData.append('lastname', formValues.lastname);
+      formData.append('email', formValues.email);
+      formData.append('phone', formValues.phone);
+      formData.append('password', formValues.password);
+      formData.append('role_id', formValues.role_id); // Mặc định là "1"
+      console.log(formData);
+      // Gọi service để gửi FormData
+      this.registerService.register(formData).subscribe({
         next: () => {
           alert('Đăng ký thành công!');
-          this.router.navigate(['/login']); // Chuyển hướng sang trang đăng nhập
+          this.router.navigate(['/login']);
         },
         error: () => {
-          this.authenticationError = true; // Hiển thị lỗi đăng ký
+          this.authenticationError = true;
         },
       });
     }
