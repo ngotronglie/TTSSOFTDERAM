@@ -181,7 +181,12 @@
                 </a>
                 <div class="d-flex justify-content-between">
                   <span style="color: #fe6f32" class="product-price fw-semibold">{{ product.price | number }}đ</span>
-                  <img style="width: 20px !important; cursor: pointer" src="content/images/cart/cart-828282.svg" alt="" />
+                  <img
+                    (click)="addToCart(product, null)"
+                    style="width: 20px !important; cursor: pointer"
+                    src="content/images/cart/cart-828282.svg"
+                    alt=""
+                  />
                 </div>
               </div>
             </div>

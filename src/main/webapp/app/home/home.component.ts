@@ -37,7 +37,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   user: any = {};
   private apiUrl = 'http://localhost:8080/api/banners'; // Replace with your actual API endpoint
   private apiProductUrl = 'http://localhost:8080/api/products'; // api sản phẩm
-  private apiGetUserId = 'http://localhost:8080/api/users/get-user';
+  private apiGetUserId = 'http://localhost:8080/api/users/get-username'; // lay nguoi dung dang nhap
 
   constructor(private http: HttpClient) {} // Inject HttpClient into the component
   ngOnInit(): void {
@@ -162,6 +162,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
       },
     );
   }
+
   addToCart(product: any, userId: number | null) {
     if (userId) {
       // Người dùng đã đăng nhập -> Gọi API để thêm vào giỏ hàng server
@@ -174,7 +175,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
       // Gọi API thêm vào giỏ hàng
       this.http.post('/api/cart/add', cartItem).subscribe(
         response => {
-          console.log('Thêm vào giỏ hàng server thành công', response);
+          alert('Thêm vào giỏ hàng server thành công');
         },
         error => {
           console.error('Lỗi thêm vào giỏ hàng server', error);
@@ -184,22 +185,24 @@ export default class HomeComponent implements OnInit, OnDestroy {
       // Khách vãng lai -> Lưu LocalStorage
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-      // Kiểm tra nếu sản phẩm đã tồn tại thì tăng quantity
+      // Kiểm tra nếu sản phẩm đã tồn tại trong giỏ hàng, tăng quantity
       const existingItem = cart.find((item: any) => item.productId === product.id_product);
       if (existingItem) {
-        existingItem.quantity += 1;
+        existingItem.quantity += 1; // Nếu sản phẩm đã tồn tại, tăng số lượng
       } else {
+        // Nếu chưa có, thêm sản phẩm vào giỏ hàng
         cart.push({
           productId: product.id_product,
           name: product.name,
           price: product.price,
           image: product.image,
-          quantity: 1,
+          quantity: 1, // Mặc định số lượng là 1 khi thêm sản phẩm mới
         });
       }
 
+      // Lưu lại giỏ hàng vào localStorage
       localStorage.setItem('cart', JSON.stringify(cart));
-      console.log('Thêm vào giỏ hàng local thành công');
+      alert('Thêm vào giỏ hàng local thành công');
     }
   }
 
