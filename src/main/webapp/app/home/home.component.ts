@@ -10,13 +10,15 @@ import { PRODUCT_GROUPS, ProductGroup } from 'app/data/home-group';
 import { Product, PRODUCTS } from 'app/data/product';
 // Import Swiper
 import Swiper from 'swiper';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   standalone: true,
-  imports: [SharedModule, RouterModule],
+  imports: [SharedModule, RouterModule, CommonModule],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
@@ -29,7 +31,12 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
 
+  banners: any[] = []; // Array to hold banners
+  private apiUrl = 'http://localhost:8080/api/banners'; // Replace with your actual API endpoint
+
+  constructor(private http: HttpClient) {} // Inject HttpClient into the component
   ngOnInit(): void {
+    this.loadBanners(); // Call the function to load banners on component init
     new Swiper('.product-slider', {
       slidesPerView: 2, // Hiển thị 2 sản phẩm cùng lúc
       spaceBetween: 12, // Khoảng cách giữa các sản phẩm
@@ -68,6 +75,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
         },
       },
     });
+
     new Swiper('.product-2-3', {
       slidesPerView: 3, // mặc định 3 sản phẩm mỗi hàng
       grid: {
@@ -117,5 +125,21 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  loadBanners(): void {
+    this.http.get<any>(this.apiUrl).subscribe(
+      response => {
+        if (response.status === 'success') {
+          this.banners = response.data; // ✅ Lấy đúng mảng data
+        } else {
+          console.error('Error: API returned non-success status');
+        }
+      },
+      error => {
+        console.error('Error fetching banners:', error); // Xử lý lỗi
+      },
+    );
+  }
+
   //  ----------------------------------------------------------------
 }
