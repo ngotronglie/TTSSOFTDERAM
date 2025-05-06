@@ -171,17 +171,17 @@
         <!--        swipper 3 product -->
         <div class="swiper product-2-3 container">
           <div class="swiper-wrapper">
-            <div class="swiper-slide" *ngFor="let product of products">
+            <div class="swiper-slide" *ngFor="let product of productss">
               <div class="rounded w-100 d-flex flex-column">
                 <!-- Ảnh -->
-                <img [src]="product.image" [alt]="product.title" class="product-image w-100" />
+                <img [src]="'http://localhost:8080' + product.image" [alt]="product.title" class="product-image w-100" />
                 <!-- Thông tin -->
                 <a [href]="product.url" style="color: #3867ad" class="product-title fw-bold text-decoration-none mb-2">
-                  {{ product.title }}
+                  {{ product.name }}
                 </a>
                 <div class="d-flex justify-content-between">
                   <span style="color: #fe6f32" class="product-price fw-semibold">{{ product.price | number }}đ</span>
-                  <img style="width: 20px !important" src="content/images/cart/cart-828282.svg" alt="" />
+                  <img style="width: 20px !important; cursor: pointer" src="content/images/cart/cart-828282.svg" alt="" />
                 </div>
               </div>
             </div>

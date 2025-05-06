@@ -21,6 +21,7 @@ import { CommonModule } from '@angular/common';
   imports: [SharedModule, RouterModule, CommonModule],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
+  userId: number | null = null;
   account = signal<Account | null>(null);
   cartItems: Sanphamhot[] = CART_ITEMS;
   cartItems_SUA: Suachoai[] = CART_ITEMS_SUA;
@@ -32,11 +33,17 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
 
   banners: any[] = []; // Array to hold banners
+  productss: any[] = [];
+  user: any = {};
   private apiUrl = 'http://localhost:8080/api/banners'; // Replace with your actual API endpoint
+  private apiProductUrl = 'http://localhost:8080/api/products'; // api sản phẩm
+  private apiGetUserId = 'http://localhost:8080/api/users/get-user';
 
   constructor(private http: HttpClient) {} // Inject HttpClient into the component
   ngOnInit(): void {
     this.loadBanners(); // Call the function to load banners on component init
+    this.loadProduct(); // goi san pham
+    this.loadIdUser(); // goi session
     new Swiper('.product-slider', {
       slidesPerView: 2, // Hiển thị 2 sản phẩm cùng lúc
       spaceBetween: 12, // Khoảng cách giữa các sản phẩm
@@ -131,6 +138,76 @@ export default class HomeComponent implements OnInit, OnDestroy {
       response => {
         if (response.status === 'success') {
           this.banners = response.data; // ✅ Lấy đúng mảng data
+        } else {
+          console.error('Error: API returned non-success status');
+        }
+      },
+      error => {
+        console.error('Error fetching banners:', error); // Xử lý lỗi
+      },
+    );
+  }
+
+  loadIdUser(): void {
+    this.http.get<any>(this.apiGetUserId).subscribe(
+      response => {
+        if (response.status === 'success') {
+          this.user = response.data; // ✅ Lấy đúng mảng data
+        } else {
+          console.error('Error: API returned non-success status');
+        }
+      },
+      error => {
+        console.error('Error fetching banners:', error); // Xử lý lỗi
+      },
+    );
+  }
+  addToCart(product: any, userId: number | null) {
+    if (userId) {
+      // Người dùng đã đăng nhập -> Gọi API để thêm vào giỏ hàng server
+      const cartItem = {
+        userId: userId,
+        productId: product.id_product,
+        quantity: 1, // Hoặc bạn cho chọn số lượng
+      };
+
+      // Gọi API thêm vào giỏ hàng
+      this.http.post('/api/cart/add', cartItem).subscribe(
+        response => {
+          console.log('Thêm vào giỏ hàng server thành công', response);
+        },
+        error => {
+          console.error('Lỗi thêm vào giỏ hàng server', error);
+        },
+      );
+    } else {
+      // Khách vãng lai -> Lưu LocalStorage
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+      // Kiểm tra nếu sản phẩm đã tồn tại thì tăng quantity
+      const existingItem = cart.find((item: any) => item.productId === product.id_product);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          productId: product.id_product,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          quantity: 1,
+        });
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      console.log('Thêm vào giỏ hàng local thành công');
+    }
+  }
+
+  loadProduct(): void {
+    this.http.get<any>(this.apiProductUrl).subscribe(
+      response => {
+        if (response.status === 'success') {
+          this.productss = response.data; // ✅ Lấy đúng mảng data
         } else {
           console.error('Error: API returned non-success status');
         }
