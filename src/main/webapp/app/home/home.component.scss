@@ -146,7 +146,7 @@
   justify-content: center;
 }
 .box-title-left h2::before {
-  content: '3';
+  content: '1';
   position: absolute;
   left: 0;
   top: 50%;
@@ -164,7 +164,7 @@
   font-weight: bold;
 }
 .box-title-right h2::after {
-  content: '2'; /* bạn có thể thay đổi số tại đây */
+  content: '1'; /* bạn có thể thay đổi số tại đây */
   position: absolute;
   top: 50%;
   right: 0;
@@ -199,4 +199,6 @@ h3 a {
 }
 .img-responsive {
   border-radius: 10px;
+}
+.taikhoancanhan:hover {
 }

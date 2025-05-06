@@ -1,22 +1,22 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
-
-import { Account } from 'app/core/auth/account.model';
-import { AccountService } from 'app/core/auth/account.service';
-import { AuthServerProvider } from 'app/core/auth/auth-jwt.service';
-import { Login } from './login.model';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
-export class LoginService {
-  private readonly accountService = inject(AccountService);
-  private readonly authServerProvider = inject(AuthServerProvider);
+export class RegisterService {
+  private baseUrl = 'http://localhost:8080/api/users';
 
-  login(credentials: Login): Observable<Account | null> {
-    return this.authServerProvider.login(credentials).pipe(mergeMap(() => this.accountService.identity(true)));
-  }
+  constructor(private http: HttpClient) {}
 
-  logout(): void {
-    this.authServerProvider.logout().subscribe({ complete: () => this.accountService.authenticate(null) });
+  // getProfile() {
+  //   return this.http.get(`${this.baseUrl}/profile`, { withCredentials: true });
+  // }
+
+  // updateProfile(data: { name: string; email: string }) {
+  //   return this.http.put(`${this.baseUrl}/profile`, data, { withCredentials: true });
+  // }
+  // Hàm đăng ký người dùng
+  register(user: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}/create`, user);
   }
 }

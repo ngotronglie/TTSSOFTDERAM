@@ -10,15 +10,18 @@ import { PRODUCT_GROUPS, ProductGroup } from 'app/data/home-group';
 import { Product, PRODUCTS } from 'app/data/product';
 // Import Swiper
 import Swiper from 'swiper';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   standalone: true,
-  imports: [SharedModule, RouterModule],
+  imports: [SharedModule, RouterModule, CommonModule],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
+  userId: number | null = null;
   account = signal<Account | null>(null);
   cartItems: Sanphamhot[] = CART_ITEMS;
   cartItems_SUA: Suachoai[] = CART_ITEMS_SUA;
@@ -29,7 +32,21 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
 
+  banners: any[] = []; // Array to hold banners
+  productss: any[] = [];
+  userloading: any = {};
+
+  private apiUrl = 'http://localhost:8080/api/banners'; // Replace with your actual API endpoint
+  private apiProductUrl = 'http://localhost:8080/api/products'; // api sản phẩm
+  private apiGetUserId = 'http://localhost:8080/api/users/get-username'; // lay nguoi dung dang nhap
+
+  private apiLogout = 'http://localhost:8080/api/users';
+
+  constructor(private http: HttpClient) {} // Inject HttpClient into the component
   ngOnInit(): void {
+    this.loadIdUser(); // goi session
+    this.loadBanners(); // Call the function to load banners on component init
+    this.loadProduct(); // goi san pham
     new Swiper('.product-slider', {
       slidesPerView: 2, // Hiển thị 2 sản phẩm cùng lúc
       spaceBetween: 12, // Khoảng cách giữa các sản phẩm
@@ -68,6 +85,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
         },
       },
     });
+
     new Swiper('.product-2-3', {
       slidesPerView: 3, // mặc định 3 sản phẩm mỗi hàng
       grid: {
@@ -116,6 +134,93 @@ export default class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  loadBanners(): void {
+    this.http.get<any>(this.apiUrl).subscribe(
+      response => {
+        if (response.status === 'success') {
+          this.banners = response.data; // ✅ Lấy đúng mảng data
+        } else {
+          console.error('Error: API returned non-success status');
+        }
+      },
+      error => {
+        console.error('Error fetching banners:', error); // Xử lý lỗi
+      },
+    );
+  }
+
+  loadIdUser(): void {
+    const userJson = localStorage.getItem('user');
+    if (userJson) {
+      this.userloading = JSON.parse(userJson);
+      console.log('User loaded from localStorage:', this.userloading);
+      // alert(JSON.stringify(this.userloading));
+    } else {
+      console.warn('Không tìm thấy user  >> localstorate.');
+    }
+  }
+
+  addToCart(product: any) {
+    // Lấy giỏ hàng hiện tại từ localStorage (nếu có)
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+    const existingItem = cart.find((item: any) => item.productId === product.id_product);
+    if (existingItem) {
+      // Nếu đã có, tăng số lượng
+      existingItem.quantity += 1;
+    } else {
+      // Nếu chưa có, thêm sản phẩm mới
+      cart.push({
+        productId: product.id_product,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      });
+    }
+
+    // Lưu giỏ hàng trở lại localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Thông báo thành công
+    alert('Thêm vào giỏ hàng thành công');
+  }
+
+  loadProduct(): void {
+    this.http.get<any>(this.apiProductUrl).subscribe(
+      response => {
+        if (response.status === 'success') {
+          this.productss = response.data; // ✅ Lấy đúng mảng data
+        } else {
+          console.error('Error: API returned non-success status');
+        }
+      },
+      error => {
+        console.error('Error fetching banners:', error); // Xử lý lỗi
+      },
+    );
+  }
+
+  // Phương thức đăng xuất (logout)
+  logout(): void {
+    // Gọi API logout từ server
+    this.http.post(`${this.apiLogout}/logout`, {}).subscribe(
+      response => {
+        // Xóa token hoặc dữ liệu xác thực
+        localStorage.removeItem('user');
+        sessionStorage.removeItem('auth_token');
+
+        // Điều hướng về trang login
+        this.router.navigate(['/login']);
+      },
+      error => {
+        console.error('Logout failed:', error);
+        // Xử lý lỗi nếu cần
+      },
+    );
   }
   //  ----------------------------------------------------------------
 }

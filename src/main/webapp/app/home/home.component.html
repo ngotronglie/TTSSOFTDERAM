@@ -7,31 +7,23 @@
     data-bs-touch="false"
   >
     <div class="carousel-inner">
-      <div class="carousel-item active">
-        <img src="content/images/banner/slide-img1.webp" class="d-block w-100" alt="..." />
-      </div>
-      <div class="carousel-item">
-        <img src="content/images/banner/slide-img2.webp" class="d-block w-100" alt="..." />
-      </div>
-      <div class="carousel-item">
-        <img src="content/images/banner/slide-img4.webp" class="d-block w-100" alt="..." />
-      </div>
-      <div class="carousel-item">
-        <img src="content/images/banner/slide-img5.webp" class="d-block w-100" alt="..." />
+      <div *ngFor="let banner of banners; let index = index" class="carousel-item" [class.active]="index === 0">
+        <img [src]="'http://localhost:8080' + banner.image_url_banner" class="d-block w-100" [alt]="'Banner ' + banner.id_banner" />
       </div>
     </div>
 
+    <!-- Previous Button -->
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       <span class="visually-hidden">Previous</span>
     </button>
 
+    <!-- Next Button -->
     <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="next">
       <span class="carousel-control-next-icon" aria-hidden="true"></span>
       <span class="visually-hidden">Next</span>
     </button>
   </div>
-
   <div class="d-flex justify-content-center align-items-center py-3 mt-4">
     <a href="#" title="SẢN PHẨM HOT" class="btn hot-btn"> SẢN PHẨM HOT </a>
   </div>
@@ -96,7 +88,9 @@
     <div class="row mt-5">
       <div class="col-xl-2 col-12 block-title-cate">
         <div class="box-title-left">
-          <h2 class="h2-element-left"><a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a></h2>
+          <h2 class="h2-element-left" style="content: '1' !important">
+            <a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a>
+          </h2>
         </div>
         <div class="btn-more-cate d-xl-none"></div>
         <div class="block-cate d-flex flex-column">
@@ -177,30 +171,37 @@
         <!--        swipper 3 product -->
         <div class="swiper product-2-3 container">
           <div class="swiper-wrapper">
-            <div class="swiper-slide" *ngFor="let product of products">
+            <div class="swiper-slide" *ngFor="let product of productss">
               <div class="rounded w-100 d-flex flex-column">
                 <!-- Ảnh -->
-                <img [src]="product.image" [alt]="product.title" class="product-image w-100" />
+                <img [src]="'http://localhost:8080' + product.image" [alt]="product.title" class="product-image w-100" />
                 <!-- Thông tin -->
                 <a [href]="product.url" style="color: #3867ad" class="product-title fw-bold text-decoration-none mb-2">
-                  {{ product.title }}
+                  {{ product.name }}
                 </a>
                 <div class="d-flex justify-content-between">
                   <span style="color: #fe6f32" class="product-price fw-semibold">{{ product.price | number }}đ</span>
-                  <img style="width: 20px !important" src="content/images/cart/cart-828282.svg" alt="" />
+                  <img
+                    (click)="addToCart(product)"
+                    style="width: 20px !important; cursor: pointer"
+                    src="content/images/cart/cart-828282.svg"
+                    alt=""
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!--          ----------------------->
+        <!------------------------->
       </div>
     </div>
     <div class="row mt-5">
       <div class="col-xl-2 order-xl-3 col-12 block-title-cate">
         <div class="box-title-right">
-          <h2 class="h2-element-right"><a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a></h2>
+          <h2 class="h2-element-right" style="content: '2' !important">
+            <a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a>
+          </h2>
         </div>
         <div class="btn-more-cate d-xl-none"></div>
         <div class="block-cate d-flex flex-column">
@@ -304,7 +305,9 @@
     <div class="row mt-5">
       <div class="col-xl-2 col-12 block-title-cate">
         <div class="box-title-left">
-          <h2 class="h2-element-left"><a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a></h2>
+          <h2 class="h2-element-left" style="content: '3' !important">
+            <a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a>
+          </h2>
         </div>
         <div class="btn-more-cate d-xl-none"></div>
         <div class="block-cate d-flex flex-column">
@@ -408,7 +411,9 @@
     <div class="row mt-5">
       <div class="col-xl-2 order-xl-3 col-12 block-title-cate">
         <div class="box-title-right">
-          <h2 class="h2-element-right"><a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a></h2>
+          <h2 class="h2-element-right" style="content: '4' !important">
+            <a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a>
+          </h2>
         </div>
         <div class="btn-more-cate d-xl-none"></div>
         <div class="block-cate d-flex flex-column">
@@ -509,7 +514,8 @@
         <!--          ----------------------->
       </div>
     </div>
-    <!--    ------------------------------------------->
+
+    <!--    ------------------ banner thu 3------------------------->
 
     <div class="row mt-4">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 banner-1">
@@ -528,7 +534,6 @@
         </div>
       </div>
     </div>
-
     <!---------------------------------------------------------------------------------------->
     <div class="d-flex justify-content-center align-items-center py-3 mt-4">
       <a href="#" title="Kinh nghiệm cho mẹ" class="btn hot-btn"> Kinh nghiệm cho mẹ </a>

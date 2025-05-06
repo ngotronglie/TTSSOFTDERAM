@@ -27,15 +27,11 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./layouts/login/login.component'),
-    title: 'login.title',
-    data: { title: 'Đăng nhập' },
+    loadComponent: () => import('./layouts/login/login.component').then(m => m.LoginComponent),
   },
   {
     path: 'register',
-    loadComponent: () => import('./layouts/register/register.component'),
-    title: 'register.title',
-    data: { title: 'Đăng kí' },
+    loadComponent: () => import('./layouts/register/register.component').then(m => m.RegisterComponent),
   },
   {
     path: 'forgot-password',
@@ -60,6 +56,10 @@ const routes: Routes = [
     loadComponent: () => import('./layouts/news/news.component').then(m => m.NewsComponent),
     title: 'tin-tuc.title',
     data: { title: 'Tin tuc' },
+  },
+  {
+    path: 'checkout',
+    loadComponent: () => import('./layouts/checkout/checkout.component').then(m => m.CheckoutComponent),
   },
   {
     path: '',

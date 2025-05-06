@@ -1,22 +1,47 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+import { Router } from '@angular/router'; // Import Router
 
-import { Account } from 'app/core/auth/account.model';
-import { AccountService } from 'app/core/auth/account.service';
-import { AuthServerProvider } from 'app/core/auth/auth-jwt.service';
-import { Login } from './login.model';
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class LoginService {
-  private readonly accountService = inject(AccountService);
-  private readonly authServerProvider = inject(AuthServerProvider);
+  private baseUrl = 'http://localhost:8080/api/users';
 
-  login(credentials: Login): Observable<Account | null> {
-    return this.authServerProvider.login(credentials).pipe(mergeMap(() => this.accountService.identity(true)));
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
+
+  // Phương thức đăng nhập (login)
+  login(credentials: { email: string; password: string }): Observable<any> {
+    const formData = new FormData();
+    formData.append('email', credentials.email);
+    formData.append('password', credentials.password);
+
+    console.log('FormData:', formData);
+
+    return this.http
+      .post(`${this.baseUrl}/login`, formData, {
+        headers: new HttpHeaders(),
+        withCredentials: true,
+      })
+      .pipe(
+        tap((res: any) => {
+          if (res.status === 'success' && res.data) {
+            // ✅ Lưu user vào localStorage
+            localStorage.setItem('user', JSON.stringify(res.data));
+          }
+        }),
+      );
   }
 
+  // Phương thức đăng xuất (logout)
   logout(): void {
-    this.authServerProvider.logout().subscribe({ complete: () => this.accountService.authenticate(null) });
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user'); // ✅ Xóa user nếu có
+    sessionStorage.removeItem('auth_token');
+    window.location.href = '/login';
   }
 }
