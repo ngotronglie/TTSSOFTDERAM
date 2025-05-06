@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class OrdersServiceImpl implements OrdersService {
@@ -23,7 +24,6 @@ public class OrdersServiceImpl implements OrdersService {
         List<Orders> orders = ordersRepository.findAll();
         return new ApiResponse<>("success", "Lấy danh sách đơn hàng thành công", LocalDateTime.now(), orders, null);
     }
-
     @Override
     public ApiResponse<Orders> findById(Long id) {
         Orders order = ordersRepository.findById(id).orElse(null);
@@ -37,6 +37,7 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public ApiResponse<Orders> save(Orders orders) {
+        orders.setCode(UUID.randomUUID().toString().substring(0, 8));
         orders.setCreated_at(LocalDateTime.now());
         Orders saved = ordersRepository.save(orders);
         return new ApiResponse<>("success", "Tạo đơn hàng thành công", LocalDateTime.now(), saved, null);
@@ -85,5 +86,4 @@ public class OrdersServiceImpl implements OrdersService {
         // Trả về thông báo thành công khi xóa thành công
         return new ApiResponse<>("success", "Xóa đơn hàng thành công", LocalDateTime.now(), "Deleted ID: " + id, null);
     }
-
 }

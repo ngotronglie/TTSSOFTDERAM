@@ -37,11 +37,35 @@ public class Orders {
     @Column(name = "address")
     private String address;
 
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    @Column(name = "code")
+    private String code;
+
+    @Column(name = "method")
+    private String method;
+
     @Column(name = "created_at")
     private LocalDateTime created_at;
 
     @Column(name = "updated_at")
     private LocalDateTime updated_at;
+
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
     public String getStatus_orders() {
         return status_orders;
@@ -62,7 +86,6 @@ public class Orders {
     public int getCoupon_id() {
         return coupon_id;
     }
-
     public void setCoupon_id(int coupon_id) {
         this.coupon_id = coupon_id;
     }

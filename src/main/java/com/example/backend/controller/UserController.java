@@ -6,6 +6,7 @@ import com.example.backend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,7 @@ import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-@CrossOrigin(origins = {"http://localhost:9000", "http://localhost:9090"}) // Hạn chế CORS cho các origin cụ thể
-
+//@CrossOrigin(origins = {"http://localhost:9000", "http://localhost:9090",} , allowCredentials = "true") // Hạn chế CORS cho các origin cụ thể
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -34,10 +34,59 @@ public class UserController {
         return userService.findAll();
     }
 
+
+//    @GetMapping("/get_userid")
+
+
     @GetMapping("/{id}")
     public ApiResponse<User> getById(@PathVariable Long id) {
         return userService.findById(id);
     }
+
+    @GetMapping("/get-username")
+    public ResponseEntity<ApiResponse<UserTDO>> getUserFromSession(HttpSession session) {
+        ApiResponse<UserTDO> response;
+        try {
+            Object sessionUser = session.getAttribute("user");
+
+            if (sessionUser instanceof UserTDO user) {
+                // Tìm thấy người dùng và ép kiểu thành công (Java 16+ hỗ trợ instanceof pattern matching)
+                response = new ApiResponse<>(
+                        "success",
+                        "Lấy thông tin người dùng thành công",
+                        LocalDateTime.now(),
+                        user,
+                        null
+                );
+            } else {
+                // Không có hoặc sai kiểu dữ liệu
+                response = new ApiResponse<>(
+                        "error",
+                        "Không có người dùng đăng nhập",
+                        LocalDateTime.now(),
+                        null,
+                        List.of("User not found or invalid type in session")
+                );
+            }
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            // Lỗi hệ thống không mong muốn
+            ApiResponse<UserTDO> errorResponse = new ApiResponse<>(
+                    "error",
+                    "Lỗi hệ thống khi lấy thông tin người dùng từ session",
+                    LocalDateTime.now(),
+                    null,
+                    List.of(e.getMessage())
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+
+
+
 
     // =================== CREATE ===================
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -147,7 +196,6 @@ public class UserController {
 
             // Nếu đăng nhập thành công, lưu thông tin user vào session
             session.setAttribute("user", response.getData());
-
             // Trả về thông báo thành công và thông tin user
             return ResponseEntity.ok(response);
 
@@ -174,8 +222,6 @@ public class UserController {
                     new ApiResponse<>("error", "Lỗi hệ thống khi đăng xuất", LocalDateTime.now(), null, List.of(e.getMessage())));
         }
     }
-
-
     // =================== UPDATE ===================
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<User>> updateUser(
