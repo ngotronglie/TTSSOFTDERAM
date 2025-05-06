@@ -26,7 +26,7 @@
         <tbody>
           <tr *ngFor="let item of cartItems; let i = index">
             <td>
-              <img [src]="item.image" class="img-thumbnail product-img" alt="{{ item.name }}" />
+              <img [src]="'http://localhost:8080' + item.image" class="img-thumbnail product-img" alt="{{ item.name }}" />
             </td>
             <td>
               <strong class="text-danger">{{ item.name }}</strong
@@ -62,7 +62,7 @@
         <div class="border p-3 total-price">
           <strong class="h5">Tổng tiền: {{ totalPrice | number: '1.0-0' }}₫</strong>
         </div>
-        <button class="btn btn-danger w-100 py-2 mt-3">TIẾN HÀNH THANH TOÁN</button>
+        <button [routerLink]="'/checkout'" class="btn btn-danger w-100 py-2 mt-3">TIẾN HÀNH THANH TOÁN</button>
       </div>
     </div>
   </div>

@@ -6,7 +6,6 @@ import { LoginService } from './login.service'; // Import LoginService
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router'; // Để sử dụng các routerLink trong template
-
 @Component({
   selector: 'jhi-login',
   standalone: true, // Đảm bảo LoginComponent là standalone
@@ -53,6 +52,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
           this.authenticationError = false;
           console.log('Login successful');
           alert('đăng nhập thành công');
+
           this.router.navigate(['/']); // Navigate to home page after successful login
         },
         error: err => {

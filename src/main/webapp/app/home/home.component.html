@@ -182,7 +182,7 @@
                 <div class="d-flex justify-content-between">
                   <span style="color: #fe6f32" class="product-price fw-semibold">{{ product.price | number }}đ</span>
                   <img
-                    (click)="addToCart(product, null)"
+                    (click)="addToCart(product)"
                     style="width: 20px !important; cursor: pointer"
                     src="content/images/cart/cart-828282.svg"
                     alt=""
@@ -534,7 +534,6 @@
         </div>
       </div>
     </div>
-
     <!---------------------------------------------------------------------------------------->
     <div class="d-flex justify-content-center align-items-center py-3 mt-4">
       <a href="#" title="Kinh nghiệm cho mẹ" class="btn hot-btn"> Kinh nghiệm cho mẹ </a>

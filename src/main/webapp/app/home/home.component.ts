@@ -34,16 +34,19 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   banners: any[] = []; // Array to hold banners
   productss: any[] = [];
-  user: any = {};
+  userloading: any = {};
+
   private apiUrl = 'http://localhost:8080/api/banners'; // Replace with your actual API endpoint
   private apiProductUrl = 'http://localhost:8080/api/products'; // api sản phẩm
   private apiGetUserId = 'http://localhost:8080/api/users/get-username'; // lay nguoi dung dang nhap
 
+  private apiLogout = 'http://localhost:8080/api/users';
+
   constructor(private http: HttpClient) {} // Inject HttpClient into the component
   ngOnInit(): void {
+    this.loadIdUser(); // goi session
     this.loadBanners(); // Call the function to load banners on component init
     this.loadProduct(); // goi san pham
-    this.loadIdUser(); // goi session
     new Swiper('.product-slider', {
       slidesPerView: 2, // Hiển thị 2 sản phẩm cùng lúc
       spaceBetween: 12, // Khoảng cách giữa các sản phẩm
@@ -149,61 +152,41 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   loadIdUser(): void {
-    this.http.get<any>(this.apiGetUserId).subscribe(
-      response => {
-        if (response.status === 'success') {
-          this.user = response.data; // ✅ Lấy đúng mảng data
-        } else {
-          console.error('Error: API returned non-success status');
-        }
-      },
-      error => {
-        console.error('Error fetching banners:', error); // Xử lý lỗi
-      },
-    );
+    const userJson = localStorage.getItem('user');
+    if (userJson) {
+      this.userloading = JSON.parse(userJson);
+      console.log('User loaded from localStorage:', this.userloading);
+      // alert(JSON.stringify(this.userloading));
+    } else {
+      console.warn('Không tìm thấy user  >> localstorate.');
+    }
   }
 
-  addToCart(product: any, userId: number | null) {
-    if (userId) {
-      // Người dùng đã đăng nhập -> Gọi API để thêm vào giỏ hàng server
-      const cartItem = {
-        userId: userId,
-        productId: product.id_product,
-        quantity: 1, // Hoặc bạn cho chọn số lượng
-      };
+  addToCart(product: any) {
+    // Lấy giỏ hàng hiện tại từ localStorage (nếu có)
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-      // Gọi API thêm vào giỏ hàng
-      this.http.post('/api/cart/add', cartItem).subscribe(
-        response => {
-          alert('Thêm vào giỏ hàng server thành công');
-        },
-        error => {
-          console.error('Lỗi thêm vào giỏ hàng server', error);
-        },
-      );
+    // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+    const existingItem = cart.find((item: any) => item.productId === product.id_product);
+    if (existingItem) {
+      // Nếu đã có, tăng số lượng
+      existingItem.quantity += 1;
     } else {
-      // Khách vãng lai -> Lưu LocalStorage
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-      // Kiểm tra nếu sản phẩm đã tồn tại trong giỏ hàng, tăng quantity
-      const existingItem = cart.find((item: any) => item.productId === product.id_product);
-      if (existingItem) {
-        existingItem.quantity += 1; // Nếu sản phẩm đã tồn tại, tăng số lượng
-      } else {
-        // Nếu chưa có, thêm sản phẩm vào giỏ hàng
-        cart.push({
-          productId: product.id_product,
-          name: product.name,
-          price: product.price,
-          image: product.image,
-          quantity: 1, // Mặc định số lượng là 1 khi thêm sản phẩm mới
-        });
-      }
-
-      // Lưu lại giỏ hàng vào localStorage
-      localStorage.setItem('cart', JSON.stringify(cart));
-      alert('Thêm vào giỏ hàng local thành công');
+      // Nếu chưa có, thêm sản phẩm mới
+      cart.push({
+        productId: product.id_product,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      });
     }
+
+    // Lưu giỏ hàng trở lại localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Thông báo thành công
+    alert('Thêm vào giỏ hàng thành công');
   }
 
   loadProduct(): void {
@@ -221,5 +204,23 @@ export default class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
+  // Phương thức đăng xuất (logout)
+  logout(): void {
+    // Gọi API logout từ server
+    this.http.post(`${this.apiLogout}/logout`, {}).subscribe(
+      response => {
+        // Xóa token hoặc dữ liệu xác thực
+        localStorage.removeItem('user');
+        sessionStorage.removeItem('auth_token');
+
+        // Điều hướng về trang login
+        this.router.navigate(['/login']);
+      },
+      error => {
+        console.error('Logout failed:', error);
+        // Xử lý lỗi nếu cần
+      },
+    );
+  }
   //  ----------------------------------------------------------------
 }

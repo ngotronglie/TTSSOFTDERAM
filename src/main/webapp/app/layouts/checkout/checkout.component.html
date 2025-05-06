@@ -1,0 +1,56 @@
+<section class="mb-5">
+  <div class="container py-4">
+    <h3 class="mb-4 text-uppercase fw-bold">Thông tin thanh toán</h3>
+
+    <!-- Form thông tin thanh toán -->
+    <form (ngSubmit)="onSubmit()" #checkoutForm="ngForm">
+      <div class="row">
+        <!-- Thông tin cá nhân -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="fullName" class="form-label">Họ và tên</label>
+            <input type="text" class="form-control" id="fullName" [(ngModel)]="order.fullName" name="fullName" required />
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" [(ngModel)]="order.email" name="email" required />
+          </div>
+        </div>
+
+        <!-- Địa chỉ giao hàng -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="address" class="form-label">Địa chỉ giao hàng</label>
+            <input type="text" class="form-control" id="address" [(ngModel)]="order.address" name="address" required />
+          </div>
+          <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Số điện thoại</label>
+            <input type="text" class="form-control" id="phoneNumber" [(ngModel)]="order.phoneNumber" name="phoneNumber" required />
+          </div>
+        </div>
+      </div>
+
+      <!-- Phương thức thanh toán -->
+      <div class="mb-3">
+        <label class="form-label">Phương thức thanh toán</label>
+        <select class="form-control" [(ngModel)]="order.paymentMethod" name="paymentMethod" required>
+          <option value="cash">Thanh toán khi nhận hàng</option>
+          <option value="credit">Thẻ tín dụng</option>
+          <option value="paypal">PayPal</option>
+        </select>
+      </div>
+      <!-- Tổng tiền -->
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <a [routerLink]="'/cart'" class="btn btn-outline-secondary w-100 py-2">Quay lại giỏ hàng</a>
+        </div>
+        <div class="col-md-6 text-end">
+          <div class="border p-3 total-price">
+            <strong class="h5">Tổng tiền: {{ totalPrice | number: '1.0-0' }}₫</strong>
+          </div>
+          <button class="btn btn-danger w-100 py-2 mt-3" type="submit">Xác nhận thanh toán</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
