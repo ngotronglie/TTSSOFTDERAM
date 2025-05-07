@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.OrderRequest;
 import com.example.backend.entity.Orders;
 import com.example.backend.service.OrdersService;
 import jakarta.validation.Valid;
@@ -9,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 @CrossOrigin(origins = {"http://localhost:9000", "http://localhost:9090"}) // Hạn chế CORS cho các origin cụ thể
@@ -22,6 +24,22 @@ public class OrdersController {
     public OrdersController(OrdersService ordersService) {
         this.ordersService = ordersService;
     }
+
+
+    // API tạo đơn hàng (gọi service saveOrder từ OrdersServiceImpl)
+    @PostMapping("/user-add")
+    public ApiResponse<Orders> createOrder(@RequestBody OrderRequest orderRequest) {
+        try {
+            // Gọi service và trả luôn response
+            return ordersService.saveOrder(orderRequest);
+        } catch (Exception e) {
+            // Nếu có lỗi, trả về thông báo lỗi
+            List<String> errors = new ArrayList<>();
+            errors.add("Đã có lỗi xảy ra khi tạo đơn hàng: " + e.getMessage());
+            return new ApiResponse<>("error", "Lỗi khi tạo đơn hàng", LocalDateTime.now(), null, errors);
+        }
+    }
+
 
     @GetMapping
     public ApiResponse<List<Orders>> getAllOrders() {
@@ -42,6 +60,10 @@ public class OrdersController {
         }
         return ordersService.save(orders);
     }
+
+
+
+
 
     @PutMapping("/{id}")
     public ApiResponse<Orders> updateOrder(@PathVariable Long id, @Valid @RequestBody Orders orders,

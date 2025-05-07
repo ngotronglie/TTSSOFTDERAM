@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.OrderRequest;
 import com.example.backend.entity.Orders;
 
 import java.util.List;
@@ -11,4 +12,6 @@ public interface OrdersService {
     ApiResponse<Orders> save(Orders orders);
     ApiResponse<Orders> update(Long id, Orders orders);
     ApiResponse<String> deleteById(Long id);
+    ApiResponse<Orders> saveOrder(OrderRequest orderRequest);
+
 }

@@ -23,7 +23,7 @@ public class OrderDetail {
     private int quantity;
 
     @Column(name = "price", nullable = false)
-    private int price;
+    private double price;
 
     @Column(name = "created_at")
     private LocalDateTime created_at;
@@ -55,14 +55,6 @@ public class OrderDetail {
         this.order_id = order_id;
     }
 
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
     public int getProduct_id() {
         return product_id;
     }
@@ -73,6 +65,13 @@ public class OrderDetail {
 
     public int getQuantity() {
         return quantity;
+    }
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public void setQuantity(int quantity) {
