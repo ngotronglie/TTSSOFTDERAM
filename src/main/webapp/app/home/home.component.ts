@@ -162,7 +162,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  addToCart(product: any) {
+  addToCart(product: any, idUser: number = 0) {
     // Lấy giỏ hàng hiện tại từ localStorage (nếu có)
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
@@ -179,6 +179,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
         price: product.price,
         image: product.image,
         quantity: 1,
+        idUser: idUser,
       });
     }
 
@@ -203,7 +204,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
       },
     );
   }
-
   // Phương thức đăng xuất (logout)
   logout(): void {
     // Gọi API logout từ server

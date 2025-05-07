@@ -58,10 +58,6 @@ const routes: Routes = [
     data: { title: 'Tin tuc' },
   },
   {
-    path: 'checkout',
-    loadComponent: () => import('./layouts/checkout/checkout.component').then(m => m.CheckoutComponent),
-  },
-  {
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
   },
