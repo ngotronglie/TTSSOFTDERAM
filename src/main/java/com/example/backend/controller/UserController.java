@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
@@ -23,9 +24,11 @@ import java.util.*;
 public class UserController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -145,7 +148,7 @@ public class UserController {
             user.setFirstname(firstname);
             user.setLastname(lastname);
             user.setEmail(email);
-            user.setPassword(password);
+            user.setPassword(passwordEncoder.encode(password));
             user.setPhone(phone);
             user.setRole_id(role_id);
             user.setAvatar(avatarUrl);
@@ -260,7 +263,8 @@ public class UserController {
             user.setFirstname(firstname);
             user.setLastname(lastname);
             user.setEmail(email);
-            user.setPassword(password);
+//            user.setPassword(password);
+            user.setPassword(passwordEncoder.encode(password));
             user.setPhone(phone);
             user.setRole_id(role_id);
             user.setEmail_verified_at(email_verified_at);

@@ -1,6 +1,6 @@
 package com.example.backend.security;
 
-import lombok.Value;
+import com.example.backend.config.JwtConfig;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -10,22 +10,28 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-//    @Value("${jwt.secret}")
-    private String secret;
+    private final JwtConfig jwtConfig;
 
-    private final long expiration = 1000 * 60 * 60 * 10; // 10h
+    public JwtUtil(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+    }
 
-    public String generateToken(String email) {
+    public String generateToken( Long idUser, String email) {
         return Jwts.builder()
+                .claim("id", idUser)
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpirationTime()))
+                .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecretKey())
                 .compact();
     }
 
     public String extractEmail(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser()
+                .setSigningKey(jwtConfig.getSecretKey())
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public boolean validateToken(String token, String email) {
@@ -33,6 +39,11 @@ public class JwtUtil {
     }
 
     private boolean isTokenExpired(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getExpiration().before(new Date());
+        return Jwts.parser()
+                .setSigningKey(jwtConfig.getSecretKey())
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration()
+                .before(new Date());
     }
 }

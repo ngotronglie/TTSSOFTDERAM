@@ -17,4 +17,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT new com.example.backend.dto.UserTDO(u.id_user, u.firstname, u.lastname, u.email, u.avatar, u.role_id) FROM User u WHERE u.email = :email AND u.password = :password")
     Optional<UserTDO> findByEmailAndPassword(String email, String password);
 
+
 }

@@ -1,11 +1,9 @@
 package com.example.backend.dto;
 
 
+import java.util.List;
 
 public class UserTDO {
-
-
-
 
     private Long id_user;
     private String firstname;
@@ -13,6 +11,10 @@ public class UserTDO {
     private String email;
     private String avatar;
     private Long role_id;
+
+//    private List<OrderRequest> products;
+
+
 
     public UserTDO() {
     }

@@ -1,6 +1,8 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.AuthTDO;
+import com.example.backend.dto.LoginRequest;
 import com.example.backend.dto.UserTDO;
 import com.example.backend.entity.User;
 
@@ -16,6 +18,8 @@ public interface UserService {
     ApiResponse<User> update(Long id, User user);
 
     ApiResponse<String> deleteById(Long id);
+
+    ApiResponse<AuthTDO> authenticate(LoginRequest loginRequest);
 
     // Thêm phương thức findByEmailAndPassword
     ApiResponse<UserTDO> findByEmailAndPassword(String email, String password);

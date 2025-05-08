@@ -1,9 +1,14 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.AuthTDO;
+import com.example.backend.dto.LoginRequest;
 import com.example.backend.dto.UserTDO;
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
+import com.example.backend.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,11 +19,86 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     private final UserRepository userRepository;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
+
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
+
+
+
+    @Override
+    public ApiResponse<AuthTDO> authenticate(LoginRequest loginRequest) {
+        try {
+            // Tìm người dùng theo email
+            User user = userRepository.findByEmail(loginRequest.getEmail());
+
+            // Kiểm tra sự tồn tại của người dùng
+            if (user == null) {
+                return new ApiResponse<>(
+                        "error",
+                        "Người dùng không tồn tại với email: " + loginRequest.getEmail(),
+                        LocalDateTime.now(),
+                        null,
+                        List.of("Người dùng không tồn tại")
+                );
+            }
+
+            // Kiểm tra mật khẩu
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                return new ApiResponse<>(
+                        "error",
+                        "Mật khẩu không đúng",
+                        LocalDateTime.now(),
+                        null,
+                        List.of("Sai mật khẩu")
+                );
+            }
+
+            // Sinh JWT token
+            String token = jwtUtil.generateToken(user.getId_user(), user.getEmail());
+
+            // Tạo DTO trả về (bao gồm thông tin user + token)
+            AuthTDO authTDO = new AuthTDO();
+            authTDO.setId_user(user.getId_user());
+            authTDO.setFirstname(user.getFirstname());
+            authTDO.setLastname(user.getLastname());
+            authTDO.setEmail(user.getEmail());
+            authTDO.setRole_id(user.getRole_id());
+            authTDO.setToken(token);
+
+            // Trả về kết quả thành công
+            return new ApiResponse<>(
+                    "success",
+                    "Đăng nhập thành công",
+                    LocalDateTime.now(),
+                    authTDO,
+                    null
+            );
+
+        } catch (Exception e) {
+            return new ApiResponse<>(
+                    "error",
+                    "Lỗi khi xác thực người dùng",
+                    LocalDateTime.now(),
+                    null,
+                    List.of(e.getMessage())
+            );
+        }
+    }
+
+
+
+
 
     @Override
     public ApiResponse<List<User>> findAll() {
