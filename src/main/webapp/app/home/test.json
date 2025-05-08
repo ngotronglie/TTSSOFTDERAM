@@ -1,0 +1,144 @@
+{
+  "category 1": {
+    "image_category": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
+    "category_parent_child": {
+      "category_child_1": {
+        "id": 1,
+        "name": "name category_child_1"
+      },
+      "category_child_2": {
+        "id": 2,
+        "name": "name category_child_1"
+      },
+      "category_child_3": {
+        "id": 3,
+        "name": "name category_child_1"
+      },
+      "category_child_4": {
+        "id": 4,
+        "name": "name category_child_1"
+      }
+    },
+    "image_branch": {
+      "image_branch_1": {
+        "image_branch_id": 1,
+        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
+      },
+      "image_branch_2": {
+        "image_branch_id": 2,
+        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
+      },
+      "image_branch_3": {
+        "image_branch_id": 3,
+        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
+      },
+      "image_branch_4": {
+        "image_branch_id": 4,
+        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
+      }
+    },
+    "product": {
+      "product 1": {
+        "id": "1",
+        "name": "product 1",
+        "image": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
+        "price": 1000
+      },
+      "product 2": {
+        "id": "2",
+        "name": "product 1",
+        "image": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
+        "price": 1000
+      }
+    }
+  },
+  "category 2": {
+    "image_category": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
+    "category_parent_child": {
+      "category_child_1": {
+        "id": 1,
+        "name": "name category_child_1"
+      },
+      "category_child_2": {
+        "id": 2,
+        "name": "name category_child_1"
+      },
+      "category_child_3": {
+        "id": 3,
+        "name": "name category_child_1"
+      },
+      "category_child_4": {
+        "id": 4,
+        "name": "name category_child_1"
+      }
+    },
+    "image_branch": {
+      "image_branch_1": {
+        "image_branch_id": 1,
+        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
+      },
+      "image_branch_2": {
+        "image_branch_id": 2,
+        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
+      },
+      "image_branch_3": {
+        "image_branch_id": 3,
+        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
+      },
+      "image_branch_4": {
+        "image_branch_id": 4,
+        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
+      }
+    },
+    "product": {
+      "product 1": {
+        "id": "1",
+        "name": "product 1",
+        "image": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
+        "price": 1000
+      },
+      "product 2": {
+        "id": "2",
+        "name": "product 1",
+        "image": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
+        "price": 1000
+      }
+    }
+  }
+}
+
+//select * from CATEGORIES_PRODUCT
+//CREATE TABLE categories_product (
+//id_categories_product NUMBER(19) PRIMARY KEY,
+//name VARCHAR2(255),
+//image VARCHAR2(255),
+//parent_category_product_id NUMBER(10),
+//is_active NUMBER(1),
+//created_at TIMESTAMP,
+//updated_at TIMESTAMP
+//);
+//****************************************************************************************************************8
+//CREATE TABLE products (
+//id_product NUMBER(19) PRIMARY KEY,
+//category_id_product NUMBER(10),
+//image_varian_id NUMBER(10),
+//branch_id NUMBER(10),
+//city_id NUMBER(10),
+//name VARCHAR2(255),
+//price NUMBER(10, 2),
+//discount NUMBER(10, 2),
+//image VARCHAR2(255),
+//stock NUMBER(10),
+//description CLOB,
+//banner_show NUMBER(1),
+//created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+//);
+//****************************************************************************************************************8
+//CREATE TABLE image_branch (
+//id_image_branch NUMBER(19) PRIMARY KEY,
+//image_branch VARCHAR2(255),
+//is_status NUMBER(1) NOT NULL, -- Giá trị trạng thái có thể là 0 hoặc 1
+//created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+//);

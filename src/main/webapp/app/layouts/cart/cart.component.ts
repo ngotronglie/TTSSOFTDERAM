@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
@@ -9,10 +8,11 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule], // ❌ Xóa RouterLink nếu không dùng trong template
 })
 export default class CartComponent implements OnInit {
   cartItems: any[] = [];
+  user: any = null;
 
   order = {
     fullName: '',
@@ -26,6 +26,7 @@ export default class CartComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCart();
+    this.loadUser(); // ✅ Gọi hàm load user
   }
 
   loadCart(): void {
@@ -77,7 +78,6 @@ export default class CartComponent implements OnInit {
       return;
     }
 
-    // Tạo đơn hàng gửi lên backend
     const payload = {
       customerName: this.order.fullName,
       email: this.order.email,
@@ -91,6 +91,8 @@ export default class CartComponent implements OnInit {
         price: item.price,
       })),
     };
+
+    console.log(payload);
 
     this.http.post('/api/orders', payload).subscribe({
       next: () => {
@@ -109,5 +111,17 @@ export default class CartComponent implements OnInit {
         alert('Đặt hàng thất bại!');
       },
     });
+  }
+
+  loadUser(): void {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      this.user = JSON.parse(storedUser);
+
+      if (this.user.firstname && this.user.lastname && this.user.email) {
+        this.order.fullName = `${this.user.firstname} ${this.user.lastname}`;
+        this.order.email = this.user.email;
+      }
+    }
   }
 }

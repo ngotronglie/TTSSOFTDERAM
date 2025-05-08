@@ -153,6 +153,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   loadIdUser(): void {
     const userJson = localStorage.getItem('user');
+    console.log(userJson);
     if (userJson) {
       this.userloading = JSON.parse(userJson);
       console.log('User loaded from localStorage:', this.userloading);
@@ -182,7 +183,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
         idUser: idUser,
       });
     }
-
     // Lưu giỏ hàng trở lại localStorage
     localStorage.setItem('cart', JSON.stringify(cart));
 
