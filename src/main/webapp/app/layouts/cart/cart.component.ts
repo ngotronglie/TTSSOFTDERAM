@@ -94,7 +94,7 @@ export default class CartComponent implements OnInit {
 
     console.log(payload);
 
-    this.http.post('/api/orders', payload).subscribe({
+    this.http.post('/api/orders/user-add', payload).subscribe({
       next: () => {
         alert('Đặt hàng thành công!');
         this.clearCart();
@@ -103,7 +103,7 @@ export default class CartComponent implements OnInit {
           email: '',
           address: '',
           phoneNumber: '',
-          paymentMethod: 'cash',
+          paymentMethod: '',
         };
       },
       error: err => {
