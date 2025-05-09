@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
             }
 
             // Sinh JWT token
-            String token = jwtUtil.generateToken(user.getId_user(), user.getEmail());
+            String token = jwtUtil.generateToken(user.getId_user(), user.getEmail(), user.getRole_id());
 
             // Tạo DTO trả về (bao gồm thông tin user + token)
             AuthTDO authTDO = new AuthTDO();
@@ -168,7 +168,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResponse<UserTDO> findByEmailAndPassword(String email, String password) {
         Optional<UserTDO> userOptional = userRepository.findByEmailAndPassword(email, password);
-
         if (userOptional.isPresent()) {
             return new ApiResponse<>("success", "Đăng nhập thành công", LocalDateTime.now(), userOptional.get(), null);
         } else {
