@@ -1,0 +1,6 @@
+package com.example.backend.repository;
+import com.example.backend.entity.CategoryProduct;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CategoryProductChildRepository extends JpaRepository<CategoryProduct, Long> {
+}

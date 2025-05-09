@@ -8,3 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface CityReponsitory extends JpaRepository<City, Long> {
 
 }
+
+
+
