@@ -1,13 +1,15 @@
 package com.example.backend.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Map;
 
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class CategoryDTO {
     private String imageCategory;
     private Map<String, CategoryChildDTO> categoryParentChild;
