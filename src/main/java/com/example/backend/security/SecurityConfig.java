@@ -1,5 +1,6 @@
 package com.example.backend.security;
 
+import com.example.backend.filter.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,7 +25,6 @@ public class SecurityConfig {
     public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -32,9 +32,24 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
+                // Public APIs - Không cần xác thực
+                .requestMatchers("/auth/**").permitAll()  // Login, Register
+                .requestMatchers("/api/products/**").permitAll()  // Product APIs
+                .requestMatchers("/api/categories/**").permitAll()  // Category APIs
+                .requestMatchers("/api/cart/**").permitAll()  // Cart APIs
+                .requestMatchers("/api/orders/**").permitAll()  // Order APIs
+                .requestMatchers("/api/banners/**").permitAll()  // Banner APIs
+                .requestMatchers("/api/social-token/**").permitAll()  // Social token APIs
+                .requestMatchers("/uploads/**").permitAll()  // Uploaded files
+                .requestMatchers("/api/user/**").permitAll()
+                .requestMatchers("/api/users/create").permitAll()  // Allow user creation without authentication
+                
+                // Admin only APIs
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                // User management APIs - Cần xác thực và phân quyền
                 .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "USER")
+                
+                // All other APIs require authentication
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
