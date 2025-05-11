@@ -78,12 +78,17 @@ export default class CartComponent implements OnInit {
       return;
     }
 
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    const idUser = user.id_user ? user.id_user : 0;
     const payload = {
-      customerName: this.order.fullName,
+      userId: idUser,
+      fullName: this.order.fullName,
       email: this.order.email,
       address: this.order.address,
       phoneNumber: this.order.phoneNumber,
       paymentMethod: this.order.paymentMethod,
+      totalPrice: this.totalPrice,
       orderDetails: this.cartItems.map(item => ({
         productId: item.productId,
         productName: item.name,
