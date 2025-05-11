@@ -51,6 +51,8 @@ public class SecurityConfig {
                         .requestMatchers("api/image-varians").permitAll()
                         .requestMatchers("/api/order-detail/**").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
+                        .requestMatchers("/api/category-structure").permitAll()
+                        .requestMatchers("api/categories-products/upload").permitAll()
 
 
                         // Admin only APIs

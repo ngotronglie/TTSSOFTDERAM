@@ -9,6 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryChildDTO {
-    private Long id;
+    private Integer id;
     private String name;
 }

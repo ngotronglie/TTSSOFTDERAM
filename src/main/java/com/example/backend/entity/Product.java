@@ -16,31 +16,31 @@ public class Product {
     private Long id_product;
 
     @Column(name = "category_id_product")
-    private int category_id_product;
+    private Integer category_id_product;
 
     @Column(name = "image_varian_id")
-    private int image_varian_id;
+    private Integer image_varian_id;
 
     @Column(name = "branch_id")
-    private int branch_id;
+    private Integer branch_id;
 
     @Column(name = "city_id")
-    private int city_id;
+    private Integer city_id;
 
     @Column(name = "name")
     private String name;
 
     @Column(name = "price")
-    private float price;
+    private Float price;
 
     @Column(name = "discount")
-    private float discount;
+    private Float discount;
 
     @Column(name = "image") // cai nay la anh
     private String image;
 
     @Column(name = "stock")
-    private int stock;
+    private Integer stock;
 
     @Column(name = "description")
     @Lob
@@ -48,7 +48,7 @@ public class Product {
 
 
     @Column(name = "banner_show")
-    private int banner_show;
+    private Integer banner_show;
 
     @Column(name = "created_at")
     private LocalDateTime created_at;
@@ -56,35 +56,35 @@ public class Product {
     @Column(name = "updated_at")
     private LocalDateTime updated_at;
 
-    public int getBanner_show() {
+    public Integer getBanner_show() {
         return banner_show;
     }
 
-    public void setBanner_show(int banner_show) {
+    public void setBanner_show(Integer banner_show) {
         this.banner_show = banner_show;
     }
 
-    public int getBranch_id() {
+    public Integer getBranch_id() {
         return branch_id;
     }
 
-    public void setBranch_id(int branch_id) {
+    public void setBranch_id(Integer branch_id) {
         this.branch_id = branch_id;
     }
 
-    public int getCategory_id_product() {
+    public Integer getCategory_id_product() {
         return category_id_product;
     }
 
-    public void setCategory_id_product(int category_id_product) {
+    public void setCategory_id_product(Integer category_id_product) {
         this.category_id_product = category_id_product;
     }
 
-    public int getCity_id() {
+    public Integer getCity_id() {
         return city_id;
     }
 
-    public void setCity_id(int city_id) {
+    public void setCity_id(Integer city_id) {
         this.city_id = city_id;
     }
 
@@ -104,11 +104,11 @@ public class Product {
         this.description = description;
     }
 
-    public float getDiscount() {
+    public Float getDiscount() {
         return discount;
     }
 
-    public void setDiscount(float discount) {
+    public void setDiscount(Float discount) {
         this.discount = discount;
     }
 
@@ -128,11 +128,11 @@ public class Product {
         this.image = image;
     }
 
-    public int getImage_varian_id() {
+    public Integer getImage_varian_id() {
         return image_varian_id;
     }
 
-    public void setImage_varian_id(int image_varian_id) {
+    public void setImage_varian_id(Integer image_varian_id) {
         this.image_varian_id = image_varian_id;
     }
 
@@ -144,19 +144,19 @@ public class Product {
         this.name = name;
     }
 
-    public float getPrice() {
+    public Float getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(Float price) {
         this.price = price;
     }
 
-    public int getStock() {
+    public Integer getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 
