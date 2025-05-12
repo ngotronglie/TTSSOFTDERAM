@@ -1,109 +1,59 @@
 {
   "category 1": {
     "image_category": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
-    "category_parent_child": {
-      "category_child_1": {
+    "category_parent_child": [
+      {
         "id": 1,
         "name": "name category_child_1"
       },
-      "category_child_2": {
+      {
         "id": 2,
         "name": "name category_child_1"
       },
-      "category_child_3": {
+      {
         "id": 3,
         "name": "name category_child_1"
       },
-      "category_child_4": {
+      {
         "id": 4,
         "name": "name category_child_1"
       }
-    },
-    "image_branch": {
-      "image_branch_1": {
+    ],
+    "image_branch": [
+      {
         "image_branch_id": 1,
         "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
       },
-      "image_branch_2": {
+      {
         "image_branch_id": 2,
         "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
       },
-      "image_branch_3": {
+      {
         "image_branch_id": 3,
         "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
       },
-      "image_branch_4": {
+      {
         "image_branch_id": 4,
         "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
       }
-    },
-    "product": {
-      "product 1": {
+    ],
+    "product": [
+      {
         "id": "1",
         "name": "product 1",
         "image": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
         "price": 1000
       },
-      "product 2": {
+      {
         "id": "2",
         "name": "product 1",
         "image": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
         "price": 1000
       }
-    }
+    ]
   },
   "category 2": {
-    "image_category": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
-    "category_parent_child": {
-      "category_child_1": {
-        "id": 1,
-        "name": "name category_child_1"
-      },
-      "category_child_2": {
-        "id": 2,
-        "name": "name category_child_1"
-      },
-      "category_child_3": {
-        "id": 3,
-        "name": "name category_child_1"
-      },
-      "category_child_4": {
-        "id": 4,
-        "name": "name category_child_1"
-      }
-    },
-    "image_branch": {
-      "image_branch_1": {
-        "image_branch_id": 1,
-        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
-      },
-      "image_branch_2": {
-        "image_branch_id": 2,
-        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
-      },
-      "image_branch_3": {
-        "image_branch_id": 3,
-        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
-      },
-      "image_branch_4": {
-        "image_branch_id": 4,
-        "image_branch": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png"
-      }
-    },
-    "product": {
-      "product 1": {
-        "id": "1",
-        "name": "product 1",
-        "image": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
-        "price": 1000
-      },
-      "product 2": {
-        "id": "2",
-        "name": "product 1",
-        "image": "upload/lkjadhsflakjdhsflakjdhslfakjdhslakjxdflaksdhfjlaskdfhjalskdfhj.png",
-        "price": 1000
-      }
-    }
+    // Tương tự như category 1
   }
 }
 
