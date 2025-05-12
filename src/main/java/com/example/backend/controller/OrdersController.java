@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.OrderRequest;
+import com.example.backend.dto.UserOrderResponseDTO;
 import com.example.backend.entity.Orders;
 import com.example.backend.service.OrdersService;
 import jakarta.validation.Valid;
@@ -79,5 +80,18 @@ public class OrdersController {
     @DeleteMapping("/{id}")
     public ApiResponse<String> deleteOrder(@PathVariable Long id) {
         return ordersService.deleteById(id);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ApiResponse<List<UserOrderResponseDTO>> getUserOrders(@PathVariable int userId) {
+        return ordersService.getUserOrders(userId);
+    }
+
+
+
+    // API lấy đơn hàng theo mã code
+    @GetMapping("/code/{code}")
+    public ApiResponse<UserOrderResponseDTO> getOrderByCode(@PathVariable String code) {
+        return ordersService.getOrderByCode(code);
     }
 }
