@@ -75,8 +75,7 @@ public class CategoryStructureServiceImpl implements CategoryStructureService {
 
                 // Lấy tất cả sản phẩm thuộc danh mục cha và các danh mục con
                 List<Product> products = productRepository.findAll().stream()
-                        .filter(product -> product.getCategory_id_product() != null && 
-                                allCategoryIds.contains(product.getCategory_id_product()))
+                        .filter(product -> allCategoryIds.contains(product.getCategory_id_product()))
                         .collect(Collectors.toList());
 
                 // Tạo map cho sản phẩm
