@@ -19,7 +19,7 @@ export default class CartComponent implements OnInit {
     email: '',
     address: '',
     phoneNumber: '',
-    paymentMethod: 'cash',
+    paymentMethod: '1',
   };
 
   constructor(private http: HttpClient) {}

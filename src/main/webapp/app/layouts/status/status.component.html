@@ -1,44 +1,168 @@
-<div class="order-status">
+<div class="container mt-5 mb-5">
   <h2>Thông tin trạng thái đơn hàng</h2>
+  <div class="row mt-5">
+    <!-- Cột trái: Thông tin người dùng và đơn hàng -->
+    <div class="col-md-6">
+      <div *ngIf="user">
+        <!-- Thông báo nếu không có đơn hàng -->
+        <div *ngIf="noOrdersMessage; else orderDetails">
+          <p class="alert alert-warning">{{ noOrdersMessage }}</p>
+        </div>
 
-  <!-- Thông tin người mua -->
-  <div class="order-info">
-    <p><strong>Họ và tên:</strong> Liêm Ngô Trọng</p>
-    <p><strong>Email:</strong> user1 &#64; gmail.com</p>
-    <p><strong>Địa chỉ:</strong> thôn giao lac xã thái tho huyện thái thủy tỉnh thái bình</p>
-    <p><strong>Số điện thoại:</strong> 03762878382</p>
-    <p><strong>Phương thức thanh toán:</strong> Thanh toán tiền mặt</p>
-    <p><strong>Tổng giá trị:</strong> 69,000 VNĐ</p>
-  </div>
+        <!-- Nếu có đơn hàng, hiển thị thông tin người mua -->
+        <ng-template #orderDetails>
+          <div *ngFor="let order of OrderDetails" class="mb-4">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="mb-0">Đơn hàng mã: {{ order.code }}</h4>
+              </div>
+              <div class="card-body">
+                <!-- Thông tin người mua -->
+                <div class="mb-3">
+                  <h5>Thông tin người mua:</h5>
+                  <p><strong>Họ và tên:</strong> {{ order.fullName }}</p>
+                  <p><strong>Email:</strong> {{ order.email }}</p>
+                  <p><strong>Địa chỉ:</strong> {{ order.address }}</p>
+                  <p><strong>Số điện thoại:</strong> {{ order.phone }}</p>
+                  <p><strong>Phương thức thanh toán:</strong> {{ getPaymentMethodText(order.paymentMethod) }}</p>
+                </div>
 
-  <!-- Trạng thái đơn hàng -->
-  <div class="order-status-details">
-    <h3>Trạng thái đơn hàng:</h3>
-    <div class="status-processing">
-      <p>Đang xử lý</p>
+                <!-- Thông tin đơn hàng -->
+                <div class="mb-3">
+                  <p><strong>Tổng giá trị:</strong> {{ order.totalPrice | number: '1.0-0' }} VNĐ</p>
+                  <p>
+                    <strong>Trạng thái:</strong> <span [class]="getStatusClass(order.status)">{{ order.status }}</span>
+                  </p>
+                  <p><strong>Ngày tạo:</strong> {{ order.createdAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+                </div>
+
+                <!-- Chi tiết sản phẩm -->
+                <div class="mb-3">
+                  <h5>Chi tiết sản phẩm:</h5>
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>Ảnh</th>
+                          <th>Tên sản phẩm</th>
+                          <th>Số lượng</th>
+                          <th>Giá</th>
+                          <th>Thành tiền</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let product of order.orderDetails">
+                          <td>
+                            <img [src]="'http://localhost:8080' + product.productImage" alt="Ảnh sản phẩm" width="50" />
+                          </td>
+                          <td>{{ product.productName }}</td>
+                          <td>{{ product.quantity }}</td>
+                          <td>{{ product.price | number: '1.0-0' }} VNĐ</td>
+                          <td>{{ product.price * product.quantity | number: '1.0-0' }} VNĐ</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Nút hủy đơn hàng (chỉ hiển thị khi đơn hàng đang pending) -->
+                <button *ngIf="order.status === 'pending'" class="btn btn-danger" (click)="cancelOrder()">Hủy đơn hàng</button>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </div>
     </div>
 
-    <h3>Chi tiết sản phẩm:</h3>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Tên sản phẩm</th>
-          <th>Số lượng</th>
-          <th>Giá</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Sản phẩm A</td>
-          <td>2</td>
-          <td>34,000 VNĐ</td>
-        </tr>
-        <tr>
-          <td>Sản phẩm B</td>
-          <td>3</td>
-          <td>35,000 VNĐ</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Cột phải: Tìm kiếm đơn hàng -->
+    <div class="col-md-6">
+      <div class="card p-4">
+        <h4>Tìm kiếm đơn hàng</h4>
+        <form (ngSubmit)="searchOrder()">
+          <div class="form-group">
+            <label for="orderCode">Mã đơn hàng</label>
+            <div class="input-group">
+              <input
+                type="text"
+                id="orderCode"
+                class="form-control"
+                [(ngModel)]="orderCode"
+                name="orderCode"
+                placeholder="Nhập mã đơn hàng..."
+                [class.is-invalid]="searchError"
+              />
+              <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Tìm kiếm
+              </button>
+            </div>
+            <div *ngIf="searchError" class="alert alert-danger mt-2">
+              {{ searchError }}
+            </div>
+          </div>
+        </form>
+
+        <!-- Hiển thị kết quả tìm kiếm -->
+        <div *ngIf="searchedOrder" class="mt-4">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="mb-0">Đơn hàng mã: {{ searchedOrder.code }}</h4>
+            </div>
+            <div class="card-body">
+              <!-- Thông tin người mua -->
+              <div class="mb-3">
+                <h5>Thông tin người mua:</h5>
+                <p><strong>Họ và tên:</strong> {{ searchedOrder.fullName }}</p>
+                <p><strong>Email:</strong> {{ searchedOrder.email }}</p>
+                <p><strong>Địa chỉ:</strong> {{ searchedOrder.address }}</p>
+                <p><strong>Số điện thoại:</strong> {{ searchedOrder.phone }}</p>
+                <p><strong>Phương thức thanh toán:</strong> {{ getPaymentMethodText(searchedOrder.paymentMethod) }}</p>
+              </div>
+
+              <!-- Thông tin đơn hàng -->
+              <div class="mb-3">
+                <p><strong>Tổng giá trị:</strong> {{ searchedOrder.totalPrice | number: '1.0-0' }} VNĐ</p>
+                <p>
+                  <strong>Trạng thái:</strong> <span [class]="getStatusClass(searchedOrder.status)">{{ searchedOrder.status }}</span>
+                </p>
+                <p><strong>Ngày tạo:</strong> {{ searchedOrder.createdAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+
+              <!-- Chi tiết sản phẩm -->
+              <div class="mb-3">
+                <h5>Chi tiết sản phẩm:</h5>
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>Ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                        <th>Thành tiền</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let product of searchedOrder.orderDetails">
+                        <td>
+                          <img [src]="'http://localhost:8080' + product.productImage" alt="Ảnh sản phẩm" width="50" />
+                        </td>
+                        <td>{{ product.productName }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ product.price | number: '1.0-0' }} VNĐ</td>
+                        <td>{{ product.price * product.quantity | number: '1.0-0' }} VNĐ</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Nút hủy đơn hàng (chỉ hiển thị khi đơn hàng đang pending) -->
+              <button *ngIf="searchedOrder.status === 'pending'" class="btn btn-danger" (click)="cancelOrder()">Hủy đơn hàng</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
