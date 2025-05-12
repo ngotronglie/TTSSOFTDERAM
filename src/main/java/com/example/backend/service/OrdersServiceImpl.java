@@ -15,10 +15,7 @@ import com.example.backend.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -182,17 +179,30 @@ public class OrdersServiceImpl implements OrdersService {
                         // Convert order details to DTOs
                         List<OrderDetailDTO> orderDetailDTOs = orderDetails.stream()
                                 .map(detail -> {
-                                    Product product = productMap.get(detail.getProduct_id());
+                                    Long productId = (long) detail.getProduct_id(); // Ép kiểu int -> Long
+                                    Product product = productMap.get(productId);     // Lấy sản phẩm từ map (có thể null)
+
+                                    // Lấy tên sản phẩm an toàn bằng Optional
+                                    String productName = Optional.ofNullable(product)
+                                            .map(Product::getName)
+                                            .orElse("Unknown Product");
+
+                                    // Lấy ảnh sản phẩm an toàn
+                                    String productImage = Optional.ofNullable(product)
+                                            .map(Product::getImage)
+                                            .orElse("");
+
                                     return OrderDetailDTO.builder()
                                             .orderDetailId(detail.getId_order_detail())
-                                            .productId(detail.getProduct_id())
-                                            .productName(product != null ? product.getName() : "Unknown Product")
-                                            .productImage(product != null ? product.getImage() : "")
+                                            .productId(productId.intValue())
+                                            .productName(productName)
+                                            .productImage(productImage)
                                             .quantity(detail.getQuantity())
                                             .price(detail.getPrice())
                                             .build();
                                 })
                                 .collect(Collectors.toList());
+
 
                         // Create and return the order response DTO
                         return UserOrderResponseDTO.builder()
@@ -227,37 +237,49 @@ public class OrdersServiceImpl implements OrdersService {
             // Tìm đơn hàng theo code
             Orders order = ordersRepository.findByCode(code);
             if (order == null) {
-                List<String> errors = new ArrayList<>();
-                errors.add("Không tìm thấy đơn hàng với mã: " + code);
+                List<String> errors = List.of("Không tìm thấy đơn hàng với mã: " + code);
                 return new ApiResponse<>("error", "Không tìm thấy đơn hàng", LocalDateTime.now(), null, errors);
             }
 
-            // Lấy chi tiết đơn hàng
-            List<OrderDetail> orderDetails = orderDetailRepository.findAll().stream()
+            // Lấy tất cả chi tiết đơn hàng từ DB
+            List<OrderDetail> allOrderDetails = orderDetailRepository.findAll();
+
+            // Lọc ra chi tiết đơn hàng tương ứng với đơn hàng hiện tại
+            List<OrderDetail> orderDetails = allOrderDetails.stream()
                     .filter(detail -> detail.getOrder_id() == order.getId_order())
                     .collect(Collectors.toList());
 
-            // Lấy tất cả sản phẩm
+            // Lấy tất cả sản phẩm và build productMap
             List<Product> allProducts = productRepository.findAll();
             Map<Long, Product> productMap = allProducts.stream()
                     .collect(Collectors.toMap(Product::getId_product, product -> product));
 
-            // Convert OrderDetail -> OrderDetailDTO
+            // Chuyển OrderDetail thành OrderDetailDTO
             List<OrderDetailDTO> orderDetailDTOs = orderDetails.stream()
                     .map(detail -> {
-                        Product product = productMap.get(detail.getProduct_id());
+                        Long productId = (long) detail.getProduct_id(); // Ép int → Long để khớp với productMap
+                        Product product = productMap.get(productId);
+
+                        String productName = Optional.ofNullable(product)
+                                .map(Product::getName)
+                                .orElse("Unknown Product");
+
+                        String productImage = Optional.ofNullable(product)
+                                .map(Product::getImage)
+                                .orElse("");
+
                         return OrderDetailDTO.builder()
                                 .orderDetailId(detail.getId_order_detail())
-                                .productId(detail.getProduct_id())
-                                .productName(product != null ? product.getName() : "Unknown Product")
-                                .productImage(product != null ? product.getImage() : "")
+                                .productId(productId.intValue()) // ép về int nếu DTO dùng int
+                                .productName(productName)
+                                .productImage(productImage)
                                 .quantity(detail.getQuantity())
                                 .price(detail.getPrice())
                                 .build();
                     })
                     .collect(Collectors.toList());
 
-            // Build UserOrderResponseDTO
+            // Build response DTO
             UserOrderResponseDTO responseDTO = UserOrderResponseDTO.builder()
                     .orderId(order.getId_order())
                     .code(order.getCode())
@@ -272,12 +294,13 @@ public class OrdersServiceImpl implements OrdersService {
                     .orderDetails(orderDetailDTOs)
                     .build();
 
-            return new ApiResponse<>("success", "Lấy thông tin đơn hàng thành công", LocalDateTime.now(), responseDTO, null);
+            return new ApiResponse<>("success", "Lấy thông tin đơn hàng thành công",
+                    LocalDateTime.now(), responseDTO, null);
         } catch (Exception e) {
-            List<String> errors = new ArrayList<>();
-            errors.add("Lỗi khi lấy đơn hàng: " + e.getMessage());
+            List<String> errors = List.of("Lỗi khi lấy đơn hàng: " + e.getMessage());
             return new ApiResponse<>("error", "Lỗi hệ thống", LocalDateTime.now(), null, errors);
         }
     }
+
 
 }
