@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { CartService } from '../../services/cart.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'jhi-main-header',
@@ -7,16 +9,35 @@ import { Router, RouterLink } from '@angular/router';
   styleUrls: ['./main-header.component.scss'],
   imports: [RouterLink],
 })
-export class MainHeaderComponent implements OnInit {
+export class MainHeaderComponent implements OnInit, OnDestroy {
   userloading: any = {};
-  numberOfItems: number = 0; // Biến để lưu số lượng phần tử trong localStorage
+  numberOfItems = 0;
+  private subscription: Subscription;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private cartService: CartService,
+  ) {
+    this.subscription = this.cartService.getNumberOfItems().subscribe(count => {
+      this.numberOfItems = count;
+    });
+  }
 
   ngOnInit(): void {
     this.loadIdUser();
     this.checkLocalStorage();
+    // Initial load of cart items
+    this.cartService.getNumberOfItems().subscribe(count => {
+      this.numberOfItems = count;
+    });
   }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
   // Hàm để load thông tin người dùng từ localStorage
   loadIdUser(): void {
     const userJson = localStorage.getItem('user');

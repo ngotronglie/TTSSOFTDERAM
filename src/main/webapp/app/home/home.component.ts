@@ -12,6 +12,7 @@ import { CART_ITEMS, Sanphamhot } from 'app/data/sanphamhot/sanphamhot';
 import { CART_ITEMS_SUA, Suachoai } from 'app/data/suachoai/suachoai';
 import { PRODUCT_GROUPS, ProductGroup } from 'app/data/home-group';
 import { Product, PRODUCTS } from 'app/data/product';
+import { CartService } from '../services/cart.service';
 
 @Component({
   selector: 'jhi-home',
@@ -25,6 +26,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
+  private cartService: CartService;
 
   // State
   account = signal<Account | null>(null);
@@ -47,6 +49,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private readonly apiGetUserId = 'http://localhost:8080/api/users/get-username';
   private readonly apiLogout = 'http://localhost:8080/api/users/logout';
   private readonly apiShowProduct = 'http://localhost:8080/api/category-structure';
+
+  constructor(cartService: CartService) {
+    this.cartService = cartService;
+  }
 
   ngOnInit(): void {
     this.loadUser();
@@ -181,24 +187,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  addToCart(product: any, idUser: number = 0): void {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = cart.find((item: any) => item.productId === product.id_product);
-
-    if (existingItem) {
-      existingItem.quantity += 1;
-    } else {
-      cart.push({
-        productId: product.id_product,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        quantity: 1,
-        idUser,
-      });
-    }
-
-    localStorage.setItem('cart', JSON.stringify(cart));
+  addToCart(product: any): void {
+    this.cartService.addToCart(product);
     alert('Thêm vào giỏ hàng thành công');
   }
 }
