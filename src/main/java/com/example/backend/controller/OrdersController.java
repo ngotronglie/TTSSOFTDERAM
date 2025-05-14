@@ -77,6 +77,8 @@ public class OrdersController {
         return ordersService.update(id, orders);
     }
 
+
+
     @DeleteMapping("/{id}")
     public ApiResponse<String> deleteOrder(@PathVariable Long id) {
         return ordersService.deleteById(id);
@@ -93,5 +95,27 @@ public class OrdersController {
     @GetMapping("/code/{code}")
     public ApiResponse<UserOrderResponseDTO> getOrderByCode(@PathVariable String code) {
         return ordersService.getOrderByCode(code);
+    }
+
+    @PutMapping("/user/{userId}")
+    public ApiResponse<Orders> updateOrderByUserId(@PathVariable int userId, @Valid @RequestBody Orders orders,
+                                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage).collect(Collectors.toList());
+            return new ApiResponse<>("error", "Dữ liệu không hợp lệ", LocalDateTime.now(), null, errors);
+        }
+        return ordersService.updateByIdUser(userId, orders);
+    }
+
+    @PutMapping("/code/{code}")
+    public ApiResponse<Orders> updateOrderByCode(@PathVariable String code, @Valid @RequestBody Orders orders,
+                                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage).collect(Collectors.toList());
+            return new ApiResponse<>("error", "Dữ liệu không hợp lệ", LocalDateTime.now(), null, errors);
+        }
+        return ordersService.updateByCode(code, orders);
     }
 }

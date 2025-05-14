@@ -16,4 +16,6 @@ public interface OrdersService {
     ApiResponse<Orders> saveOrder(OrderRequest orderRequest);
     ApiResponse<List<UserOrderResponseDTO>> getUserOrders(int userId);
     ApiResponse<UserOrderResponseDTO> getOrderByCode(String code);
+    ApiResponse<Orders> updateByIdUser(int userId, Orders orders);
+    ApiResponse<Orders> updateByCode(String code, Orders orders);
 }

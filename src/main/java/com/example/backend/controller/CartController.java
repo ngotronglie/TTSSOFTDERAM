@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.CartRequestDTO;
 import com.example.backend.entity.Cart;
 import com.example.backend.entity.City;
 import com.example.backend.service.CartService;
@@ -80,5 +81,37 @@ public class CartController {
     @DeleteMapping("/{id}")
     public ApiResponse<String> deleteCart(@PathVariable Long id) {
         return cartService.deleteById(id);
+    }
+
+    @PostMapping("/add")
+    public ApiResponse<Cart> addToCart(@Valid @RequestBody CartRequestDTO cartRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            return new ApiResponse<>("error", "Dữ liệu không hợp lệ", LocalDateTime.now(), null, errors);
+        }
+        return cartService.addToCart(cartRequest);
+    }
+
+    @PutMapping("/update")
+    public ApiResponse<Cart> updateCartItem(@Valid @RequestBody CartRequestDTO cartRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            return new ApiResponse<>("error", "Dữ liệu không hợp lệ", LocalDateTime.now(), null, errors);
+        }
+        return cartService.updateCartItem(cartRequest);
+    }
+
+    @DeleteMapping("/remove/{userId}/{productId}")
+    public ApiResponse<String> removeFromCart(@PathVariable Integer userId, @PathVariable Integer productId) {
+        return cartService.removeFromCart(userId, productId);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ApiResponse<List<Cart>> getUserCart(@PathVariable Integer userId) {
+        return cartService.getUserCart(userId);
     }
 }

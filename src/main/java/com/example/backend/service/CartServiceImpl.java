@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.CartRequestDTO;
 import com.example.backend.entity.Cart;
 import com.example.backend.repository.CartRepository;
 import org.springframework.stereotype.Service;
@@ -8,14 +9,15 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
 
-    public CartServiceImpl(CartRepository cartRepository ) {
+    public CartServiceImpl(CartRepository cartRepository) {
         this.cartRepository = cartRepository;
     }
 
@@ -76,5 +78,115 @@ public class CartServiceImpl implements CartService {
         }
         cartRepository.deleteById(id);
         return new ApiResponse<>("success", "Xóa gio hang thành công", LocalDateTime.now(), "Deleted ID: " + id, null);
+    }
+
+    @Override
+    public ApiResponse<Cart> addToCart(CartRequestDTO cartRequest) {
+        try {
+            // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+            Optional<Cart> existingCartItem = cartRepository.findAll().stream()
+                    .filter(cart -> cart.getUser_id() == cartRequest.getUserId() 
+                            && cart.getProduct_id() == cartRequest.getProductId())
+                    .findFirst();
+
+            if (existingCartItem.isPresent()) {
+                // Nếu đã có, cập nhật số lượng
+                Cart cart = existingCartItem.get();
+                cart.setQuantity(cart.getQuantity() + cartRequest.getQuantity());
+                cart.setUpdated_at(LocalDateTime.now());
+                Cart updated = cartRepository.save(cart);
+                return new ApiResponse<>("success", "Cập nhật giỏ hàng thành công", 
+                        LocalDateTime.now(), updated, null);
+            } else {
+                // Nếu chưa có, tạo mới
+                Cart newCart = new Cart();
+                newCart.setUser_id(cartRequest.getUserId());
+                newCart.setProduct_id(cartRequest.getProductId());
+                newCart.setQuantity(cartRequest.getQuantity());
+                newCart.setCreated_at(LocalDateTime.now());
+                newCart.setUpdated_at(LocalDateTime.now());
+                
+                Cart saved = cartRepository.save(newCart);
+                return new ApiResponse<>("success", "Thêm vào giỏ hàng thành công", 
+                        LocalDateTime.now(), saved, null);
+            }
+        } catch (Exception e) {
+            List<String> errors = new ArrayList<>();
+            errors.add("Lỗi khi thêm vào giỏ hàng: " + e.getMessage());
+            return new ApiResponse<>("error", "Lỗi khi thêm vào giỏ hàng", 
+                    LocalDateTime.now(), null, errors);
+        }
+    }
+
+    @Override
+    public ApiResponse<Cart> updateCartItem(CartRequestDTO cartRequest) {
+        try {
+            Optional<Cart> existingCartItem = cartRepository.findAll().stream()
+                    .filter(cart -> cart.getUser_id() == cartRequest.getUserId() 
+                            && cart.getProduct_id() == cartRequest.getProductId())
+                    .findFirst();
+
+            if (existingCartItem.isPresent()) {
+                Cart cart = existingCartItem.get();
+                cart.setQuantity(cartRequest.getQuantity());
+                cart.setUpdated_at(LocalDateTime.now());
+                Cart updated = cartRepository.save(cart);
+                return new ApiResponse<>("success", "Cập nhật giỏ hàng thành công", 
+                        LocalDateTime.now(), updated, null);
+            } else {
+                List<String> errors = new ArrayList<>();
+                errors.add("Không tìm thấy sản phẩm trong giỏ hàng");
+                return new ApiResponse<>("error", "Không tìm thấy sản phẩm", 
+                        LocalDateTime.now(), null, errors);
+            }
+        } catch (Exception e) {
+            List<String> errors = new ArrayList<>();
+            errors.add("Lỗi khi cập nhật giỏ hàng: " + e.getMessage());
+            return new ApiResponse<>("error", "Lỗi khi cập nhật giỏ hàng", 
+                    LocalDateTime.now(), null, errors);
+        }
+    }
+
+    @Override
+    public ApiResponse<String> removeFromCart(Integer userId, Integer productId) {
+        try {
+            Optional<Cart> existingCartItem = cartRepository.findAll().stream()
+                    .filter(cart -> cart.getUser_id() == userId 
+                            && cart.getProduct_id() == productId)
+                    .findFirst();
+
+            if (existingCartItem.isPresent()) {
+                cartRepository.delete(existingCartItem.get());
+                return new ApiResponse<>("success", "Xóa sản phẩm khỏi giỏ hàng thành công", 
+                        LocalDateTime.now(), "Đã xóa sản phẩm", null);
+            } else {
+                List<String> errors = new ArrayList<>();
+                errors.add("Không tìm thấy sản phẩm trong giỏ hàng");
+                return new ApiResponse<>("error", "Không tìm thấy sản phẩm", 
+                        LocalDateTime.now(), null, errors);
+            }
+        } catch (Exception e) {
+            List<String> errors = new ArrayList<>();
+            errors.add("Lỗi khi xóa sản phẩm khỏi giỏ hàng: " + e.getMessage());
+            return new ApiResponse<>("error", "Lỗi khi xóa sản phẩm", 
+                    LocalDateTime.now(), null, errors);
+        }
+    }
+
+    @Override
+    public ApiResponse<List<Cart>> getUserCart(Integer userId) {
+        try {
+            List<Cart> userCart = cartRepository.findAll().stream()
+                    .filter(cart -> cart.getUser_id() == userId)
+                    .collect(Collectors.toList());
+            
+            return new ApiResponse<>("success", "Lấy giỏ hàng thành công", 
+                    LocalDateTime.now(), userCart, null);
+        } catch (Exception e) {
+            List<String> errors = new ArrayList<>();
+            errors.add("Lỗi khi lấy giỏ hàng: " + e.getMessage());
+            return new ApiResponse<>("error", "Lỗi khi lấy giỏ hàng", 
+                    LocalDateTime.now(), null, errors);
+        }
     }
 }

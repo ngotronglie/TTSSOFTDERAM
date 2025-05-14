@@ -104,6 +104,42 @@ public class OrdersServiceImpl implements OrdersService {
 
 
     @Override
+    public ApiResponse<Orders> updateByIdUser(int UserId, Orders orders) {
+        // Tìm đơn hàng theo userId
+        List<Orders> userOrders = ordersRepository.findAll().stream()
+                .filter(order -> order.getUser_id() == UserId)
+                .collect(Collectors.toList());
+
+        if (userOrders.isEmpty()) {
+            List<String> errors = new ArrayList<>();
+            errors.add("Không tìm thấy đơn hàng cho user với id: " + UserId);
+            return new ApiResponse<>("error", "Không tìm thấy đơn hàng", LocalDateTime.now(), null, errors);
+        }
+
+        // Cập nhật thông tin đơn hàng
+        Orders existing = userOrders.get(0);
+        existing.setStatus_orders(orders.getStatus_orders());
+        Orders updated = ordersRepository.save(existing);
+        return new ApiResponse<>("success", "Cập nhật đơn hàng thành công", LocalDateTime.now(), updated, null);
+    }
+
+    @Override
+    public ApiResponse<Orders> updateByCode(String code, Orders orders) {
+        // Tìm đơn hàng theo code
+        Orders existing = ordersRepository.findByCode(code);
+        if (existing == null) {
+            List<String> errors = new ArrayList<>();
+            errors.add("Không tìm thấy đơn hàng với mã: " + code);
+            return new ApiResponse<>("error", "Không tìm thấy đơn hàng", LocalDateTime.now(), null, errors);
+        }
+
+        // Cập nhật thông tin đơn hàng
+        existing.setStatus_orders(orders.getStatus_orders());
+        Orders updated = ordersRepository.save(existing);
+        return new ApiResponse<>("success", "Cập nhật đơn hàng thành công", LocalDateTime.now(), updated, null);
+    }
+
+    @Override
     public ApiResponse<Orders> update(Long id, Orders orders) {
         Orders existing = ordersRepository.findById(id).orElse(null);
         if (existing == null) {
@@ -267,7 +303,6 @@ public class OrdersServiceImpl implements OrdersService {
                         String productImage = Optional.ofNullable(product)
                                 .map(Product::getImage)
                                 .orElse("");
-
                         return OrderDetailDTO.builder()
                                 .orderDetailId(detail.getId_order_detail())
                                 .productId(productId.intValue()) // ép về int nếu DTO dùng int
