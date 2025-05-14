@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'jhi-shop',
@@ -35,7 +36,10 @@ export default class ShopComponent implements OnInit {
 
   sortOption: string = 'default';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cartService: CartService,
+  ) {}
 
   ngOnInit(): void {
     this.getProducts();
@@ -142,24 +146,8 @@ export default class ShopComponent implements OnInit {
     this.applyFilters();
   }
 
-  addToCart(product: any, idUser: number = 0): void {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = cart.find((item: any) => item.productId === product.id_product);
-
-    if (existingItem) {
-      existingItem.quantity += 1;
-    } else {
-      cart.push({
-        productId: product.id_product,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        quantity: 1,
-        idUser,
-      });
-    }
-
-    localStorage.setItem('cart', JSON.stringify(cart));
+  addToCart(product: any): void {
+    this.cartService.addToCart(product);
     alert('Thêm vào giỏ hàng thành công');
   }
 }
