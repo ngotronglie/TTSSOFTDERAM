@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 interface OrderDetail {
   orderDetailId: number;
@@ -34,6 +35,10 @@ interface ApiResponse {
   errors: any;
 }
 
+interface UpdateOrderRequest {
+  status_orders: string;
+}
+
 @Component({
   selector: 'jhi-status',
   standalone: true,
@@ -50,7 +55,10 @@ export class StatusComponent implements OnInit {
   isLoading: boolean = false;
   searchError: string = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     const userData = localStorage.getItem('user');
@@ -115,9 +123,56 @@ export class StatusComponent implements OnInit {
     });
   }
 
-  cancelOrder(): void {
-    // Implement cancel order logic here
-    alert('Hủy đơn hàng thành công!');
+  cancelOrderByCode(code: string): void {
+    if (!code) {
+      alert('Mã đơn hàng không hợp lệ!');
+      return;
+    }
+
+    const updateData: UpdateOrderRequest = {
+      status_orders: 'tra hang',
+    };
+
+    this.http.put<ApiResponse>(`http://localhost:8080/api/orders/code/${code}`, updateData).subscribe({
+      next: response => {
+        if (response.status === 'success') {
+          alert('Cập nhật trạng thái đơn hàng thành công!');
+          // Reload the searched order to show updated status
+          this.searchOrder();
+        } else {
+          alert('Cập nhật trạng thái đơn hàng thất bại!');
+        }
+      },
+      error: error => {
+        console.error('Error updating order:', error);
+        alert('Lỗi khi cập nhật trạng thái đơn hàng. Vui lòng thử lại sau.');
+      },
+    });
+  }
+
+  cancelOrder(orderId: number): void {
+    const updateData: UpdateOrderRequest = {
+      status_orders: 'tra hang',
+    };
+
+    this.http.put<ApiResponse>(`http://localhost:8080/api/orders/user/${this.user.id_user}`, updateData).subscribe({
+      next: response => {
+        if (response.status === 'success') {
+          alert('Cập nhật trạng thái đơn hàng thành công!');
+          // Reload orders after update
+          this.loadOrdersForUser(this.user.id_user);
+          // Clear search if it was showing
+          this.searchedOrder = null;
+          this.orderCode = '';
+        } else {
+          alert('Cập nhật trạng thái đơn hàng thất bại!');
+        }
+      },
+      error: error => {
+        console.error('Error updating order:', error);
+        alert('Lỗi khi cập nhật trạng thái đơn hàng. Vui lòng thử lại sau.');
+      },
+    });
   }
 
   getStatusClass(status: string): string {
@@ -127,6 +182,8 @@ export class StatusComponent implements OnInit {
       case 'completed':
         return 'text-success';
       case 'cancelled':
+        return 'text-danger';
+      case 'tra hang':
         return 'text-danger';
       default:
         return 'text-secondary';
@@ -142,5 +199,46 @@ export class StatusComponent implements OnInit {
       default:
         return 'Không xác định';
     }
+  }
+
+  buyAgain(order: Order): void {
+    // Add all products from the order to cart
+    order.orderDetails.forEach(detail => {
+      // Fetch complete product information
+      this.http.get<any>(`http://localhost:8080/api/products/${detail.productId}`).subscribe({
+        next: productResponse => {
+          if (productResponse.status === 'success' && productResponse.data) {
+            const product = productResponse.data;
+            const cartItem = {
+              productId: detail.productId,
+              quantity: detail.quantity,
+              productName: product.name,
+              productImage: product.image,
+              price: product.price,
+            };
+
+            // Add to cart using localStorage
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const existingItem = cart.find((item: any) => item.productId === detail.productId);
+
+            if (existingItem) {
+              existingItem.quantity += detail.quantity;
+            } else {
+              cart.push(cartItem);
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+          }
+        },
+        error: error => {
+          console.error('Error fetching product details:', error);
+          alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng. Vui lòng thử lại sau.');
+        },
+        complete: () => {
+          // Navigate to cart page after all products are processed
+          this.router.navigate(['/cart']);
+        },
+      });
+    });
   }
 }
