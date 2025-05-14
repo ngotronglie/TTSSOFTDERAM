@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule], // ❌ Xóa RouterLink nếu không dùng trong template
+  imports: [CommonModule, FormsModule],
 })
 export default class CartComponent implements OnInit {
   cartItems: any[] = [];
@@ -22,6 +22,9 @@ export default class CartComponent implements OnInit {
     paymentMethod: '1',
   };
 
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('user');
+  }
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
@@ -30,9 +33,23 @@ export default class CartComponent implements OnInit {
   }
 
   loadCart(): void {
-    const storedCart = localStorage.getItem('cart');
-    if (storedCart) {
-      this.cartItems = JSON.parse(storedCart);
+    if (this.isLoggedIn()) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const idUser = user.id_user ? user.id_user : 0;
+      this.http.get(`http://localhost:8080/api/cart/user/${idUser}`).subscribe({
+        next: (response: any) => {
+          this.cartItems = response.data;
+          console.log(this.cartItems);
+        },
+        error: (error: any) => {
+          console.error('Lỗi khi lấy giỏ hàng:', error);
+        },
+      });
+    } else {
+      const storedCart = localStorage.getItem('cart');
+      if (storedCart) {
+        this.cartItems = JSON.parse(storedCart);
+      }
     }
   }
 
@@ -40,32 +57,68 @@ export default class CartComponent implements OnInit {
     localStorage.setItem('cart', JSON.stringify(this.cartItems));
   }
 
-  increaseQuantity(item: any): void {
-    item.quantity++;
-    this.updateCart();
+  updateCartHttp(items: any) {
+    this.http.put('http://localhost:8080/api/cart/update', items).subscribe();
   }
 
-  decreaseQuantity(item: any): void {
-    if (item.quantity > 1) {
-      item.quantity--;
+  increaseQuantity(item: any): void {
+    if (this.isLoggedIn()) {
+      item.quantity++;
+      const items = {
+        userId: item.userId,
+        productId: item.productId,
+        quantity: item.quantity,
+      };
+      this.updateCartHttp(items);
+    } else {
+      item.quantity++;
       this.updateCart();
     }
   }
 
-  removeItem(index: number): void {
-    this.cartItems.splice(index, 1);
-    this.updateCart();
+  decreaseQuantity(item: any): void {
+    if (this.isLoggedIn()) {
+      if (item.quantity > 1) {
+        item.quantity--;
+        const items = {
+          userId: item.userId,
+          productId: item.productId,
+          quantity: item.quantity,
+        };
+        this.updateCartHttp(items);
+      }
+    } else {
+      if (item.quantity > 1) {
+        item.quantity--;
+        this.updateCart();
+      }
+    }
+  }
+
+  removeItem(index: number, item: any): void {
+    if (this.isLoggedIn()) {
+      console.log('user id: ' + item.userId);
+      console.log('product id : ' + item.productId);
+      this.http.delete(`http://localhost:8080/api/cart/remove/${item.userId}/${item.productId}`).subscribe();
+      this.cartItems.splice(index, 1);
+      console.log('dax chay qua day');
+    } else {
+      this.cartItems.splice(index, 1);
+      this.updateCart();
+    }
   }
 
   get totalPrice(): number {
     return this.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }
 
+  // xoas cart
   clearCart(): void {
     localStorage.removeItem('cart');
     this.cartItems = [];
   }
 
+  // submit
   onSubmit(): void {
     if (this.cartItems.length === 0) {
       alert('Giỏ hàng trống. Vui lòng thêm sản phẩm!');
@@ -73,13 +126,31 @@ export default class CartComponent implements OnInit {
     }
 
     const { fullName, email, address, phoneNumber } = this.order;
-    if (!fullName || !email || !address || !phoneNumber) {
-      alert('Vui lòng điền đầy đủ thông tin đơn hàng!');
+
+    let ThongBaoCart = [];
+
+    if (!fullName) {
+      ThongBaoCart.push('vui long nhap ho ten...');
+    }
+
+    if (!email) {
+      ThongBaoCart.push('vui long nhap email');
+    }
+
+    if (!address) {
+      ThongBaoCart.push('vui long nhap dia chi');
+    }
+
+    if (!phoneNumber) {
+      ThongBaoCart.push('vui long nhap so dien thoai');
+    }
+
+    if (ThongBaoCart.length > 0) {
+      alert(ThongBaoCart.join('\n'));
       return;
     }
 
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-
     const idUser = user.id_user ? user.id_user : 0;
     const payload = {
       userId: idUser,

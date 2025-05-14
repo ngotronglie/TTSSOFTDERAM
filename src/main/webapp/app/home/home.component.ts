@@ -41,8 +41,11 @@ export default class HomeComponent implements OnInit, OnDestroy {
   productss: any[] = [];
   productAll: any[] = [];
 
-  private readonly destroy$ = new Subject<void>();
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('user');
+  }
 
+  private readonly destroy$ = new Subject<void>();
   // API Endpoints
   private readonly apiUrl = 'http://localhost:8080/api/banners';
   private readonly apiProductUrl = 'http://localhost:8080/api/products';
@@ -55,11 +58,11 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initSwipers();
     this.loadUser();
     this.loadBanners();
     this.loadProducts();
     this.loadAllProducts();
-    this.initSwipers();
   }
 
   ngOnDestroy(): void {
@@ -178,7 +181,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.http.post(this.apiLogout, {}).subscribe({
       next: () => {
         localStorage.removeItem('user');
-        sessionStorage.removeItem('auth_token');
         this.router.navigate(['/login']);
       },
       error: error => {
@@ -188,7 +190,22 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   addToCart(product: any): void {
-    this.cartService.addToCart(product);
-    alert('Thêm vào giỏ hàng thành công');
+    if (this.isLoggedIn()) {
+      alert('>>>>>>>>>>>>>>>> bạn đã đăng nhập');
+      console.table(product);
+      return;
+      // this.http.post().subscribe({
+      //   next: () => {
+      //     localStorage.removeItem('user');
+      //     this.router.navigate(['/login']);
+      //   },
+      //   error: error => {
+      //     console.error('Logout failed:', error);
+      //   },
+      // });
+    } else {
+      this.cartService.addToCart(product);
+      alert('Thêm vào giỏ hàng thành công');
+    }
   }
 }

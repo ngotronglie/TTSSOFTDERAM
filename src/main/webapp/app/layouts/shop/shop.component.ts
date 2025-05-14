@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
@@ -9,7 +8,7 @@ import { CartService } from '../../services/cart.service';
   selector: 'jhi-shop',
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.scss'],
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
 })
 export default class ShopComponent implements OnInit {
   products: any[] = [];
@@ -43,6 +42,10 @@ export default class ShopComponent implements OnInit {
 
   ngOnInit(): void {
     this.getProducts();
+  }
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('user');
   }
 
   getProducts(): void {
@@ -147,7 +150,31 @@ export default class ShopComponent implements OnInit {
   }
 
   addToCart(product: any): void {
-    this.cartService.addToCart(product);
-    alert('Thêm vào giỏ hàng thành công');
+    if (this.isLoggedIn()) {
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        const user = JSON.parse(userJson);
+        console.log(user);
+        const cartData = {
+          userId: user.id_user,
+          productId: product.id,
+          quantity: 1,
+        };
+        console.log(cartData);
+        this.http.post('http://localhost:8080/api/cart/add', cartData).subscribe({
+          next: response => {
+            console.log('Product added to cart:', response);
+            alert('Thêm vào giỏ hàng thành công');
+          },
+          error: error => {
+            console.error('Error adding to cart:', error);
+            alert('Có lỗi xảy ra khi thêm vào giỏ hàng');
+          },
+        });
+      }
+    } else {
+      this.cartService.addToCart(product);
+      alert('Thêm vào giỏ hàng thành công');
+    }
   }
 }

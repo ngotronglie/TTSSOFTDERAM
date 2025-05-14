@@ -1,64 +1,63 @@
-<div class="row">
-  <!-- GIỎ HÀNG -->
-  <section class="mb-5 col-md-6">
-    <div class="bread-crumb">
-      <div class="container p-4" aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-          <li class="breadcrumb-item active" aria-current="page"><b>Giỏ hàng</b></li>
-        </ol>
-      </div>
+<section class="mb-5">
+  <div class="bread-crumb">
+    <div class="container p-4" aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><b>Giỏ hàng</b></li>
+      </ol>
     </div>
+  </div>
+</section>
 
-    <div class="container my-4">
-      <h3 class="mb-3 text-uppercase fw-bold">Giỏ hàng của bạn</h3>
+<div class="row">
+  <div class="container my-4 col-md-6">
+    <h3 class="mb-3 text-uppercase fw-bold">Giỏ hàng của bạn</h3>
 
-      <div class="table-responsive" *ngIf="cartItems.length > 0; else emptyCart">
-        <table class="table table-bordered text-center align-middle">
-          <thead class="bg-danger text-white">
-            <tr>
-              <th>Ảnh</th>
-              <th>Tên</th>
-              <th>Giá</th>
-              <th>Số lượng</th>
-              <th>Tạm tính</th>
-              <th>Xoá</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of cartItems; let i = index">
-              <td><img [src]="'http://localhost:8080' + item.image" class="img-thumbnail" style="width: 60px" alt="{{ item.name }}" /></td>
-              <td>
-                <strong>{{ item.name }}</strong>
-              </td>
-              <td>{{ item.price | number: '1.0-0' }}₫</td>
-              <td>
-                <div class="d-flex justify-content-center align-items-center">
-                  <button class="btn btn-sm btn-light" (click)="decreaseQuantity(item)">-</button>
-                  <span class="mx-2">{{ item.quantity }}</span>
-                  <button class="btn btn-sm btn-light" (click)="increaseQuantity(item)">+</button>
-                </div>
-              </td>
-              <td>{{ item.price * item.quantity | number: '1.0-0' }}₫</td>
-              <td><button class="btn btn-outline-danger btn-sm" (click)="removeItem(i)">✖</button></td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="table-responsive" *ngIf="cartItems.length > 0; else emptyCart">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="bg-danger text-white">
+          <tr>
+            <th>Ảnh</th>
+            <th>Tên</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Tạm tính</th>
+            <th>Xoá</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of cartItems; let i = index">
+            <td><img [src]="'http://localhost:8080' + item.image" class="img-thumbnail" style="width: 60px" alt="{{ item.name }}" /></td>
+            <td>
+              <strong>{{ item.name }}</strong>
+            </td>
+            <td>{{ item.price | number: '1.0-0' }}₫</td>
+            <td>
+              <div class="d-flex justify-content-center align-items-center">
+                <button class="btn btn-sm btn-light" (click)="decreaseQuantity(item)">-</button>
+                <span class="mx-2">{{ item.quantity }}</span>
+                <button class="btn btn-sm btn-light" (click)="increaseQuantity(item)">+</button>
+              </div>
+            </td>
+            <td>{{ item.price * item.quantity | number: '1.0-0' }}₫</td>
+            <td><button class="btn btn-outline-danger btn-sm" (click)="removeItem(i, item)">✖</button></td>
+          </tr>
+        </tbody>
+      </table>
 
-        <div class="d-flex justify-content-between mt-3">
-          <button class="btn btn-outline-danger">Tiếp tục mua hàng</button>
-          <div class="text-end">
-            <strong class="h5">Tổng tiền: {{ totalPrice | number: '1.0-0' }}₫</strong>
-          </div>
+      <div class="d-flex justify-content-between mt-3">
+        <button class="btn btn-outline-danger">Tiếp tục mua hàng</button>
+        <div class="text-end">
+          <strong class="h5">Tổng tiền: {{ totalPrice | number: '1.0-0' }}₫</strong>
         </div>
       </div>
-
-      <!-- Giỏ hàng trống -->
-      <ng-template #emptyCart>
-        <p class="text-muted text-center py-4">Giỏ hàng của bạn đang trống.</p>
-      </ng-template>
     </div>
-  </section>
+
+    <!-- Giỏ hàng trống -->
+    <ng-template #emptyCart>
+      <p class="text-muted text-center py-4">Giỏ hàng của bạn đang trống.</p>
+    </ng-template>
+  </div>
 
   <!-- FORM THANH TOÁN -->
   <section class="mb-5 col-md-6">
@@ -107,4 +106,5 @@
       </form>
     </div>
   </section>
+  >
 </div>
