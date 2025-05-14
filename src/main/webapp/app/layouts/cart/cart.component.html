@@ -10,9 +10,8 @@
 </section>
 
 <div class="row">
-  <div class="container my-4 col-md-6">
+  <div class="my-4 container col-md-6">
     <h3 class="mb-3 text-uppercase fw-bold">Giỏ hàng của bạn</h3>
-
     <div class="table-responsive" *ngIf="cartItems.length > 0; else emptyCart">
       <table class="table table-bordered text-center align-middle">
         <thead class="bg-danger text-white">
@@ -60,7 +59,7 @@
   </div>
 
   <!-- FORM THANH TOÁN -->
-  <section class="mb-5 col-md-6">
+  <div class="mb-5 col-md-6">
     <div class="container py-4">
       <h3 class="mb-4 text-uppercase fw-bold">Thông tin thanh toán</h3>
 
@@ -105,6 +104,5 @@
         </div>
       </form>
     </div>
-  </section>
-  >
+  </div>
 </div>
