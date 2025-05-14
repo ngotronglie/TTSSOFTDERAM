@@ -2,8 +2,11 @@ package com.example.backend.service;
 
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.CartRequestDTO;
+import com.example.backend.dto.CartDetailDTO;
 import com.example.backend.entity.Cart;
+import com.example.backend.entity.Product;
 import com.example.backend.repository.CartRepository;
+import com.example.backend.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,9 +19,11 @@ import java.util.stream.Collectors;
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
+    private final ProductRepository productRepository;
 
-    public CartServiceImpl(CartRepository cartRepository) {
+    public CartServiceImpl(CartRepository cartRepository, ProductRepository productRepository) {
         this.cartRepository = cartRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -174,14 +179,38 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public ApiResponse<List<Cart>> getUserCart(Integer userId) {
+    public ApiResponse<List<CartDetailDTO>> getUserCart(Integer userId) {
         try {
+            // Lấy danh sách giỏ hàng của user
             List<Cart> userCart = cartRepository.findAll().stream()
                     .filter(cart -> cart.getUser_id() == userId)
                     .collect(Collectors.toList());
-            
+
+            if (userCart.isEmpty()) {
+                return new ApiResponse<>("success", "Giỏ hàng trống", 
+                        LocalDateTime.now(), new ArrayList<>(), null);
+            }
+
+            // Chuyển đổi Cart thành CartDetailDTO
+            List<CartDetailDTO> cartDetails = new ArrayList<>();
+            for (Cart cart : userCart) {
+                Product product = productRepository.findById(Long.valueOf(cart.getProduct_id())).orElse(null);
+                if (product != null) {
+                    CartDetailDTO cartDetail = new CartDetailDTO(
+                        cart.getId_cart(),
+                        Integer.valueOf(cart.getUser_id()),
+                        Integer.valueOf(cart.getProduct_id()),
+                        product.getImage(),
+                        product.getName(),
+                        Integer.valueOf(cart.getQuantity()),
+                        product.getPrice()
+                    );
+                    cartDetails.add(cartDetail);
+                }
+            }
+
             return new ApiResponse<>("success", "Lấy giỏ hàng thành công", 
-                    LocalDateTime.now(), userCart, null);
+                    LocalDateTime.now(), cartDetails, null);
         } catch (Exception e) {
             List<String> errors = new ArrayList<>();
             errors.add("Lỗi khi lấy giỏ hàng: " + e.getMessage());

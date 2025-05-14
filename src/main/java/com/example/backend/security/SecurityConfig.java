@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public APIs - Không cần xác thực
                         .requestMatchers("/auth/**").permitAll()  // Login, Register
-                        .requestMatchers("/api/products").permitAll()  // Product APIs
+                        .requestMatchers("/api/products/**").permitAll()  // Product APIs
                         .requestMatchers("/api/categories/**").permitAll()  // Category APIs
                         .requestMatchers("/api/cart/**").permitAll()  // Cart APIs
                         .requestMatchers("/api/orders/**").permitAll()  // Order APIs

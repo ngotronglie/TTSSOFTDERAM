@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.CartDetailDTO;
 import com.example.backend.dto.CartRequestDTO;
 import com.example.backend.entity.Cart;
 import com.example.backend.entity.City;
@@ -111,7 +112,7 @@ public class CartController {
     }
 
     @GetMapping("/user/{userId}")
-    public ApiResponse<List<Cart>> getUserCart(@PathVariable Integer userId) {
+    public ApiResponse<List<CartDetailDTO>> getUserCart(@PathVariable Integer userId) {
         return cartService.getUserCart(userId);
     }
 }

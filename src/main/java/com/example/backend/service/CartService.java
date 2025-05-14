@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.CartRequestDTO;
+import com.example.backend.dto.CartDetailDTO;
 import com.example.backend.entity.Cart;
 import com.example.backend.entity.City;
 import com.example.backend.repository.CartRepository;
@@ -25,5 +26,5 @@ public interface CartService {
 
     ApiResponse<String> removeFromCart(Integer userId, Integer productId);
 
-    ApiResponse<List<Cart>> getUserCart(Integer userId);
+    ApiResponse<List<CartDetailDTO>> getUserCart(Integer userId);
 }
