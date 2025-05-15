@@ -4,7 +4,6 @@ import com.example.backend.dto.ApiResponse;
 import com.example.backend.entity.CategoryNew;
 import com.example.backend.service.CategoryNewService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

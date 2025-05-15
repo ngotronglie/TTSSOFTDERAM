@@ -218,4 +218,32 @@ public class CartServiceImpl implements CartService {
                     LocalDateTime.now(), null, errors);
         }
     }
+
+    @Override
+    public ApiResponse<String> clearUserCart(Integer userId) {
+        try {
+            // Lấy tất cả sản phẩm trong giỏ hàng của user
+            List<Cart> userCart = cartRepository.findAll().stream()
+                    .filter(cart -> cart.getUser_id() == userId)
+                    .collect(Collectors.toList());
+
+            if (userCart.isEmpty()) {
+                return new ApiResponse<>("success", "Giỏ hàng đã trống", 
+                        LocalDateTime.now(), "Không có sản phẩm nào trong giỏ hàng", null);
+            }
+
+            // Xóa tất cả sản phẩm trong giỏ hàng
+            for (Cart cart : userCart) {
+                cartRepository.delete(cart);
+            }
+
+            return new ApiResponse<>("success", "Xóa giỏ hàng thành công", 
+                    LocalDateTime.now(), "Đã xóa " + userCart.size() + " sản phẩm khỏi giỏ hàng", null);
+        } catch (Exception e) {
+            List<String> errors = new ArrayList<>();
+            errors.add("Lỗi khi xóa giỏ hàng: " + e.getMessage());
+            return new ApiResponse<>("error", "Lỗi khi xóa giỏ hàng", 
+                    LocalDateTime.now(), null, errors);
+        }
+    }
 }

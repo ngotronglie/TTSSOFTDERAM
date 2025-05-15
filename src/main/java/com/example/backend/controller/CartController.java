@@ -5,18 +5,13 @@ import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.CartDetailDTO;
 import com.example.backend.dto.CartRequestDTO;
 import com.example.backend.entity.Cart;
-import com.example.backend.entity.City;
 import com.example.backend.service.CartService;
-import com.example.backend.service.CartServiceImpl;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 @CrossOrigin(origins = {"http://localhost:9000", "http://localhost:9090"}) // Hạn chế CORS cho các origin cụ thể
@@ -114,5 +109,10 @@ public class CartController {
     @GetMapping("/user/{userId}")
     public ApiResponse<List<CartDetailDTO>> getUserCart(@PathVariable Integer userId) {
         return cartService.getUserCart(userId);
+    }
+
+    @DeleteMapping("/clear/{userId}")
+    public ApiResponse<String> clearUserCart(@PathVariable Integer userId) {
+        return cartService.clearUserCart(userId);
     }
 }

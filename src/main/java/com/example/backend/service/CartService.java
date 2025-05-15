@@ -27,4 +27,6 @@ public interface CartService {
     ApiResponse<String> removeFromCart(Integer userId, Integer productId);
 
     ApiResponse<List<CartDetailDTO>> getUserCart(Integer userId);
+
+    ApiResponse<String> clearUserCart(Integer userId);
 }
