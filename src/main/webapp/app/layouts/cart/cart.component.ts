@@ -39,7 +39,6 @@ export default class CartComponent implements OnInit {
       this.http.get(`http://localhost:8080/api/cart/user/${idUser}`).subscribe({
         next: (response: any) => {
           this.cartItems = response.data;
-          console.log(this.cartItems);
         },
         error: (error: any) => {
           console.error('Lỗi khi lấy giỏ hàng:', error);
@@ -118,6 +117,11 @@ export default class CartComponent implements OnInit {
     this.cartItems = [];
   }
 
+  clearCartHttp(Item: any) {
+    console.log(Item);
+    return;
+  }
+
   // submit
   onSubmit(): void {
     if (this.cartItems.length === 0) {
@@ -173,14 +177,20 @@ export default class CartComponent implements OnInit {
     this.http.post('/api/orders/user-add', payload).subscribe({
       next: () => {
         alert('Đặt hàng thành công!');
+
+        if (this.isLoggedIn()) {
+          console.log(idUser);
+          this.http.delete(`http://localhost:8080/api/cart/clear/${idUser}`).subscribe();
+        }
         this.clearCart();
-        this.order = {
-          fullName: '',
-          email: '',
-          address: '',
-          phoneNumber: '',
-          paymentMethod: '',
-        };
+        // this.order = {
+        //   fullName: '',
+        //   email: '',
+        //   address: '',
+        //   phoneNumber: '',
+        //   paymentMethod: '',
+        // };
+        window.location.href = '/status';
       },
       error: err => {
         console.error('Lỗi khi đặt hàng:', err);
