@@ -115,4 +115,9 @@ public class CartController {
     public ApiResponse<String> clearUserCart(@PathVariable Integer userId) {
         return cartService.clearUserCart(userId);
     }
+
+    @GetMapping("/count/{userId}")
+    public ApiResponse<Long> countUserCartItems(@PathVariable Integer userId) {
+        return cartService.countUserCartItems(userId);
+    }
 }

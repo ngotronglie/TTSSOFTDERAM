@@ -29,4 +29,6 @@ public interface CartService {
     ApiResponse<List<CartDetailDTO>> getUserCart(Integer userId);
 
     ApiResponse<String> clearUserCart(Integer userId);
+
+    ApiResponse<Long> countUserCartItems(Integer userId);
 }

@@ -246,4 +246,22 @@ public class CartServiceImpl implements CartService {
                     LocalDateTime.now(), null, errors);
         }
     }
+
+    @Override
+    public ApiResponse<Long> countUserCartItems(Integer userId) {
+        try {
+            long totalQuantity = cartRepository.findAll().stream()
+                    .filter(cart -> cart.getUser_id() == userId)
+                    .mapToLong(Cart::getQuantity)
+                    .sum();
+            
+            return new ApiResponse<>("success", "Đếm tổng số lượng sản phẩm trong giỏ hàng thành công", 
+                    LocalDateTime.now(), totalQuantity, null);
+        } catch (Exception e) {
+            List<String> errors = new ArrayList<>();
+            errors.add("Lỗi khi đếm số lượng sản phẩm trong giỏ hàng: " + e.getMessage());
+            return new ApiResponse<>("error", "Lỗi khi đếm số lượng sản phẩm trong giỏ hàng", 
+                    LocalDateTime.now(), null, errors);
+        }
+    }
 }
