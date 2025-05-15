@@ -52,15 +52,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/order-detail/**").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
                         .requestMatchers("/api/category-structure").permitAll()
-                        .requestMatchers("api/categories-products/upload").permitAll()
-
-
+                        .requestMatchers("/api/categories-products/upload").permitAll()
+                        .requestMatchers("/api/comment-new/**").permitAll()
+                        .requestMatchers("/api/news").permitAll()
                         // Admin only APIs
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
                         // User management APIs - Cần xác thực và phân quyền
                         .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "USER")
-
                         // All other APIs require authentication
                         .anyRequest().authenticated()
                 )
