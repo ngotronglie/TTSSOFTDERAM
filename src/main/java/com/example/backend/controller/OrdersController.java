@@ -98,6 +98,7 @@ public class OrdersController {
     }
 
     @PutMapping("/user/{userId}")
+//    không dùng cái này nữa /// lỗi rồi
     public ApiResponse<Orders> updateOrderByUserId(@PathVariable int userId, @Valid @RequestBody Orders orders,
                                            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
