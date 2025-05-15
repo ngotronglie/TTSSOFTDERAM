@@ -73,6 +73,9 @@
                   <button *ngIf="order.status === 'cancelled'" class="btn btn-primary" (click)="buyAgain(order)">
                     <i class="fas fa-shopping-cart me-2"></i>Mua lại
                   </button>
+                  <button class="btn btn-primary" *ngIf="order.status === 'completed'" (click)="buyAgain(order)">
+                    <i class="fas fa-shopping-cart me-2"></i>Mua lại
+                  </button>
                 </div>
               </div>
             </div>

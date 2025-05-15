@@ -52,6 +52,11 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     }
   }
 
+  //  login
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('user');
+  }
+
   // Hàm để load thông tin người dùng từ localStorage
   loadIdUser(): void {
     const userJson = localStorage.getItem('user'); // Lấy dữ liệu user dạng JSON
