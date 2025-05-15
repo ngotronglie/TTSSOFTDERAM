@@ -60,6 +60,9 @@ export class StatusComponent implements OnInit {
     private router: Router,
   ) {}
 
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('user');
+  }
   ngOnInit(): void {
     const userData = localStorage.getItem('user');
     if (userData) {
@@ -80,6 +83,7 @@ export class StatusComponent implements OnInit {
         if (response.status === 'success') {
           if (response.data && Array.isArray(response.data) && response.data.length > 0) {
             this.OrderDetails = response.data;
+            console.log(this.OrderDetails);
             this.noOrdersMessage = '';
           } else {
             this.noOrdersMessage = 'Bạn chưa có đơn hàng nào!';
@@ -148,9 +152,10 @@ export class StatusComponent implements OnInit {
         alert('Lỗi khi cập nhật trạng thái đơn hàng. Vui lòng thử lại sau.');
       },
     });
+    window.location.reload();
   }
-
-  cancelOrder(orderId: number): void {
+  // không dùng nữa
+  cancelOrder(code: string): void {
     const updateData: UpdateOrderRequest = {
       status_orders: 'cancelled',
     };
@@ -198,43 +203,52 @@ export class StatusComponent implements OnInit {
   }
 
   buyAgain(order: Order): void {
-    // Add all products from the order to cart
-    order.orderDetails.forEach(detail => {
-      // Fetch complete product information
-      this.http.get<any>(`http://localhost:8080/api/products/${detail.productId}`).subscribe({
-        next: productResponse => {
-          if (productResponse.status === 'success' && productResponse.data) {
-            const product = productResponse.data;
-            const cartItem = {
-              productId: detail.productId,
-              quantity: detail.quantity,
-              productName: product.name,
-              productImage: product.image,
-              price: product.price,
-            };
+    if (this.isLoggedIn()) {
+      // For logged in users, add to cart via API
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      order.orderDetails.forEach(detail => {
+        const cartHttp = {
+          userId: userData.id_user,
+          productId: detail.productId,
+          quantity: detail.quantity,
+        };
 
-            // Add to cart using localStorage
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            const existingItem = cart.find((item: any) => item.productId === detail.productId);
-
-            if (existingItem) {
-              existingItem.quantity += detail.quantity;
-            } else {
-              cart.push(cartItem);
-            }
-
-            localStorage.setItem('cart', JSON.stringify(cart));
-          }
-        },
-        error: error => {
-          console.error('Error fetching product details:', error);
-          alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng. Vui lòng thử lại sau.');
-        },
-        complete: () => {
-          // Navigate to cart page after all products are processed
-          this.router.navigate(['/cart']);
-        },
+        this.http.post('http://localhost:8080/api/cart/add', cartHttp).subscribe({
+          next: () => {
+            console.log('Đã thêm sản phẩm vào giỏ hàng!');
+          },
+          error: error => {
+            console.error('Error adding to cart:', error);
+            alert('Có lỗi xảy ra khi thêm vào giỏ hàng!');
+          },
+        });
+        window.location.href = '/cart';
       });
-    });
+    } else {
+      // For non-logged in users, store in localStorage
+      let cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+
+      order.orderDetails.forEach(detail => {
+        const cartItem = {
+          quantity: detail.quantity,
+          name: detail.productName,
+          image: detail.productImage,
+          price: detail.price,
+        };
+        // Check if product already exists in cart
+        const existingItemIndex = cartItems.findIndex((item: any) => item.productId === detail.productId);
+
+        if (existingItemIndex !== -1) {
+          // Update quantity if product exists
+          cartItems[existingItemIndex].quantity += detail.quantity;
+        } else {
+          // Add new item if product doesn't exist
+          cartItems.push(cartItem);
+        }
+      });
+
+      localStorage.setItem('cart', JSON.stringify(cartItems));
+      alert('Đã thêm sản phẩm vào giỏ hàng!');
+    }
   }
 }

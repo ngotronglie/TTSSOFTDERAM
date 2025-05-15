@@ -67,10 +67,10 @@
 
                 <!-- Nút hủy đơn hàng và mua lại -->
                 <div class="text-end mt-3">
-                  <button *ngIf="order.status === 'pending'" class="btn btn-danger me-2" (click)="cancelOrder(order.orderId)">
+                  <button *ngIf="order.status === 'pending'" class="btn btn-danger me-2" (click)="cancelOrderByCode(order.code)">
                     Hủy đơn hàng
                   </button>
-                  <button *ngIf="order.status === 'Cancelled'" class="btn btn-primary" (click)="buyAgain(order)">
+                  <button *ngIf="order.status === 'cancelled'" class="btn btn-primary" (click)="buyAgain(order)">
                     <i class="fas fa-shopping-cart me-2"></i>Mua lại
                   </button>
                 </div>
