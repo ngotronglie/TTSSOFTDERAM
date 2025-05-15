@@ -176,18 +176,14 @@ export class StatusComponent implements OnInit {
   }
 
   getStatusClass(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return 'text-warning';
-      case 'completed':
-        return 'text-success';
-      case 'cancelled':
-        return 'text-danger';
-      case 'tra hang':
-        return 'text-danger';
-      default:
-        return 'text-secondary';
-    }
+    const statusClasses: { [key: string]: string } = {
+      pending: 'text-info',
+      processing: 'text-warning',
+      completed: 'text-success',
+      cancelled: 'text-danger',
+    };
+
+    return statusClasses[status.toLowerCase()] || 'text-secondary';
   }
 
   getPaymentMethodText(method: string): string {

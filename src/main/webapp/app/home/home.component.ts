@@ -165,6 +165,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
       spaceBetween: 15,
       navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
       pagination: { el: '.swiper-pagination', clickable: true },
+      // loop: true,
       breakpoints: {
         0: { slidesPerView: 1, grid: { rows: 2 } },
         576: { slidesPerView: 2, grid: { rows: 2 } },
