@@ -1,0 +1,186 @@
+<div class="container mt-5 mb-5">
+  <h2>Thông tin trạng thái đơn hàng</h2>
+  <div class="row mt-5">
+    <!-- Cột trái: Thông tin người dùng và đơn hàng -->
+    <div class="col-md-6">
+      <div *ngIf="user">
+        <!-- Thông báo nếu không có đơn hàng -->
+        <div *ngIf="noOrdersMessage; else orderDetails">
+          <p class="alert alert-warning">{{ noOrdersMessage }}</p>
+        </div>
+
+        <!-- Nếu có đơn hàng, hiển thị thông tin người mua -->
+        <ng-template #orderDetails>
+          <div *ngFor="let order of OrderDetails" class="mb-4">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="mb-0">Đơn hàng mã: {{ order.code }}</h4>
+              </div>
+              <div class="card-body">
+                <!-- Thông tin người mua -->
+                <div class="mb-3">
+                  <h5>Thông tin người mua:</h5>
+                  <p><strong>Họ và tên:</strong> {{ order.fullName }}</p>
+                  <p><strong>Email:</strong> {{ order.email }}</p>
+                  <p><strong>Địa chỉ:</strong> {{ order.address }}</p>
+                  <p><strong>Số điện thoại:</strong> {{ order.phone }}</p>
+                  <p><strong>Phương thức thanh toán:</strong> {{ getPaymentMethodText(order.paymentMethod) }}</p>
+                </div>
+
+                <!-- Thông tin đơn hàng -->
+                <div class="mb-3">
+                  <p><strong>Tổng giá trị:</strong> {{ order.totalPrice | number: '1.0-0' }} VNĐ</p>
+                  <p>
+                    <strong>Trạng thái:</strong> <span [class]="getStatusClass(order.status)">{{ order.status }}</span>
+                  </p>
+                  <p><strong>Ngày tạo:</strong> {{ order.createdAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+                </div>
+
+                <!-- Chi tiết sản phẩm -->
+                <div class="mb-3">
+                  <h5>Chi tiết sản phẩm:</h5>
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>Ảnh</th>
+                          <th>Tên sản phẩm</th>
+                          <th>Số lượng</th>
+                          <th>Giá</th>
+                          <th>Thành tiền</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let product of order.orderDetails">
+                          <td>
+                            <img [src]="'http://localhost:8080' + product.productImage" alt="Ảnh sản phẩm" width="50" />
+                          </td>
+                          <td>{{ product.productName }}</td>
+                          <td>{{ product.quantity }}</td>
+                          <td>{{ product.price | number: '1.0-0' }} VNĐ</td>
+                          <td>{{ product.price * product.quantity | number: '1.0-0' }} VNĐ</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Nút hủy đơn hàng và mua lại -->
+                <div class="text-end mt-3">
+                  <button *ngIf="order.status === 'pending'" class="btn btn-danger me-2" (click)="cancelOrder(order.orderId)">
+                    Hủy đơn hàng
+                  </button>
+                  <button *ngIf="order.status === 'Cancelled'" class="btn btn-primary" (click)="buyAgain(order)">
+                    <i class="fas fa-shopping-cart me-2"></i>Mua lại
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Cột phải: Tìm kiếm đơn hàng -->
+    <div class="col-md-6">
+      <div class="card p-4">
+        <h4>Tìm kiếm đơn hàng</h4>
+        <form (ngSubmit)="searchOrder()">
+          <div class="form-group">
+            <label for="orderCode">Mã đơn hàng</label>
+            <div class="input-group">
+              <input
+                type="text"
+                id="orderCode"
+                class="form-control"
+                [(ngModel)]="orderCode"
+                name="orderCode"
+                placeholder="Nhập mã đơn hàng..."
+                [class.is-invalid]="searchError"
+              />
+              <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Tìm kiếm
+              </button>
+            </div>
+            <div *ngIf="searchError" class="alert alert-danger mt-2">
+              {{ searchError }}
+            </div>
+          </div>
+        </form>
+
+        <!-- Hiển thị kết quả tìm kiếm -->
+        <div *ngIf="searchedOrder" class="mt-4">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="mb-0">Đơn hàng mã: {{ searchedOrder.code }}</h4>
+            </div>
+            <div class="card-body">
+              <!-- Thông tin người mua -->
+              <div class="mb-3">
+                <h5>Thông tin người mua:</h5>
+                <p><strong>Họ và tên:</strong> {{ searchedOrder.fullName }}</p>
+                <p><strong>Email:</strong> {{ searchedOrder.email }}</p>
+                <p><strong>Địa chỉ:</strong> {{ searchedOrder.address }}</p>
+                <p><strong>Số điện thoại:</strong> {{ searchedOrder.phone }}</p>
+                <p><strong>Phương thức thanh toán:</strong> {{ getPaymentMethodText(searchedOrder.paymentMethod) }}</p>
+              </div>
+
+              <!-- Thông tin đơn hàng -->
+              <div class="mb-3">
+                <p><strong>Tổng giá trị:</strong> {{ searchedOrder.totalPrice | number: '1.0-0' }} VNĐ</p>
+                <p>
+                  <strong>Trạng thái:</strong> <span [class]="getStatusClass(searchedOrder.status)">{{ searchedOrder.status }}</span>
+                </p>
+                <p><strong>Ngày tạo:</strong> {{ searchedOrder.createdAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+
+              <!-- Chi tiết sản phẩm -->
+              <div class="mb-3">
+                <h5>Chi tiết sản phẩm:</h5>
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>Ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                        <th>Thành tiền</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let product of searchedOrder.orderDetails">
+                        <td>
+                          <img [src]="'http://localhost:8080' + product.productImage" alt="Ảnh sản phẩm" width="50" />
+                        </td>
+                        <td>{{ product.productName }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ product.price | number: '1.0-0' }} VNĐ</td>
+                        <td>{{ product.price * product.quantity | number: '1.0-0' }} VNĐ</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Nút hủy đơn hàng và mua lại -->
+              <div class="text-end mt-3">
+                <button
+                  *ngIf="searchedOrder.status === 'pending'"
+                  class="btn btn-danger me-2"
+                  (click)="cancelOrderByCode(searchedOrder.code)"
+                >
+                  Hủy đơn hàng
+                </button>
+                <button class="btn btn-primary" *ngIf="searchedOrder.status === 'Cancelled'" (click)="buyAgain(searchedOrder)">
+                  <i class="fas fa-shopping-cart me-2"></i>Mua lại
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

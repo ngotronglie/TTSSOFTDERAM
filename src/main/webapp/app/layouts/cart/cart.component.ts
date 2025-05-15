@@ -1,74 +1,213 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'jhi-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, FormsModule],
 })
 export default class CartComponent implements OnInit {
-  cartItems: any[] = []; // Mảng chứa các sản phẩm trong giỏ hàng
+  cartItems: any[] = [];
+  user: any = null;
+
+  order = {
+    fullName: '',
+    email: '',
+    address: '',
+    phoneNumber: '',
+    paymentMethod: '1',
+  };
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('user');
+  }
+  constructor(private http: HttpClient) {}
+
   ngOnInit(): void {
-    this.loadCart(); // Khi component được khởi tạo, tải dữ liệu giỏ hàng từ localStorage
+    this.loadCart();
+    this.loadUser(); // ✅ Gọi hàm load user
   }
-  // Lấy giỏ hàng từ localStorage
+
   loadCart(): void {
-    const storedCart = localStorage.getItem('cart');
-    if (storedCart) {
-      this.cartItems = JSON.parse(storedCart);
-    }
-  }
-  // Tính tổng tiền của giỏ hàng
-  get totalPrice(): number {
-    return this.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  }
-
-  // Tăng số lượng sản phẩm
-  increaseQuantity(item: any): void {
-    item.quantity++;
-    this.updateCart(); // Cập nhật lại giỏ hàng trong localStorage
-  }
-
-  // Giảm số lượng sản phẩm
-  decreaseQuantity(item: any): void {
-    if (item.quantity > 1) {
-      item.quantity--;
-      this.updateCart(); // Cập nhật lại giỏ hàng trong localStorage
+    if (this.isLoggedIn()) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const idUser = user.id_user ? user.id_user : 0;
+      this.http.get(`http://localhost:8080/api/cart/user/${idUser}`).subscribe({
+        next: (response: any) => {
+          this.cartItems = response.data;
+        },
+        error: (error: any) => {
+          console.error('Lỗi khi lấy giỏ hàng:', error);
+        },
+      });
+    } else {
+      const storedCart = localStorage.getItem('cart');
+      if (storedCart) {
+        this.cartItems = JSON.parse(storedCart);
+      }
     }
   }
 
-  // Cập nhật giỏ hàng trong localStorage
   updateCart(): void {
     localStorage.setItem('cart', JSON.stringify(this.cartItems));
   }
 
-  // Xóa sản phẩm khỏi giỏ hàng
-  removeItem(index: number): void {
-    this.cartItems.splice(index, 1);
-    this.updateCart(); // Cập nhật lại giỏ hàng trong localStorage
+  updateCartHttp(items: any) {
+    this.http.put('http://localhost:8080/api/cart/update', items).subscribe();
   }
 
-  // Thêm sản phẩm vào giỏ hàng
-  addToCart(product: any): void {
-    // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
-    const existingItem = this.cartItems.find(item => item.productId === product.productId);
-
-    if (existingItem) {
-      // Nếu sản phẩm đã tồn tại, tăng số lượng
-      existingItem.quantity++;
+  increaseQuantity(item: any): void {
+    if (this.isLoggedIn()) {
+      item.quantity++;
+      const items = {
+        userId: item.userId,
+        productId: item.productId,
+        quantity: item.quantity,
+      };
+      this.updateCartHttp(items);
     } else {
-      // Nếu chưa có, thêm sản phẩm mới vào giỏ hàng
-      this.cartItems.push({
-        productId: product.productId,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        quantity: 1,
-      });
+      item.quantity++;
+      this.updateCart();
     }
-    this.updateCart(); // Cập nhật lại giỏ hàng trong localStorage
+  }
+
+  decreaseQuantity(item: any): void {
+    if (this.isLoggedIn()) {
+      if (item.quantity > 1) {
+        item.quantity--;
+        const items = {
+          userId: item.userId,
+          productId: item.productId,
+          quantity: item.quantity,
+        };
+        this.updateCartHttp(items);
+      }
+    } else {
+      if (item.quantity > 1) {
+        item.quantity--;
+        this.updateCart();
+      }
+    }
+  }
+
+  removeItem(index: number, item: any): void {
+    if (this.isLoggedIn()) {
+      console.log('user id: ' + item.userId);
+      console.log('product id : ' + item.productId);
+      this.http.delete(`http://localhost:8080/api/cart/remove/${item.userId}/${item.productId}`).subscribe();
+      this.cartItems.splice(index, 1);
+      console.log('dax chay qua day');
+    } else {
+      this.cartItems.splice(index, 1);
+      this.updateCart();
+    }
+  }
+
+  get totalPrice(): number {
+    return this.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  }
+
+  // xoas cart
+  clearCart(): void {
+    localStorage.removeItem('cart');
+    this.cartItems = [];
+  }
+
+  clearCartHttp(Item: any) {
+    console.log(Item);
+    return;
+  }
+
+  // submit
+  onSubmit(): void {
+    if (this.cartItems.length === 0) {
+      alert('Giỏ hàng trống. Vui lòng thêm sản phẩm!');
+      return;
+    }
+
+    const { fullName, email, address, phoneNumber } = this.order;
+
+    let ThongBaoCart = [];
+
+    if (!fullName) {
+      ThongBaoCart.push('vui long nhap ho ten...');
+    }
+
+    if (!email) {
+      ThongBaoCart.push('vui long nhap email');
+    }
+
+    if (!address) {
+      ThongBaoCart.push('vui long nhap dia chi');
+    }
+
+    if (!phoneNumber) {
+      ThongBaoCart.push('vui long nhap so dien thoai');
+    }
+
+    if (ThongBaoCart.length > 0) {
+      alert(ThongBaoCart.join('\n'));
+      return;
+    }
+
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const idUser = user.id_user ? user.id_user : 0;
+    const payload = {
+      userId: idUser,
+      fullName: this.order.fullName,
+      email: this.order.email,
+      address: this.order.address,
+      phoneNumber: this.order.phoneNumber,
+      paymentMethod: this.order.paymentMethod,
+      totalPrice: this.totalPrice,
+      orderDetails: this.cartItems.map(item => ({
+        productId: item.productId,
+        productName: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+    };
+
+    console.log(payload);
+
+    this.http.post('/api/orders/user-add', payload).subscribe({
+      next: () => {
+        alert('Đặt hàng thành công!');
+
+        if (this.isLoggedIn()) {
+          console.log(idUser);
+          this.http.delete(`http://localhost:8080/api/cart/clear/${idUser}`).subscribe();
+        }
+        this.clearCart();
+        // this.order = {
+        //   fullName: '',
+        //   email: '',
+        //   address: '',
+        //   phoneNumber: '',
+        //   paymentMethod: '',
+        // };
+        window.location.href = '/status';
+      },
+      error: err => {
+        console.error('Lỗi khi đặt hàng:', err);
+        alert('Đặt hàng thất bại!');
+      },
+    });
+  }
+
+  loadUser(): void {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      this.user = JSON.parse(storedUser);
+
+      if (this.user.firstname && this.user.lastname && this.user.email) {
+        this.order.fullName = `${this.user.firstname} ${this.user.lastname}`;
+        this.order.email = this.user.email;
+      }
+    }
   }
 }

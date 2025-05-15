@@ -1,6 +1,10 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import Swiper from 'swiper';
+
 import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
@@ -8,10 +12,7 @@ import { CART_ITEMS, Sanphamhot } from 'app/data/sanphamhot/sanphamhot';
 import { CART_ITEMS_SUA, Suachoai } from 'app/data/suachoai/suachoai';
 import { PRODUCT_GROUPS, ProductGroup } from 'app/data/home-group';
 import { Product, PRODUCTS } from 'app/data/product';
-// Import Swiper
-import Swiper from 'swiper';
-import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { CartService } from '../services/cart.service';
 
 @Component({
   selector: 'jhi-home',
@@ -21,114 +22,47 @@ import { CommonModule } from '@angular/common';
   imports: [SharedModule, RouterModule, CommonModule],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
-  userId: number | null = null;
-  account = signal<Account | null>(null);
-  cartItems: Sanphamhot[] = CART_ITEMS;
-  cartItems_SUA: Suachoai[] = CART_ITEMS_SUA;
-  productGroups: ProductGroup[] = [];
-  products: Product[] = PRODUCTS;
-
-  private readonly destroy$ = new Subject<void>();
+  // Inject service
   private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
+  private readonly http = inject(HttpClient);
+  private cartService: CartService;
 
-  banners: any[] = []; // Array to hold banners
-  productss: any[] = [];
+  // State
+  account = signal<Account | null>(null);
+  userId: number | null = null;
   userloading: any = {};
 
-  private apiUrl = 'http://localhost:8080/api/banners'; // Replace with your actual API endpoint
-  private apiProductUrl = 'http://localhost:8080/api/products'; // api sản phẩm
-  private apiGetUserId = 'http://localhost:8080/api/users/get-username'; // lay nguoi dung dang nhap
+  banners: any[] = [];
+  productGroups: ProductGroup[] = PRODUCT_GROUPS;
+  products: Product[] = PRODUCTS;
+  cartItems: Sanphamhot[] = CART_ITEMS;
+  cartItems_SUA: Suachoai[] = CART_ITEMS_SUA;
+  productss: any[] = [];
+  productAll: any[] = [];
 
-  private apiLogout = 'http://localhost:8080/api/users';
-
-  constructor(private http: HttpClient) {} // Inject HttpClient into the component
-  ngOnInit(): void {
-    this.loadIdUser(); // goi session
-    this.loadBanners(); // Call the function to load banners on component init
-    this.loadProduct(); // goi san pham
-    new Swiper('.product-slider', {
-      slidesPerView: 2, // Hiển thị 2 sản phẩm cùng lúc
-      spaceBetween: 12, // Khoảng cách giữa các sản phẩm
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-      },
-    });
-    new Swiper('.for-slider', {
-      slidesPerView: 7, // Hiển thị 7 sản phẩm cùng lúc
-      spaceBetween: 8, // Khoảng cách giữa các sản phẩm
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-      },
-      breakpoints: {
-        0: {
-          slidesPerView: 2,
-        },
-        576: {
-          slidesPerView: 2,
-        },
-        768: {
-          slidesPerView: 3,
-        },
-        992: {
-          slidesPerView: 7,
-        },
-      },
-    });
-
-    new Swiper('.product-2-3', {
-      slidesPerView: 3, // mặc định 3 sản phẩm mỗi hàng
-      grid: {
-        rows: 2, // luôn 2 hàng
-        fill: 'row', // điền theo hàng
-      },
-      spaceBetween: 15,
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-      },
-      breakpoints: {
-        0: {
-          slidesPerView: 1, // màn nhỏ chỉ hiện 1 sản phẩm mỗi hàng => tổng 2 sản phẩm trên 2 hàng
-          grid: {
-            rows: 2,
-          },
-        },
-        576: {
-          slidesPerView: 2,
-          grid: {
-            rows: 2,
-          },
-        },
-        768: {
-          slidesPerView: 3,
-          grid: {
-            rows: 2,
-          },
-        },
-      },
-    });
-
-    this.productGroups = PRODUCT_GROUPS;
-    this.products = PRODUCTS;
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('user');
   }
 
-  login(): void {
-    this.router.navigate(['/login']);
+  private readonly destroy$ = new Subject<void>();
+  // API Endpoints
+  private readonly apiUrl = 'http://localhost:8080/api/banners';
+  private readonly apiProductUrl = 'http://localhost:8080/api/products';
+  private readonly apiGetUserId = 'http://localhost:8080/api/users/get-username';
+  private readonly apiLogout = 'http://localhost:8080/api/users/logout';
+  private readonly apiShowProduct = 'http://localhost:8080/api/category-structure';
+
+  constructor(cartService: CartService) {
+    this.cartService = cartService;
+  }
+
+  ngOnInit(): void {
+    this.initSwipers();
+    this.loadUser();
+    this.loadBanners();
+    this.loadProducts();
+    this.loadAllProducts();
   }
 
   ngOnDestroy(): void {
@@ -136,91 +70,152 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadBanners(): void {
-    this.http.get<any>(this.apiUrl).subscribe(
-      response => {
-        if (response.status === 'success') {
-          this.banners = response.data; // ✅ Lấy đúng mảng data
-        } else {
-          console.error('Error: API returned non-success status');
-        }
-      },
-      error => {
-        console.error('Error fetching banners:', error); // Xử lý lỗi
-      },
-    );
-  }
-
-  loadIdUser(): void {
+  private loadUser(): void {
     const userJson = localStorage.getItem('user');
     if (userJson) {
       this.userloading = JSON.parse(userJson);
-      console.log('User loaded from localStorage:', this.userloading);
-      // alert(JSON.stringify(this.userloading));
+      console.log('User loaded:', this.userloading);
     } else {
-      console.warn('Không tìm thấy user  >> localstorate.');
+      console.warn('No user found in localStorage.');
     }
   }
 
-  addToCart(product: any) {
-    // Lấy giỏ hàng hiện tại từ localStorage (nếu có)
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-    // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
-    const existingItem = cart.find((item: any) => item.productId === product.id_product);
-    if (existingItem) {
-      // Nếu đã có, tăng số lượng
-      existingItem.quantity += 1;
-    } else {
-      // Nếu chưa có, thêm sản phẩm mới
-      cart.push({
-        productId: product.id_product,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        quantity: 1,
-      });
-    }
-
-    // Lưu giỏ hàng trở lại localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
-
-    // Thông báo thành công
-    alert('Thêm vào giỏ hàng thành công');
-  }
-
-  loadProduct(): void {
-    this.http.get<any>(this.apiProductUrl).subscribe(
-      response => {
+  private loadBanners(): void {
+    this.http.get<any>(this.apiUrl).subscribe({
+      next: response => {
         if (response.status === 'success') {
-          this.productss = response.data; // ✅ Lấy đúng mảng data
+          this.banners = response.data;
         } else {
-          console.error('Error: API returned non-success status');
+          console.error('Failed to load banners.');
         }
       },
-      error => {
-        console.error('Error fetching banners:', error); // Xử lý lỗi
+      error: error => {
+        console.error('Error loading banners:', error);
       },
-    );
+    });
   }
 
-  // Phương thức đăng xuất (logout)
-  logout(): void {
-    // Gọi API logout từ server
-    this.http.post(`${this.apiLogout}/logout`, {}).subscribe(
-      response => {
-        // Xóa token hoặc dữ liệu xác thực
-        localStorage.removeItem('user');
-        sessionStorage.removeItem('auth_token');
+  private loadProducts(): void {
+    this.http.get<any>(this.apiProductUrl).subscribe({
+      next: response => {
+        if (response.status === 'success') {
+          this.productss = response.data;
+        } else {
+          console.error('Failed to load products.');
+        }
+      },
+      error: error => {
+        console.error('Error loading products:', error);
+      },
+    });
+  }
 
-        // Điều hướng về trang login
+  private loadAllProducts(): void {
+    this.http.get<any>(this.apiShowProduct).subscribe({
+      next: response => {
+        if (response.status === 'success') {
+          this.productAll = Object.keys(response.data).map(key => {
+            const item = response.data[key];
+            return {
+              categoryName: key,
+              imageCategory: item.image_category,
+              branches: item.image_branch,
+              products: Object.values(item.product),
+              children: Object.values(item.category_parent_child),
+            };
+          });
+          console.log('All Products:', this.productAll);
+        } else {
+          console.error('Failed to load all products.');
+        }
+      },
+      error: error => {
+        console.error('Error loading all products:', error);
+      },
+    });
+  }
+
+  private initSwipers(): void {
+    // Product slider
+    new Swiper('.product-slider', {
+      slidesPerView: 2,
+      spaceBetween: 12,
+      navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+      pagination: { el: '.swiper-pagination', clickable: true },
+    });
+
+    // For slider
+    new Swiper('.for-slider', {
+      slidesPerView: 7,
+      spaceBetween: 8,
+      navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: {
+        0: { slidesPerView: 2 },
+        576: { slidesPerView: 2 },
+        768: { slidesPerView: 3 },
+        992: { slidesPerView: 7 },
+      },
+    });
+
+    // Product 2x3 grid
+    new Swiper('.product-2-3', {
+      slidesPerView: 3,
+      grid: { rows: 2, fill: 'row' },
+      spaceBetween: 15,
+      navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: {
+        0: { slidesPerView: 1, grid: { rows: 2 } },
+        576: { slidesPerView: 2, grid: { rows: 2 } },
+        768: { slidesPerView: 3, grid: { rows: 2 } },
+      },
+    });
+  }
+
+  login(): void {
+    this.router.navigate(['/login']);
+  }
+
+  logout(): void {
+    this.http.post(this.apiLogout, {}).subscribe({
+      next: () => {
+        localStorage.removeItem('user');
         this.router.navigate(['/login']);
       },
-      error => {
+      error: error => {
         console.error('Logout failed:', error);
-        // Xử lý lỗi nếu cần
       },
-    );
+    });
   }
-  //  ----------------------------------------------------------------
+
+  addToCart(product: any): void {
+    if (this.isLoggedIn()) {
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        const user = JSON.parse(userJson);
+        console.log(user);
+        console.log(product);
+        const cartData = {
+          userId: user.id_user,
+          productId: product.id,
+          quantity: 1,
+        };
+        console.log(cartData);
+        this.http.post('http://localhost:8080/api/cart/add', cartData).subscribe({
+          next: response => {
+            console.log('Product added to cart:', response);
+            alert('Thêm vào giỏ hàng thành công');
+          },
+          error: error => {
+            console.error('Error adding to cart:', error);
+            alert('Có lỗi xảy ra khi thêm vào giỏ hàng');
+          },
+        });
+      }
+    } else {
+      this.cartService.addToCart(product);
+      alert('Thêm vào giỏ hàng thành công');
+    }
+  }
 }

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Authority } from 'app/config/authority.constants';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { errorRoute } from './layouts/error/error.route';
+import { StatusComponent } from './layouts/status/status.component';
 const routes: Routes = [
   {
     path: '',
@@ -20,10 +21,6 @@ const routes: Routes = [
     },
     canActivate: [UserRouteAccessService],
     loadChildren: () => import('./admin/admin.routes'),
-  },
-  {
-    path: 'account',
-    loadChildren: () => import('./account/account.route'),
   },
   {
     path: 'login',
@@ -58,8 +55,8 @@ const routes: Routes = [
     data: { title: 'Tin tuc' },
   },
   {
-    path: 'checkout',
-    loadComponent: () => import('./layouts/checkout/checkout.component').then(m => m.CheckoutComponent),
+    path: 'status',
+    loadComponent: () => import('./layouts/status/status.component').then(m => StatusComponent),
   },
   {
     path: '',

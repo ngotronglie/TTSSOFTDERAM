@@ -85,333 +85,68 @@
   <!--  ------------------------------------------------------>
 
   <div class="container mt-5">
-    <div class="row mt-5">
-      <div class="col-xl-2 col-12 block-title-cate">
-        <div class="box-title-left">
-          <h2 class="h2-element-left" style="content: '1' !important">
-            <a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a>
-          </h2>
+    <div *ngFor="let category of productAll">
+      <div class="row mt-5">
+        <!-- Bên trái -->
+        <div class="col-xl-2 col-12 block-title-cate">
+          <div class="box-title-left">
+            <h2 class="h2-element-left">
+              <a [href]="category.url" [title]="category.categoryName">{{ category.categoryName }}</a>
+            </h2>
+          </div>
+          <div class="block-cate d-flex flex-column">
+            <a *ngFor="let child of category.children" class="d-xl-block d-none" href="">{{ child.name }}</a>
+          </div>
+          <div class="block-vendor d-flex flex-wrap gap-1">
+            <a *ngFor="let branch of category.branches" href="#">
+              <img class="image-branch m-1" [src]="'http://localhost:8080' + branch.image_branch" alt="branch" />
+            </a>
+          </div>
         </div>
-        <div class="btn-more-cate d-xl-none"></div>
-        <div class="block-cate d-flex flex-column">
-          <a class="d-xl-block d-none" href="">cho be 0-6 thang</a>
-          <a class="d-xl-block d-none" href="">cho be 6-12 thang</a>
-          <a class="d-xl-block d-none" href="">cho be tren 1 tuoi</a>
-          <a class="d-xl-block d-none" href="">Xem tat ca</a>
-          <a class="d-xl-block d-none" href="">Xem tat ca</a>
+
+        <!-- Banner giữa -->
+        <div class="col-xl-3 col-lg-4 col-md-4 col-12 block-banner">
+          <div class="banner">
+            <a [href]="category.bannerUrl" [title]="category.categoryName">
+              <img
+                style="width: 100%"
+                class="img-responsive lazyload loaded rounded"
+                [src]="'http://localhost:8080' + category.imageCategory"
+                [alt]="category.categoryName"
+              />
+            </a>
+          </div>
         </div>
-        <div class="block-vendor d-flex flex-wrap gap-1">
-          <a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            />
-          </a>
-          <a href="#">
-            <img
-              class="image-branch"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            />
-          </a>
-        </div>
-      </div>
-      <div class="col-xl-3 col-lg-4 col-md-4 col-12 block-banner">
-        <div class="banner">
-          <a href="https://thegioisua.com/bimbosan-stage" title="Bimbosan">
-            <img
-              style="width: 100%"
-              class="img-responsive lazyload loaded rounded"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/img_product_banner_1.jpg?1744084012349"
-              data-src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/img_product_banner_1.jpg?1744084012349"
-              alt="Bimbosan"
-              data-was-processed="true"
-            />
-          </a>
-        </div>
-      </div>
-      <div class="col-xl-7 col-lg-8 col-md-8 col-12 block-product">
-        <!--        swipper 3 product -->
-        <div class="swiper product-2-3 container">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide" *ngFor="let product of productss">
-              <div class="rounded w-100 d-flex flex-column">
-                <!-- Ảnh -->
-                <img [src]="'http://localhost:8080' + product.image" [alt]="product.title" class="product-image w-100" />
-                <!-- Thông tin -->
-                <a [href]="product.url" style="color: #3867ad" class="product-title fw-bold text-decoration-none mb-2">
-                  {{ product.name }}
-                </a>
-                <div class="d-flex justify-content-between">
-                  <span style="color: #fe6f32" class="product-price fw-semibold">{{ product.price | number }}đ</span>
-                  <img
-                    (click)="addToCart(product)"
-                    style="width: 20px !important; cursor: pointer"
-                    src="content/images/cart/cart-828282.svg"
-                    alt=""
-                  />
+
+        <!-- Sản phẩm phải -->
+        <div class="col-xl-7 col-lg-8 col-md-8 col-12 block-product">
+          <div class="swiper product-2-3 container">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide" *ngFor="let product of category.products">
+                <div class="rounded w-100 d-flex flex-column">
+                  <img [src]="'http://localhost:8080' + product.image" [alt]="product.name" class="product-image w-100" />
+                  <a style="color: #3867ad" class="product-title fw-bold text-decoration-none mb-2">{{ product.name }}</a>
+                  <div class="d-flex justify-content-between">
+                    <span style="color: #fe6f32" class="product-price fw-semibold">{{ product.price | number }}đ</span>
+                    <img
+                      (click)="addToCart(product)"
+                      style="width: 20px !important; cursor: pointer"
+                      src="content/images/cart/cart-828282.svg"
+                      alt="Thêm vào giỏ"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <!------------------------->
       </div>
     </div>
+
     <div class="row mt-5">
       <div class="col-xl-2 order-xl-3 col-12 block-title-cate">
         <div class="box-title-right">
           <h2 class="h2-element-right" style="content: '2' !important">
-            <a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a>
-          </h2>
-        </div>
-        <div class="btn-more-cate d-xl-none"></div>
-        <div class="block-cate d-flex flex-column">
-          <a class="d-xl-block d-none" href="">cho be 0-6 thang</a>
-          <a class="d-xl-block d-none" href="">cho be 6-12 thang</a>
-          <a class="d-xl-block d-none" href="">cho be tren 1 tuoi</a>
-          <a class="d-xl-block d-none" href="">Xem tat ca</a>
-          <a class="d-xl-block d-none" href="">Xem tat ca</a>
-        </div>
-        <div class="block-vendor d-flex flex-wrap gap-1">
-          <a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            />
-          </a>
-          <a href="#">
-            <img
-              class="image-branch"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            />
-          </a>
-        </div>
-      </div>
-      <div class="col-xl-3 order-xl-2 col-lg-4 col-md-4 col-12 block-banner">
-        <div class="banner">
-          <a href="https://thegioisua.com/bimbosan-stage" title="Bimbosan">
-            <img
-              style="width: 100%"
-              class="img-responsive lazyload loaded rounded"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/img_product_banner_1.jpg?1744084012349"
-              data-src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/img_product_banner_1.jpg?1744084012349"
-              alt="Bimbosan"
-              data-was-processed="true"
-            />
-          </a>
-        </div>
-      </div>
-      <div class="col-xl-7 order-xl-1 col-lg-8 col-md-8 col-12 block-product">
-        <!--        swipper 3 product -->
-        <div class="swiper product-2-3 container">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide" *ngFor="let product of products">
-              <div class="rounded w-100 d-flex flex-column">
-                <!-- Ảnh -->
-                <img [src]="product.image" [alt]="product.title" class="product-image w-100" />
-                <!-- Thông tin -->
-                <a [href]="product.url" style="color: #3867ad" class="product-title fw-bold text-decoration-none mb-2">
-                  {{ product.title }}
-                </a>
-                <div class="d-flex justify-content-between">
-                  <span style="color: #fe6f32" class="product-price fw-semibold">{{ product.price | number }}đ</span>
-                  <img style="width: 20px !important" src="content/images/cart/cart-828282.svg" alt="" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!--          ----------------------->
-      </div>
-    </div>
-    <div class="row mt-5">
-      <div class="col-xl-2 col-12 block-title-cate">
-        <div class="box-title-left">
-          <h2 class="h2-element-left" style="content: '3' !important">
-            <a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a>
-          </h2>
-        </div>
-        <div class="btn-more-cate d-xl-none"></div>
-        <div class="block-cate d-flex flex-column">
-          <a class="d-xl-block d-none" href="">cho be 0-6 thang</a>
-          <a class="d-xl-block d-none" href="">cho be 6-12 thang</a>
-          <a class="d-xl-block d-none" href="">cho be tren 1 tuoi</a>
-          <a class="d-xl-block d-none" href="">Xem tat ca</a>
-          <a class="d-xl-block d-none" href="">Xem tat ca</a>
-        </div>
-        <div class="block-vendor d-flex flex-wrap gap-1">
-          <a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            /> </a
-          ><a href="#">
-            <img
-              class="image-branch m-1"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            />
-          </a>
-          <a href="#">
-            <img
-              class="image-branch"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/product_1_vendor_1.jpg?1744084012349"
-              alt="anh-branch-1"
-            />
-          </a>
-        </div>
-      </div>
-      <div class="col-xl-3 col-lg-4 col-md-4 col-12 block-banner">
-        <div class="banner">
-          <a href="https://thegioisua.com/bimbosan-stage" title="Bimbosan">
-            <img
-              style="width: 100%"
-              class="img-responsive lazyload loaded rounded"
-              src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/img_product_banner_1.jpg?1744084012349"
-              data-src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/img_product_banner_1.jpg?1744084012349"
-              alt="Bimbosan"
-              data-was-processed="true"
-            />
-          </a>
-        </div>
-      </div>
-      <div class="col-xl-7 col-lg-8 col-md-8 col-12 block-product">
-        <!--        swipper 3 product -->
-        <div class="swiper product-2-3 container">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide" *ngFor="let product of products">
-              <div class="rounded w-100 d-flex flex-column">
-                <!-- Ảnh -->
-                <img [src]="product.image" [alt]="product.title" class="product-image w-100" />
-                <!-- Thông tin -->
-                <a [href]="product.url" style="color: #3867ad" class="product-title fw-bold text-decoration-none mb-2">
-                  {{ product.title }}
-                </a>
-                <div class="d-flex justify-content-between">
-                  <span style="color: #fe6f32" class="product-price fw-semibold">{{ product.price | number }}đ</span>
-                  <img style="width: 20px !important" src="content/images/cart/cart-828282.svg" alt="" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!--          ----------------------->
-      </div>
-    </div>
-    <div class="row mt-5">
-      <div class="col-xl-2 order-xl-3 col-12 block-title-cate">
-        <div class="box-title-right">
-          <h2 class="h2-element-right" style="content: '4' !important">
             <a href="sua-bot-sinh-hoc" title="Sữa bột bán chạy"> Sữa bột bán chạy </a>
           </h2>
         </div>

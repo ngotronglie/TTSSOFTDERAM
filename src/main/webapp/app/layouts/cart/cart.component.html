@@ -7,63 +7,102 @@
       </ol>
     </div>
   </div>
+</section>
 
-  <div class="container my-4">
+<div class="row">
+  <div class="my-4 container col-md-6">
     <h3 class="mb-3 text-uppercase fw-bold">Giỏ hàng của bạn</h3>
-
-    <div class="table-responsive">
+    <div class="table-responsive" *ngIf="cartItems.length > 0; else emptyCart">
       <table class="table table-bordered text-center align-middle">
         <thead class="bg-danger text-white">
           <tr>
-            <th>Ảnh sản phẩm</th>
-            <th>Tên sản phẩm</th>
+            <th>Ảnh</th>
+            <th>Tên</th>
             <th>Giá</th>
             <th>Số lượng</th>
             <th>Tạm tính</th>
-            <th>Xóa</th>
+            <th>Xoá</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let item of cartItems; let i = index">
+            <td><img [src]="'http://localhost:8080' + item.image" class="img-thumbnail" style="width: 60px" alt="{{ item.name }}" /></td>
             <td>
-              <img [src]="'http://localhost:8080' + item.image" class="img-thumbnail product-img" alt="{{ item.name }}" />
+              <strong>{{ item.name }}</strong>
             </td>
+            <td>{{ item.price | number: '1.0-0' }}₫</td>
             <td>
-              <strong class="text-danger">{{ item.name }}</strong
-              ><br />
-              <small class="text-muted">{{ item.location }}</small>
-            </td>
-            <td>
-              <strong>{{ item.price | number: '1.0-0' }}₫</strong>
-            </td>
-            <td>
-              <div class="d-flex justify-content-center align-items-center quantity-control">
-                <button class="btn btn-light btn-sm rounded-circle shadow-sm" (click)="decreaseQuantity(item)">-</button>
-                <span class="mx-3 fw-bold">{{ item.quantity }}</span>
-                <button class="btn btn-light btn-sm rounded-circle shadow-sm" (click)="increaseQuantity(item)">+</button>
+              <div class="d-flex justify-content-center align-items-center">
+                <button class="btn btn-sm btn-light" (click)="decreaseQuantity(item)">-</button>
+                <span class="mx-2">{{ item.quantity }}</span>
+                <button class="btn btn-sm btn-light" (click)="increaseQuantity(item)">+</button>
               </div>
             </td>
-            <td>
-              <strong>{{ item.price * item.quantity | number: '1.0-0' }}₫</strong>
-            </td>
-            <td>
-              <button class="btn btn-outline-danger btn-sm" (click)="removeItem(i)">✖</button>
-            </td>
+            <td>{{ item.price * item.quantity | number: '1.0-0' }}₫</td>
+            <td><button class="btn btn-outline-danger btn-sm" (click)="removeItem(i, item)">✖</button></td>
           </tr>
         </tbody>
       </table>
-    </div>
 
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <button class="btn btn-outline-danger w-100 py-2">TIẾP TỤC MUA HÀNG</button>
-      </div>
-      <div class="col-md-6 text-end">
-        <div class="border p-3 total-price">
+      <div class="d-flex justify-content-between mt-3">
+        <button class="btn btn-outline-danger">Tiếp tục mua hàng</button>
+        <div class="text-end">
           <strong class="h5">Tổng tiền: {{ totalPrice | number: '1.0-0' }}₫</strong>
         </div>
-        <button [routerLink]="'/checkout'" class="btn btn-danger w-100 py-2 mt-3">TIẾN HÀNH THANH TOÁN</button>
       </div>
     </div>
+
+    <!-- Giỏ hàng trống -->
+    <ng-template #emptyCart>
+      <p class="text-muted text-center py-4">Giỏ hàng của bạn đang trống.</p>
+    </ng-template>
   </div>
-</section>
+
+  <!-- FORM THANH TOÁN -->
+  <div class="mb-5 col-md-6">
+    <div class="container py-4">
+      <h3 class="mb-4 text-uppercase fw-bold">Thông tin thanh toán</h3>
+
+      <form (ngSubmit)="onSubmit()" #checkoutForm="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="fullName" class="form-label">Họ và tên</label>
+              <input type="text" class="form-control" id="fullName" name="fullName" [(ngModel)]="order.fullName" required />
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" [(ngModel)]="order.email" required />
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="address" class="form-label">Địa chỉ</label>
+              <input type="text" class="form-control" id="address" name="address" [(ngModel)]="order.address" required />
+            </div>
+
+            <div class="mb-3">
+              <label for="phoneNumber" class="form-label">Số điện thoại</label>
+              <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" [(ngModel)]="order.phoneNumber" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Phương thức thanh toán</label>
+          <select class="form-control" name="paymentMethod" [(ngModel)]="order.paymentMethod" required>
+            <option value="1">Thanh toán khi nhận hàng</option>
+            <option value="2">Thẻ tín dụng</option>
+            <option value="3">PayPal</option>
+          </select>
+        </div>
+
+        <div class="text-end mt-4">
+          <button type="submit" class="btn btn-danger w-100 py-2">Xác nhận thanh toán</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
