@@ -23,3 +23,67 @@
   font-size: 15px;
   color: #fff;
 }
+
+.dropdown-menu {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.child-parent {
+  position: absolute;
+  top: 47px;
+}
+li a:hover {
+  background: #da1919;
+  color: #ffffff;
+}
+.childen-item {
+  top: 45px;
+  width: 400px;
+  display: none;
+  transition: opacity 1s ease;
+  border-radius: 0;
+}
+.parent-item-1 {
+  cursor: pointer;
+  height: 100%;
+  padding: 4px 0;
+}
+.parent-item-1:hover .childen-item {
+  display: block;
+  animation: slideIn 1s ease-in-out forwards; /* Áp dụng animation */
+}
+/* Định nghĩa animation */
+@keyframes slideIn {
+  0% {
+    transform: translateY(-30px); /* Bắt đầu từ trên */
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0); /* Kết thúc ở vị trí ban đầu */
+    opacity: 1; /* Phần tử trở nên rõ ràng */
+  }
+}
+
+.size-to {
+  right: -1190px;
+  width: 898px;
+  height: 500px;
+  background: #ffffff;
+  display: none;
+}
+.parent-2:hover .size-to {
+  display: block;
+  right: -1190px;
+  width: 898px;
+  height: 500px;
+  background: #ffffff;
+}

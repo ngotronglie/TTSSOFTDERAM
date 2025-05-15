@@ -63,7 +63,7 @@
         </div>
         <!--don hang-->
         <div class="d-flex align-items-center gap-2 d-none d-lg-block">
-          <a href="/apps/kiem-tra-don-hang" class="d-flex align-items-center text-decoration-none">
+          <a href="/status" class="d-flex align-items-center text-decoration-none">
             <div class="circle-icon d-flex align-items-center justify-content-center">
               <img src="content/images/bill.svg" alt="Đơn hàng" />
             </div>
@@ -72,21 +72,40 @@
             </div>
           </a>
         </div>
-
         <!--don hang-->
-        <div class="d-flex align-items-center gap-2 d-none d-lg-block">
-          <a href="/apps/kiem-tra-don-hang" class="d-flex align-items-center text-decoration-none">
-            <div class="circle-icon d-flex align-items-center justify-content-center">
-              <img src="content/images/account.svg" alt="Đơn hàng" />
-            </div>
-            <div class="ms-2">
-              <p class="order-text mb-0">Theo dõi<br />đơn hàng</p>
-            </div>
-          </a>
+        <div class="taikhoancanhan d-flex align-items-center gap-2 d-none d-lg-block">
+          <div class="dropdown">
+            <!-- Link tài khoản cá nhân, khi nhấn vào sẽ mở dropdown -->
+            <a
+              href="#"
+              class="d-flex align-items-center text-decoration-none"
+              id="dropdownMenuButton"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <div class="circle-icon d-flex align-items-center justify-content-center">
+                <img src="content/images/account.svg" alt="Đơn hàng" />
+              </div>
+              <div class="ms-2">
+                <p class="order-text mb-0">tài khoản<br />cá nhân</p>
+              </div>
+            </a>
+            <!-- Dropdown menu, hiện khi nhấn vào tài khoản cá nhân -->
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <li>
+                <a class="dropdown-item" href="#">{{ userloading.firstname }} {{ userloading.lastname }}</a>
+              </li>
+              <li><a class="dropdown-item" href="#">Đơn hàng</a></li>
+              <li><hr class="dropdown-divider" /></li>
+              <li><a class="dropdown-item" [routerLink]="'/login'">Đăng nhập</a></li>
+              <li><a class="dropdown-item" [routerLink]="'/register'">Đăng kí</a></li>
+              <li><a class="dropdown-item" (click)="logout()">Đăng xuất</a></li>
+            </ul>
+          </div>
         </div>
 
         <div class="d-flex gap-2">
-          <a href="" class="d-flex align-items-center position-relative">
+          <a href="" [routerLink]="'/cart'" class="d-flex align-items-center position-relative">
             <div class="circle-icon d-flex align-items-center justify-content-center">
               <img src="content/images/cart.svg" alt="Đơn hàng" />
             </div>
@@ -94,7 +113,7 @@
               class="position-absolute number translate-middle bg-primary text-white rounded-circle d-flex justify-content-center align-items-center"
               style="width: 20px; height: 20px; font-size: 12px"
             >
-              0
+              {{ numberOfItems }}
             </div>
           </a>
         </div>
