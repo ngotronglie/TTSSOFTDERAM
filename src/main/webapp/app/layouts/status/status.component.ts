@@ -130,17 +130,17 @@ export class StatusComponent implements OnInit {
     }
 
     const updateData: UpdateOrderRequest = {
-      status_orders: 'tra hang',
+      status_orders: 'cancelled',
     };
 
     this.http.put<ApiResponse>(`http://localhost:8080/api/orders/code/${code}`, updateData).subscribe({
       next: response => {
         if (response.status === 'success') {
-          alert('Cập nhật trạng thái đơn hàng thành công!');
+          alert('Hủy đơn hàng thành công!');
           // Reload the searched order to show updated status
           this.searchOrder();
         } else {
-          alert('Cập nhật trạng thái đơn hàng thất bại!');
+          alert('Hủy đơn hàng thất bại!');
         }
       },
       error: error => {
@@ -152,7 +152,7 @@ export class StatusComponent implements OnInit {
 
   cancelOrder(orderId: number): void {
     const updateData: UpdateOrderRequest = {
-      status_orders: 'tra hang',
+      status_orders: 'cancelled',
     };
 
     this.http.put<ApiResponse>(`http://localhost:8080/api/orders/user/${this.user.id_user}`, updateData).subscribe({

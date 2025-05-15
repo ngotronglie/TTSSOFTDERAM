@@ -132,7 +132,7 @@
                 <p>
                   <strong>Trạng thái:</strong> <span [class]="getStatusClass(searchedOrder.status)">{{ searchedOrder.status }}</span>
                 </p>
-                <p><strong>Ngày tạo:</strong> {{ searchedOrder.createdAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+                <p><strong>Ngày tạo:</strong> {{ searchedOrder.createdAt | date: 'HH:mm dd/MM/yyyy ' }}</p>
               </div>
 
               <!-- Chi tiết sản phẩm -->
@@ -173,7 +173,10 @@
                 >
                   Hủy đơn hàng
                 </button>
-                <button class="btn btn-primary" *ngIf="searchedOrder.status === 'Cancelled'" (click)="buyAgain(searchedOrder)">
+                <button class="btn btn-primary" *ngIf="searchedOrder.status === 'completed'" (click)="buyAgain(searchedOrder)">
+                  <i class="fas fa-shopping-cart me-2"></i>Mua lại
+                </button>
+                <button class="btn btn-primary" *ngIf="searchedOrder.status === 'cancelled'" (click)="buyAgain(searchedOrder)">
                   <i class="fas fa-shopping-cart me-2"></i>Mua lại
                 </button>
               </div>
