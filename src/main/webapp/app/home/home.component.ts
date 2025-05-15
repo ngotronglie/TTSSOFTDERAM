@@ -191,18 +191,28 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   addToCart(product: any): void {
     if (this.isLoggedIn()) {
-      alert('>>>>>>>>>>>>>>>> bạn đã đăng nhập');
-      console.table(product);
-      return;
-      // this.http.post().subscribe({
-      //   next: () => {
-      //     localStorage.removeItem('user');
-      //     this.router.navigate(['/login']);
-      //   },
-      //   error: error => {
-      //     console.error('Logout failed:', error);
-      //   },
-      // });
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        const user = JSON.parse(userJson);
+        console.log(user);
+        console.log(product);
+        const cartData = {
+          userId: user.id_user,
+          productId: product.id,
+          quantity: 1,
+        };
+        console.log(cartData);
+        this.http.post('http://localhost:8080/api/cart/add', cartData).subscribe({
+          next: response => {
+            console.log('Product added to cart:', response);
+            alert('Thêm vào giỏ hàng thành công');
+          },
+          error: error => {
+            console.error('Error adding to cart:', error);
+            alert('Có lỗi xảy ra khi thêm vào giỏ hàng');
+          },
+        });
+      }
     } else {
       this.cartService.addToCart(product);
       alert('Thêm vào giỏ hàng thành công');

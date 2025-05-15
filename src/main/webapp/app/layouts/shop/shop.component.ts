@@ -155,9 +155,10 @@ export default class ShopComponent implements OnInit {
       if (userJson) {
         const user = JSON.parse(userJson);
         console.log(user);
+        console.log(product);
         const cartData = {
           userId: user.id_user,
-          productId: product.id,
+          productId: product.id_product,
           quantity: 1,
         };
         console.log(cartData);
