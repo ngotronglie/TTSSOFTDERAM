@@ -1,11 +1,16 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.PageResponse;
 import com.example.backend.entity.Product;
 import com.example.backend.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -73,5 +78,30 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.deleteById(id);
         return new ApiResponse<>("success", "Xóa sản phẩm thành công", LocalDateTime.now(), "Deleted ID: " + id, null);
+    }
+
+    @Override
+    public ApiResponse<PageResponse<Product>> findAllWithPagination(int page, int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Product> productPage = productRepository.findAll(pageable);
+            
+            PageResponse<Product> pageResponse = new PageResponse<>(
+                productPage.getContent(),
+                productPage.getNumber(),
+                productPage.getSize(),
+                productPage.getTotalElements(),
+                productPage.getTotalPages(),
+                productPage.isLast()
+            );
+            
+            return new ApiResponse<>("success", "Lấy danh sách sản phẩm thành công", 
+                    LocalDateTime.now(), pageResponse, null);
+        } catch (Exception e) {
+            List<String> errors = new ArrayList<>();
+            errors.add("Lỗi khi lấy danh sách sản phẩm: " + e.getMessage());
+            return new ApiResponse<>("error", "Lỗi khi lấy danh sách sản phẩm", 
+                    LocalDateTime.now(), null, errors);
+        }
     }
 }

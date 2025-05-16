@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.PageResponse;
 import com.example.backend.entity.Product;
 import com.example.backend.service.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,6 +38,13 @@ public class ProductController {
     @GetMapping("/{id}")
     public ApiResponse<Product> getProductById(@PathVariable Long id) {
         return productService.findById(id);
+    }
+
+    @GetMapping("/page")
+    public ApiResponse<PageResponse<Product>> getAllProductsWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return productService.findAllWithPagination(page, size);
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
